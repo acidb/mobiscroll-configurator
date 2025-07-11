@@ -69,6 +69,11 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    groups: Group;
+    components: Component;
+    frameworks: Framework;
+    presets: Preset;
+    configs: Config1;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -77,6 +82,11 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    groups: GroupsSelect<false> | GroupsSelect<true>;
+    components: ComponentsSelect<false> | ComponentsSelect<true>;
+    frameworks: FrameworksSelect<false> | FrameworksSelect<true>;
+    presets: PresetsSelect<false> | PresetsSelect<true>;
+    configs: ConfigsSelect<false> | ConfigsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -158,6 +168,88 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "groups".
+ */
+export interface Group {
+  id: string;
+  name: string;
+  slug: string;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "components".
+ */
+export interface Component {
+  id: string;
+  group: string | Group;
+  view: string;
+  label: string;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "frameworks".
+ */
+export interface Framework {
+  id: string;
+  name: string;
+  slug: string;
+  template: string;
+  icon?: string | null;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "presets".
+ */
+export interface Preset {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  component: string | Component;
+  frameworks: (string | Framework)[];
+  tags?:
+    | {
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  recommended?: boolean | null;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "configs".
+ */
+export interface Config1 {
+  id: string;
+  preset: string | Preset;
+  config:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  version?: string | null;
+  createdBy?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -170,6 +262,26 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: string | Media;
+      } | null)
+    | ({
+        relationTo: 'groups';
+        value: string | Group;
+      } | null)
+    | ({
+        relationTo: 'components';
+        value: string | Component;
+      } | null)
+    | ({
+        relationTo: 'frameworks';
+        value: string | Framework;
+      } | null)
+    | ({
+        relationTo: 'presets';
+        value: string | Preset;
+      } | null)
+    | ({
+        relationTo: 'configs';
+        value: string | Config1;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -252,6 +364,75 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "groups_select".
+ */
+export interface GroupsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "components_select".
+ */
+export interface ComponentsSelect<T extends boolean = true> {
+  group?: T;
+  view?: T;
+  label?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "frameworks_select".
+ */
+export interface FrameworksSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  template?: T;
+  icon?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "presets_select".
+ */
+export interface PresetsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  component?: T;
+  frameworks?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  recommended?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "configs_select".
+ */
+export interface ConfigsSelect<T extends boolean = true> {
+  preset?: T;
+  config?: T;
+  version?: T;
+  createdBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

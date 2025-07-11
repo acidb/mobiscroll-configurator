@@ -6,9 +6,13 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
-
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Groups } from './collections/Groups'
+import { Components } from './collections/Components'
+import { Frameworks } from './collections/Frameworks'
+import { Presets } from './collections/Presets'
+import { Configs } from './collections/Configs'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -20,7 +24,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media],
+  collections: [Users, Media, Groups, Components, Frameworks, Presets, Configs],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
