@@ -1,8 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+
+import prettier from 'prettier/standalone'
+import parserBabel from 'prettier/plugins/babel'
+import parserTypescript from 'prettier/plugins/typescript'
+import pluginEstree from 'prettier/plugins/estree'
+import parserHtml from 'prettier/plugins/html'
 
 type CodeSnippets = {
   [filename: string]: string;
@@ -14,7 +20,61 @@ interface CodePreviewProps {
 }
 
 export function CodePreview({ code, language }: CodePreviewProps) {
+  const [formattedSnippets, setFormattedSnippets] = useState<CodeSnippets | null>(null);
   if (!code) return null;
+
+  const basePrettierOptions = {
+    semi: true,
+    singleQuote: true,
+    trailingComma: 'es5' as const,
+    printWidth: 100,
+    tabWidth: 2,
+    bracketSpacing: true,
+    bracketSameLine: false,
+    arrowParens: 'avoid' as const,
+    endOfLine: 'lf' as const,
+    plugins: [parserBabel, parserTypescript, pluginEstree, parserHtml],
+  };
+
+  const getParser = (lang: CodePreviewProps['language']) => {
+    switch (lang) {
+      case 'javascript':
+      case 'jquery':
+      case 'react':
+        return 'babel';
+      case 'angular':
+        return 'typescript';
+      case 'vue':
+        return 'html';
+      default:
+        return 'babel';
+    }
+  };
+
+  useEffect(() => {
+    if (!code) {
+      setFormattedSnippets(null);
+      return;
+    }
+
+    (async () => {
+      const entries = await Promise.all(
+        Object.entries(code).map(async ([filename, snippet]) => {
+          try {
+            const formatted = await prettier.format(snippet, {
+              ...basePrettierOptions,
+              parser: getParser(language),
+            });
+            return [filename, formatted] as [string, string];
+          } catch {
+            return [filename, snippet];
+          }
+        }),
+      );
+
+      setFormattedSnippets(Object.fromEntries(entries));
+    })();
+  }, [code, language]);
 
   function copyToClipboard(text: string) {
     navigator.clipboard.writeText(text);
@@ -37,10 +97,13 @@ export function CodePreview({ code, language }: CodePreviewProps) {
     }
   }
 
-  
+  if (!formattedSnippets) {
+    return <p className="text-sm text-gray-500">Loading formatted code…</p>;
+  }
+
   return (
     <div>
-      {Object.entries(code).map(([filename, snippet]) => (
+      {Object.entries(formattedSnippets).map(([filename, snippet]) => (
         <div
           key={filename}
           className="mb-6 rounded-lg overflow-hidden border border-base-200"

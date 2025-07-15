@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@mobiscroll/react':
-        specifier: npm:@mobiscroll/react-next-trial@5.34.3
-        version: '@mobiscroll/react-next-trial@5.34.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)'
+        specifier: npm:@mobiscroll/react-next@5.34.3
+        version: '@mobiscroll/react-next@5.34.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)'
       '@payloadcms/db-mongodb':
         specifier: 3.46.0
         version: 3.46.0(@aws-sdk/credential-providers@3.844.0)(payload@3.46.0(graphql@16.11.0)(typescript@5.7.3))
@@ -1117,8 +1117,8 @@ packages:
     peerDependencies:
       yjs: '>=13.5.22'
 
-  '@mobiscroll/react-next-trial@5.34.3':
-    resolution: {integrity: sha512-Eae7WS6ltCnm4okw7icWc9o98rVWTlAlanC4xJrbsIkSXSpKD3OrJ95KDt9Yghr3kYWhMOVnvGaXArj01fyG5g==}
+  '@mobiscroll/react-next@5.34.3':
+    resolution: {integrity: sha512-HzS8V+pdWlUa6CVo19TzY+h9gicNlm0HB6sZc8n5FG1j5uciHApXne7WskilzzzOWBt07ZGvVHh5ee5kXNwR1w==}
     peerDependencies:
       react: '>=18.0.0'
       react-dom: '>=18.0.0'
@@ -5941,7 +5941,7 @@ snapshots:
       lexical: 0.28.0
       yjs: 13.6.27
 
-  '@mobiscroll/react-next-trial@5.34.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@mobiscroll/react-next@5.34.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)

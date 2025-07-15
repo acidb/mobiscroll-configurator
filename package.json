@@ -18,7 +18,7 @@
         "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
     },
     "dependencies": {
-        "@mobiscroll/react": "npm:@mobiscroll/react-next-trial@5.34.3",
+        "@mobiscroll/react": "npm:@mobiscroll/react-next@5.34.3",
         "@payloadcms/db-mongodb": "3.46.0",
         "@payloadcms/next": "3.46.0",
         "@payloadcms/payload-cloud": "3.46.0",
