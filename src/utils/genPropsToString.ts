@@ -1,21 +1,71 @@
 // In thise file is the function that generates the props to string
 // Here needs to be added more functions for different frameworks 
 
-export function genReactProps(props: Record<string, any>): string {
-    const indent = '  ';
-    return Object.entries(props)
 
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([k, v]) => {
-            if (typeof v === 'string' && v.trim().startsWith('/*')) {
-                return null;;
+export function genCodeWithTopVars(
+    framework: string,
+    componentName: string,
+    props: Record<string, any>,
+    extracted: string[] = ['data', 'view', 'resources', 'invalid']
+) {
+    const topVars: string[] = [];
+    const templateInlineProps: string[] = [];
+    const liveViewInlineProps = props;
+
+    Object.entries(props).forEach(([key, value]) => {
+        if (extracted.includes(key)) {
+            topVars.push(
+                framework === 'angular'
+                    ? `  ${key} = ${JSON.stringify(value, null, 2)};`
+                    : `const ${key} = ${JSON.stringify(value, null, 2)};`
+            );
+            if (framework === 'react') {
+                templateInlineProps.push(`${key}={${key}}`);
+            } else if (framework === 'angular') {
+                templateInlineProps.push(`[${key}]="${key}"`);
+            } else if (framework === 'vue') {
+                templateInlineProps.push(`:${key}="${key}"`);
+            } else {
+                templateInlineProps.push(`${key}: ${JSON.stringify(value, null, 2)}`);
             }
-            if (typeof v === 'boolean' || typeof v === 'number') return `  ${k}={${v}}`;
-            if (typeof v === 'string') return `  ${k}="${v}"`;
-            return `${indent}${k}={${JSON.stringify(v)}}`;
-        })
-        .filter(Boolean)
-        .join('\n');
+        } else if (typeof value === 'string') {
+            if (framework === 'react') {
+                templateInlineProps.push(`${key}="${value}"`);
+            } else if (framework === 'angular') {
+                templateInlineProps.push(`[${key}]="'${value.replace(/'/g, "\\'")}'"`);
+            } else if (framework === 'vue') {
+                templateInlineProps.push(`:${key}="'${value.replace(/'/g, "\\'")}'"`);
+            } else {
+                templateInlineProps.push(`${key}: "${value}"`);
+            }
+        } else if (typeof value === 'boolean' || typeof value === 'number') {
+            if (framework === 'react') {
+                templateInlineProps.push(`${key}={${value}}`);
+            } else if (framework === 'angular') {
+                templateInlineProps.push(`[${key}]="${value}"`);
+            } else if (framework === 'vue') {
+                templateInlineProps.push(`:${key}="${value}"`);
+            } else {
+                templateInlineProps.push(`${key}: ${value}`);
+            }
+        } else if (typeof value !== 'undefined') {
+            if (framework === 'react') {
+                templateInlineProps.push(`${key}={${JSON.stringify(value)}}`);
+            } else if (framework === 'angular') {
+                templateInlineProps.push(`[${key}]="${key}"`);
+            } else if (framework === 'vue') {
+                templateInlineProps.push(`:${key}="${key}"`);
+            } else {
+                templateInlineProps.push(`${key}: ${JSON.stringify(value)}`);
+            }
+        }
+    });
+
+    return {
+        topVars: topVars.join('\n\n'),
+        templateInlineProps: templateInlineProps.join(framework === 'js' || framework === 'jquery' ? ',\n  ' : '\n  '),
+        liveViewInlineProps // <-- this is just the original props object!
+    };
 }
 
 export function filterInvalidProps(obj: any): any {

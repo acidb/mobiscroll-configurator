@@ -10,7 +10,7 @@ import { Group, Component, Framework, Preset, Config } from './types'
 import { LivePreview } from '@/components/LivePreview';
 import { CodePreview } from '@/components/CodePreview';
 import { ConfigurationsSelector } from '@/components/ConfigurationSelector';
-import { genReactProps, filterInvalidProps } from '@/utils/genPropsToString';
+import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString';
 
 export default function ConfiguratorClient({
   groups,
@@ -41,6 +41,7 @@ export default function ConfiguratorClient({
   const [currentConfig, setCurrentConfig] = useState<Config | null>(null);
   const [code, setCode] = useState<any>(null);
   const [props, setProps] = useState<Record<string, any>>({});
+  const [viewProps, setViewProps] = useState<Record<string, any>>({});
 
 
   const selectedPreset = searchParams.get('preset') || null
@@ -99,14 +100,8 @@ export default function ConfiguratorClient({
     if (selectedPreset) {
       const preset = filteredPresets.find(p => p.slug === selectedPreset);
       const config = configs.find(c => c.preset?.slug === selectedPreset) || null;
-      const propString = genReactProps(config?.config.props || {});
-
-      const updated = frameworkObj?.template
-        .replace(/\/\* Component \*\//g, config?.config.component || '')
-        .replace(/\/\* Component options \*\//g, propString);
-
-      setCode({ main: updated });
       const filteredProps = filterInvalidProps(config?.config.props || {});
+
       setProps(filteredProps);
       setPresetObj(preset || null);
       setCurrentConfig(config);
@@ -116,23 +111,40 @@ export default function ConfiguratorClient({
     }
   }, [selectedPreset, filteredPresets, configs]);
 
-
   useEffect(() => {
     if (frameworkObj && currentConfig) {
-      const propString = genReactProps(props);
-      const updated = frameworkObj.template
-        .replace(/\/\* Component \*\//g, currentConfig.config.component || '')
-        .replace(/\/\* Component options \*\//g, propString);
+      const { topVars, templateInlineProps, liveViewInlineProps } = genCodeWithTopVars(
+        frameworkObj.slug,
+        currentConfig.config.component || '',
+        props
+      );
+      let codeObj: any = {};
 
-      setCode({ main: updated });
+      if (frameworkObj.slug === 'angular') {
+        const [tsTpl, htmlTpl] = frameworkObj.template.split('//TEMPLATE');
+        codeObj = {
+          'app.component.ts': tsTpl
+            .replace(/\/\* Component \*\//g, currentConfig.config.component || ''),
+          'app.component.html': htmlTpl
+            .replace(/\/\* Component \*\//g, currentConfig.config.component?.toLowerCase() || '')
+            .replace(/\/\* Component options \*\//g, templateInlineProps),
+        };
+
+      } else {
+        codeObj = {
+          'App.tsx': frameworkObj.template
+            .replace(/\/\* Component \*\//g, currentConfig.config.component || '')
+            .replace(/\/\* variables \*\//g, topVars)
+            .replace(/\/\* Component options \*\//g, templateInlineProps)
+        };
+
+      }
+      setCode(codeObj);
     }
-  }, [props, frameworkObj, currentConfig]);
-
-
+  }, [frameworkObj, currentConfig, props]);
 
   return (
     <div className="w-full px-4 bg-white">
-
       <GroupSection
         groups={groups}
         filteredComponents={filteredComponents}
@@ -140,7 +152,6 @@ export default function ConfiguratorClient({
         selectedComponent={selectedComponent}
         updateSelection={updateSelection}
       />
-
       {selectedGroup && selectedComponent && (
         <FrameworkSection
           frameworks={frameworks}
@@ -149,7 +160,6 @@ export default function ConfiguratorClient({
           updateSelection={updateSelection}
         />
       )}
-
       {selectedGroup && selectedComponent && selectedFramework && (
         <PresetSection
           filteredPresets={filteredPresets}
@@ -172,12 +182,16 @@ export default function ConfiguratorClient({
             />
           </div>
 
-          <div className="w-full xl:w-[80%] flex flex-col lg:flex-row gap-1 transition-all duration-500 ease-in-out">
+          <div className="w-full xl:w-[80%] gap-8 flex flex-col lg:flex-row gap-1 transition-all duration-500 ease-in-out">
             <div className="w-full overflow-auto max-w-full transition-all duration-500 ease-in-out">
-              <CodePreview code={code} language="tsx" />
+              <CodePreview code={code} language={
+                ['javascript', 'angular', 'jquery', 'vue', 'react'].includes(frameworkObj.slug)
+                  ? frameworkObj.slug as 'javascript' | 'angular' | 'jquery' | 'vue' | 'react'
+                  : 'javascript'
+              } />
             </div>
 
-            <div className="flex flex-col  justify-center items-center  max-w-[400px] w-full mx-auto lg:mx-0 min-h-[700px]  sm:scale-[0.6] md:scale-[0.7] lg:scale-[0.8]">
+            <div className="flex flex-col  justify-center items-center  max-w-[400px] w-full mx-auto lg:mx-0 min-h-[700px]  sm:scale-[0.6] md:scale-[0.7] lg:scale-[1]">
               <div className="transform origin-top scale-100 md:scale-[1] lg:scale-[1] transition-transform duration-300">
                 <LivePreview
                   componentName={groupObj.slug}
