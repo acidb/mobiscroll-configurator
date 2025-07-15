@@ -24,9 +24,10 @@ export function CodePreview({ code, language }: CodePreviewProps) {
   return (
     <div>
       {Object.entries(code).map(([filename, snippet]) => (
-        <div key={filename} className="mb-6 border rounded-lg overflow-hidden">
+        <div key={filename} className="mb-6 rounded-lg overflow-hidden">
 
-          <div className="bg-[#e5eff9] text-gray-600 text-sm px-4 py-2 flex justify-between items-center">
+{/* TODOO The file name need to be adjusted because right now it only has tsx in it  */}
+           <div className="bg-[#e5eff9] text-gray-600 text-sm px-4 py-2 flex justify-between items-center">
             <div className="font-mono text-xs flex gap-2 items-center">
               <span className="px-2 py-1 rounded bg-white text-blue-600">
                 {filename === 'tsx' || filename === 'js' ? 'App.tsx' : `App.${filename}`}

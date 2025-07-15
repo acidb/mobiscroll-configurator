@@ -1,13 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import { Configuration } from './types';
 import { updateUrl } from '@/utils/updateUrl';
 import { useScreenSize } from '@/utils/useScreenSize';
+import { ResourceList } from './ResourceList';
+import { DataList } from './DataList';
+import { BooleanConfig } from './BooleanConfig';
+import { Settings2 } from 'lucide-react';
 
+// In this enum can be defined the options for the select inputs
+const ENUM_OPTIONS: Record<string, string[]> = {
+    groupBy: ["date", "resource"],
+};
+
+interface Group {
+    label: string;
+    description: string;
+    match: (key: string, value: unknown) => boolean;
+}
+
+// TODOO: This groups need to be adjusted and more precise
+const GROUPS: Group[] = [
+    {
+        label: "Component Options",
+        description: "You can adjust the component by turning the options on and off.",
+        match: (key: string, value: unknown): boolean => typeof value === 'boolean',
+    },
+    {
+        label: "Numeric Options",
+        description: "Configure detailed options by providing a number value.",
+        match: (key: string, value: unknown): boolean => typeof value === 'number',
+    },
+    {
+        label: "Unknown Options",
+        description: "These options will be rendered as text right now but they will be adjusted in the future.",
+        match: (key: string, value: unknown): boolean => typeof value === 'object',
+    },
+    {
+        label: "String Options",
+        description: "These options will be rendered as text right now but they will be adjusted in the future.",
+        match: (key: string, value: unknown): boolean => typeof value === 'string',
+    },
+];
 
 type SelectedConfig = Record<string, any>;
 
 interface ConfigurationsSelectorProps {
-    configurations: Configuration[];
+    configurations: Record<string, any>;
     onChange: (selected: SelectedConfig) => void;
     selected: SelectedConfig;
 }
@@ -22,7 +59,6 @@ export function ConfigurationsSelector({
     const [isOpen, setIsOpen] = useState(screenSize === 'desktop');
     const toggleOpen = () => setIsOpen(prev => !prev);
 
-
     useEffect(() => {
         if (screenSize === 'desktop') {
             setIsOpen(true);
@@ -35,10 +71,7 @@ export function ConfigurationsSelector({
         const newSelected = { ...selected, [prop]: value };
         onChange(newSelected);
         updateUrl(newSelected);
-
     }
-
-
 
     if (screenSize === 'mobile' || screenSize === 'tablet') {
         return (
@@ -71,88 +104,111 @@ export function ConfigurationsSelector({
         );
     }
 
+    function renderContent() {
+        return (
+            <>
+                {GROUPS.map((group, gi) => {
+                    const fields = Object.entries(configurations).filter(([key, value]) =>
+                        group.match(key, value)
+                    );
+                    if (!fields.length) return null;
+
+                    return (
+                        <div key={gi} className="mb-6">
+                            <div className="mb-2">
+                                <span className="font-semibold text-gray-700 text-sm">{group.label}</span>
+                                <span className="block text-xs text-gray-400 mt-1">{group.description}</span>
+                            </div>
+
+                            <div className="space-y-3">
+                                {fields.map(([prop, value], idx) => {
+
+                                    if (typeof value === 'boolean') {
+                                        return (
+                                            <BooleanConfig
+                                                key={prop}
+                                                value={!!selected[prop]}
+                                                onChange={val => updateValue(prop, val)}
+                                                label={prop}
+                                                id={prop}
+                                            />
+                                        );
+                                    }
+
+                                    if (typeof value === 'number') {
+                                        return (
+                                            <div key={prop} className="flex flex-row justify-between items-start">
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{prop}</code>
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    id={prop}
+                                                    value={selected[prop] ?? value}
+                                                    onChange={e => updateValue(prop, Number(e.target.value))}
+                                                    className="input input-bordered w-24 text-sm ml-3"
+                                                />
+                                            </div>
+                                        );
+                                    }
+
+                                    if (typeof value === 'object') {
+                                        if (prop === 'resources' && Array.isArray(value)) {
+                                            return <ResourceList key={idx} resources={value} />;
+                                        }
+                                        if (prop === 'data' && Array.isArray(value)) {
+                                            return <DataList key={idx} data={value} />;
+                                        }
+                                        return (
+                                            <div key={idx}>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{prop}</code>
+                                                </label>
+                                                <pre className="bg-gray-100 rounded p-2 text-xs overflow-auto max-h-40">
+                                                    {JSON.stringify(value, null, 2)}
+                                                </pre>
+                                            </div>
+                                        );
+                                    }
+
+                                    if (typeof value === 'string') {
+                                        return (
+                                            <div key={idx}>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{prop}</code>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id={prop}
+                                                    value={selected[prop] ?? value}
+                                                    onChange={e => updateValue(prop, e.target.value)}
+                                                    className="input input-bordered w-full text-sm mt-1"
+                                                />
+                                            </div>
+                                        );
+                                    }
+
+                                    return null;
+                                })}
+                            </div>
+                        </div>
+                    );
+                })}
+            </>
+        );
+    }
+
     return (
         <div className="w-full space-y-8">
-            {renderContent()}
+            <div className="xl:bg-white xl:border xl:border-gray-200 xl:rounded-2xl xl:p-2 lg:shadow-sm">
+                <div className="flex gap-2 justify-left items-center mb-4 px-1 py-2">
+                    <div className="flex items-center bg-blue-500 rounded-xl p-2">
+                        <Settings2 className="text-white" size={20} />
+                    </div>
+                    <span className="font-semibold text-gray-800 text-l">Configurations</span>
+                </div>
+                {renderContent()}
+            </div>
         </div>
     );
-
-    function renderContent() {
-        return configurations.map((conf) => (
-            <div
-                key={conf.id}
-                className="xl:bg-white xl:border xl:border-gray-200 xl:rounded-2xl xl:p-5 lg:shadow-sm"
-            >
-
-
-                {conf.description && (
-                    <p className="text-sm text-gray-500 mb-4">{conf.description}</p>
-                )}
-
-                <div className="space-y-5">
-                    {Array.isArray(conf.config?.configurations) &&
-                        conf.config.configurations.map((opt, idx) => {
-                            const key = `${conf.id}-${opt.prop}`;
-                            const Label = (
-                                <label
-                                    htmlFor={key}
-                                    className="block text-sm font-medium text-gray-700 mb-1"
-                                >
-                                    <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{opt.prop}</code>
-                                </label>
-                            );
-                            const Description = opt.description && (
-                                <p className="text-xs text-gray-500 mt-1">{opt.description}</p>
-                            );
-
-                            if (typeof opt.values === 'boolean') {
-                                return (
-                                    <div key={idx} className="flex items-center justify-between">
-                                        <div className="w-2/3">
-                                            {Label}
-                                            {Description}
-                                        </div>
-                                        <input
-                                            type="checkbox"
-                                            id={key}
-                                            className="toggle toggle-sm border-gray-300"
-                                            checked={!!selected[opt.prop]}
-                                            onChange={(e) => updateValue(opt.prop, e.target.checked)}
-                                        />
-                                    </div>
-                                );
-                            }
-
-                            if (Array.isArray(opt.values)) {
-                                const values = opt.values as string[];
-                                return (
-                                    <div key={idx}>
-                                        <div className="flex items-center justify-between flex-wrap gap-2">
-                                            {Label}
-                                            <div className="flex flex-wrap gap-2">
-                                                {values.map((val, i) => (
-                                                    <button
-                                                        key={i}
-                                                        onClick={() => updateValue(opt.prop, val)}
-                                                        className={`px-3 py-1 rounded-full text-xs font-medium border transition ${selected[opt.prop] === val
-                                                            ? 'bg-blue-600 text-white'
-                                                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                                                            }`}
-                                                    >
-                                                        {val}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                        {Description}
-                                    </div>
-                                );
-                            }
-
-                            return null;
-                        })}
-                </div>
-            </div>
-        ));
-    }
 }

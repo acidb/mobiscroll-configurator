@@ -18,7 +18,7 @@ export interface Framework {
   id: string
   name: string
   slug: string
-  template: number
+  template: string
   icon: string
 }
 
@@ -29,3 +29,17 @@ export interface Preset {
   description: string
   component: string
 }
+
+export interface ConfigurationOption {
+  component: string;
+  props: Record<string, any>;
+}
+
+export interface Config {
+  id: string;
+  preset: Preset | null;
+  config: ConfigurationOption;
+}
+
+
+

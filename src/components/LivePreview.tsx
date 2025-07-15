@@ -5,10 +5,11 @@ import { Eventcalendar, Select, Datepicker } from "@mobiscroll/react";
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
 
 const componentMap: Record<string, React.ElementType> = {
-    Eventcalendar,
-    Select,
-    Datepicker
-}
+    eventcalendar: Eventcalendar,
+    select: Select,
+    datepicker: Datepicker
+};
+
 
 export interface LivePreviewProps {
     componentName: string;    // Name of the Mobiscroll Component;
@@ -31,6 +32,8 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                     {...mergedProps}
                     {...(componentName === "Eventcalendar" ? { data: events } : {})}
                 />
+
+                {/* TODOO Something is wrong with the select component need to be fixed */}
             </div>
         </div>
     );

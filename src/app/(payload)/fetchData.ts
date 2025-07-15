@@ -44,6 +44,17 @@ export async function fetchConfiguratorData(context: any) {
       where: componentId ? { component: { equals: componentId } } : {},
     })
 
+    const selectedPreset = searchParams.preset;
+    const selectedPresetObj = presetsResult.docs.find(p => p.slug === selectedPreset);
+    const selectedPresetId = selectedPresetObj?.id;
+
+
+    const configsResult = await payload.find({
+      collection: 'configs',
+      where: selectedPresetId ? { preset: { equals: selectedPresetId } } : {},
+      limit: 1,
+    });
+
     return {
       props: {
         groups: groupsResult.docs,
@@ -53,6 +64,7 @@ export async function fetchConfiguratorData(context: any) {
         selectedGroup: group || null,
         selectedComponent: component || null,
         selectedFramework: framework || null,
+        configs: configsResult.docs,
       },
     }
   } catch (error) {
@@ -66,6 +78,7 @@ export async function fetchConfiguratorData(context: any) {
         selectedGroup: null,
         selectedComponent: null,
         selectedFramework: null,
+        configs: [],
       },
     }
   }
