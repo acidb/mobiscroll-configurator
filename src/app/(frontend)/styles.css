@@ -10,3 +10,26 @@ html {
     overflow-y: scroll;
   }
 }
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  10%,
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.animate-fade-in-out {
+  animation: fade-in-out 1.8s forwards;
+}
+
+::selection {
+  background-color: #cbdcef; 
+}
