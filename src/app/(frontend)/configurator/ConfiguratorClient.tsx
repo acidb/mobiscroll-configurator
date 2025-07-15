@@ -61,8 +61,6 @@ export default function ConfiguratorClient({
     } else if (key === 'component') {
       newQuery.delete('framework')
       newQuery.delete('preset')
-    } else if (key === 'framework') {
-      newQuery.delete('preset')
     }
     router.push(`${pathname}?${newQuery.toString()}`, { scroll: false })
   }
