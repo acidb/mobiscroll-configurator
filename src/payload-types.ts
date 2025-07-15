@@ -200,6 +200,13 @@ export interface Framework {
   name: string;
   slug: string;
   template: string;
+  templates?:
+    | {
+        label: string;
+        template: string;
+        id?: string | null;
+      }[]
+    | null;
   icon?: string | null;
   sortOrder?: number | null;
   updatedAt: string;
@@ -396,6 +403,13 @@ export interface FrameworksSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   template?: T;
+  templates?:
+    | T
+    | {
+        label?: T;
+        template?: T;
+        id?: T;
+      };
   icon?: T;
   sortOrder?: T;
   updatedAt?: T;
