@@ -9,7 +9,7 @@ export interface Group {
 export interface Component {
   id: string
   label: string
-  group: string
+  group: Group
   view: string
   sortOrder: number
 }

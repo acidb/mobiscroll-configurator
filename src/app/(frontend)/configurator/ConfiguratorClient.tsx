@@ -14,7 +14,7 @@ import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString
 
 export default function ConfiguratorClient({
   groups,
-  filteredComponents,
+  components,
   frameworks,
   filteredPresets,
   selectedGroup,
@@ -23,7 +23,7 @@ export default function ConfiguratorClient({
   configs,
 }: {
   groups: Group[]
-  filteredComponents: Component[]
+  components: Component[]
   frameworks: Framework[]
   filteredPresets: Preset[]
   selectedGroup: string | null
@@ -143,15 +143,26 @@ export default function ConfiguratorClient({
     }
   }, [frameworkObj, currentConfig, props]);
 
+
+  const selectComponent = (groupSlug: string, componentId: string) => {
+    const newQuery = new URLSearchParams(searchParams.toString())
+    newQuery.set('group', groupSlug)
+    newQuery.set('component', componentId)
+    router.push(`${pathname}?${newQuery.toString()}`, { scroll: false })
+  }
+
   return (
     <div className="w-full px-4 bg-white">
       <GroupSection
         groups={groups}
-        filteredComponents={filteredComponents}
+        components={components}
         selectedGroup={selectedGroup}
         selectedComponent={selectedComponent}
         updateSelection={updateSelection}
+        selectComponent={selectComponent}
       />
+
+
       {selectedGroup && selectedComponent && (
         <FrameworkSection
           frameworks={frameworks}

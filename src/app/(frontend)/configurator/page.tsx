@@ -12,7 +12,7 @@ export default async function ConfiguratorPage({
   return (
       <ConfiguratorClient
         groups={props.groups as Group[]}
-        filteredComponents={props.filteredComponents as Component[]}
+        components={props.components as Component[]}
         frameworks={props.frameworks as unknown as Framework[]}
         filteredPresets={props.filteredPresets as Preset[]}
         selectedGroup={props.selectedGroup}
