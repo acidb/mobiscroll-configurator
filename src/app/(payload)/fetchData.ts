@@ -11,6 +11,10 @@ export async function fetchConfiguratorData(context: any) {
       collection: 'groups',
     })
 
+    const componentsResult = await payload.find({
+      collection: 'components',
+    })
+
     let groupId = null
     if (group) {
       const groupResult = await payload.find({
@@ -30,10 +34,6 @@ export async function fetchConfiguratorData(context: any) {
       componentId = componentResult.docs[0]?.id || null
     }
 
-    const componentsResult = await payload.find({
-      collection: 'components',
-      where: groupId ? { group: { equals: groupId } } : {},
-    })
 
     const frameworksResult = await payload.find({
       collection: 'frameworks',
@@ -58,8 +58,9 @@ export async function fetchConfiguratorData(context: any) {
     return {
       props: {
         groups: groupsResult.docs,
-        filteredComponents: componentsResult.docs,
+        components: componentsResult.docs,
         frameworks: frameworksResult.docs,
+      
         filteredPresets: presetsResult.docs,
         selectedGroup: group || null,
         selectedComponent: component || null,
@@ -72,7 +73,7 @@ export async function fetchConfiguratorData(context: any) {
     return {
       props: {
         groups: [],
-        filteredComponents: [],
+        components: [],
         frameworks: [],
         filteredPresets: [],
         selectedGroup: null,
