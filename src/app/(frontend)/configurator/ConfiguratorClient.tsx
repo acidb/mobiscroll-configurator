@@ -26,7 +26,7 @@ export default function ConfiguratorClient({
   components: Component[]
   frameworks: Framework[]
   filteredPresets: Preset[]
-  selectedGroup: string | null
+  selectedGroup: string | undefined
   selectedComponent: string | null
   selectedFramework: string | null
   configs: Config[]
@@ -191,7 +191,7 @@ export default function ConfiguratorClient({
             />
           </div>
 
-          <div className="w-full xl:w-[80%] gap-8 flex flex-col lg:flex-row gap-1 transition-all duration-500 ease-in-out">
+          <div className="w-full xl:w-[80%] flex flex-col lg:flex-row gap-1 transition-all duration-500 ease-in-out">
             <div className="w-full overflow-auto max-w-full transition-all duration-500 ease-in-out">
               <CodePreview code={code} language={
                 ['javascript', 'angular', 'jquery', 'vue', 'react'].includes(frameworkObj.slug)
