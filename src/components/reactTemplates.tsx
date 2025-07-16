@@ -36,17 +36,32 @@ const resourceTemplate = (resource) => (
   </div>
 )
 `.trim(),
-      vue: `
-const resourceTemplate = (resource) => {
-  return (
-    <div class="px-3 py-2 bg-blue-50 border-l-4 border-blue-600 rounded flex flex-col">
-      <span class="font-semibold text-blue-800">{resource.name}</span>
-      <span class="text-xs text-blue-400">Resource ID: {resource.id}</span>
-      <span class="text-xs text-blue-400 italic mt-1">
-        This is a test template to check rendering.
-      </span>
-    </div>
-  );
+      sfcjs: `
+  
+    <template #resourceTemplate="resource">
+      <div class="px-3 py-2 bg-blue-50 border-l-4 border-blue-600 rounded flex flex-col">
+        <span class="font-semibold text-blue-800">{{ resource.name }}</span>
+        <span class="text-xs text-blue-400">Resource ID: {{ resource.id }}</span>
+        <span class="text-xs text-blue-400 italic mt-1">
+          This is a test template to check rendering.
+        </span>
+      </div>
+    </template>
+`.trim(),
+      sfcts: `
+    <template #resourceTemplate="resource">
+      <div class="px-3 py-2 bg-blue-50 border-l-4 border-blue-600 rounded flex flex-col">
+        <span class="font-semibold text-blue-800">{{ resource.name }}</span>
+        <span class="text-xs text-blue-400">Resource ID: {{ resource.id }}</span>
+        <span class="text-xs text-blue-400 italic mt-1">
+          This is a test template to check rendering.
+        </span>
+      </div>
+    </template>
+
+<script setup lang="ts">
+// setup data goes he
+
 }
 `.trim()
     }
@@ -233,9 +248,13 @@ export const templateCodes = Object.fromEntries(
   Object.entries(templates).map(([k, v]) => [k, v.fn])
 );
 
-type Lang = 'TSX' | 'JSX' | 'JS';
+type Lang = 'TSX' | 'JSX' | 'JS' | 'SFCJS' | 'SFCTS' | 'SFC TS' | 'SFC JS';
 
 export const templateStrs = (lang: Lang = 'TSX') =>
   Object.fromEntries(
-    Object.entries(templates).map(([k, v]) => [k, v.code[lang.toLowerCase() as keyof typeof v.code]])
+    Object.entries(templates).map(([k, v]) => {
+      const key = lang.replace(/\s+/g, '').toLowerCase();
+      return [k, v.code[key as keyof typeof v.code]];
+    })
   );
+
