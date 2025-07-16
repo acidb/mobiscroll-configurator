@@ -161,7 +161,7 @@ export function CodePreview({ fullCode }: CodePreviewProps) {
         }}
       >
         <SyntaxHighlighter
-          language={getFileExtension(active.label)}
+          language={'ts'}
           style={prism}
           wrapLines
           wrapLongLines
