@@ -40,6 +40,7 @@ export default function ConfiguratorClient({
   const [presetObj, setPresetObj] = useState<Preset | null>(null);
   const [currentConfig, setCurrentConfig] = useState<Config | null>(null);
   const [code, setCode] = useState<any>(null);
+  const [language, setLanguage] = useState<any>(null);
 
 
   const [props, setProps] = useState<Record<string, any>>({});
@@ -131,7 +132,6 @@ export default function ConfiguratorClient({
         currentConfig.config.hooks,
         currentConfig.config.templates
       );
-      let codeObj: any = {};
 
       const eventData = extractedValues.data ?? [];
       const view = extractedValues.view ?? [];
@@ -160,81 +160,67 @@ export default function ConfiguratorClient({
 
       setData(currentConfig.config.data);
 
-      if (frameworkObj.slug === 'angular') {
-        const [tsTpl, htmlTpl] = frameworkObj.template.split('//TEMPLATE');
-        codeObj = {
-          'app.component.ts': tsTpl
-            .replace(/\/\* Component \*\//g, currentConfig.config.component || ''),
-          'app.component.html': htmlTpl
-            .replace(/\/\* Component \*\//g, currentConfig.config.component?.toLowerCase() || '')
-            .replace(/\/\* Component options \*\//g, templateInlineProps)
+      const codeObj = frameworkObj.templates.map(t => ({
+        label: t.label,
+        code: t.template
+          .replace(/\/\* Component \*\//g, currentConfig.config.component || '')
+          .replace(
+            /\/\* view \*\//g,
+            `const myView = ${JSON.stringify(view, null, 2)};`
+          )
+          .replace(
+            /\/\* data \*\//g,
+            `const myData = ${JSON.stringify(eventData, null, 2)};`
+          )
+          .replace(
+            /\/\* resources \*\//g,
+            `const myResources = ${JSON.stringify(resources, null, 2)};`
+          )
+          .replace(
+            /\/\* invalids \*\//g,
+            `const myInvalid = ${JSON.stringify(invalid, null, 2)};`
+          )
+          .replace(
+            /\/\* colors \*\//g,
+            `const myColors = ${JSON.stringify(colors, null, 2)};`
+          )
+          .replace(
+            /\/\* templates \*\//g,
+            `const myTemplate = ${JSON.stringify(template, null, 2)};`
+          )
+          .replace(
+            /\/\* Component data \*\//g,
+            inlineData ? `data={myData}` : ''
+          )
+          .replace(
+            /\/\* Component resources \*\//g,
+            inlineResources ? `resources={myResources}` : ''
+          )
+          .replace(
+            /\/\* Component invalids \*\//g,
+            inlineInvalid ? `invalids={myInvalid}` : ''
+          )
+          .replace(
+            /\/\* Component colors \*\//g,
+            inlineColors ? `colors={myColors}` : ''
+          )
+          .replace(
+            /\/\* Component hooks \*\//g,
+            inlineHooks ? inlineHooks : ''
+          )
+          .replace(
+            /\/\* Component templates \*\//g,
+            inlineTemplate ? inlineTemplate : ''
+          )
+          .replace(/\/\* Component options \*\//g, templateInlineProps)
 
-        };
-      } else {
-        codeObj = {
-          'App.tsx': frameworkObj.templates[1].template
-            .replace(/\/\* Component \*\//g, currentConfig.config.component || '')
+      }));
 
-            .replace(
-              /\/\* view \*\//g,
-              `const myView = ${JSON.stringify(view, null, 2)};`
-            )
-            .replace(
-              /\/\* data \*\//g,
-              `const myData = ${JSON.stringify(eventData, null, 2)};`
-            )
-            .replace(
-              /\/\* resources \*\//g,
-              `const myResources = ${JSON.stringify(resources, null, 2)};`
-            )
-            .replace(
-              /\/\* invalids \*\//g,
-              `const myInvalid = ${JSON.stringify(invalid, null, 2)};`
-            )
+      const finalCode = codeObj.map(obj => obj.code);
+      const finalLanguage = codeObj.map(obj => obj.label);
 
-            .replace(
-              /\/\* colors \*\//g,
-              `const myColors = ${JSON.stringify(colors, null, 2)};`
-            )
-
-            .replace(
-              /\/\* templates \*\//g,
-              `const myTemplate = ${JSON.stringify(template, null, 2)};`
-            )
-
-
-            .replace(
-              /\/\* Component data \*\//g,
-              inlineData ? `data={myData}` : ''
-            )
-            .replace(
-              /\/\* Component resources \*\//g,
-              inlineResources ? `resources={myResources}` : ''
-            )
-            .replace(
-              /\/\* Component invalids \*\//g,
-              inlineInvalid ? `invalids={myInvalid}` : ''
-            )
-            .replace(
-              /\/\* Component colors \*\//g,
-              inlineColors ? `colors={myColors}` : ''
-            )
-            .replace(
-              /\/\* Component hooks \*\//g,
-              inlineHooks ? inlineHooks : ''
-            )
-
-            .replace(
-              /\/\* Component templates \*\//g,
-              inlineTemplate ? inlineTemplate : ''
-            )
-
-
-
-            .replace(/\/\* Component options \*\//g, templateInlineProps)
-        };
-
-      }
+      console.log(finalLanguage);
+      setLanguage(finalLanguage);
       setCode(codeObj);
     }
   }, [frameworkObj, currentConfig, props]);
@@ -289,11 +275,8 @@ export default function ConfiguratorClient({
 
           <div className="w-full xl:w-[80%] gap-8 flex flex-col lg:flex-row gap-1 transition-all duration-500 ease-in-out">
             <div className="w-full overflow-auto max-w-full transition-all duration-500 ease-in-out">
-              <CodePreview code={code} language={
-                ['javascript', 'angular', 'jquery', 'vue', 'react'].includes(frameworkObj.slug)
-                  ? frameworkObj.slug as 'javascript' | 'angular' | 'jquery' | 'vue' | 'react'
-                  : 'javascript'
-              } />
+              <CodePreview fullCode={code}
+              />
             </div>
 
             <div className="flex flex-col  justify-center items-center  max-w-[400px] w-full mx-auto lg:mx-0 min-h-[700px]  sm:scale-[0.6] md:scale-[0.7] lg:scale-[1]">

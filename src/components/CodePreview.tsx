@@ -3,20 +3,18 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/cjs/styles/prism';
-
 import prettier from 'prettier/standalone';
 import parserBabel from 'prettier/plugins/babel';
 import parserTypescript from 'prettier/plugins/typescript';
 import pluginEstree from 'prettier/plugins/estree';
 import parserHtml from 'prettier/plugins/html';
 
-type CodeSnippets = {
-  [filename: string]: string;
+type CodeSnippet = {
+  label: 'TSX' | 'JSX' | 'jquery' | 'vue' | 'react';
+  code: string;
 };
-
 interface CodePreviewProps {
-  code: CodeSnippets | null;
-  language: 'javascript' | 'angular' | 'jquery' | 'vue' | 'react';
+  fullCode: CodeSnippet[];
 }
 
 const basePrettierOptions = {
@@ -32,55 +30,75 @@ const basePrettierOptions = {
   plugins: [parserBabel, parserTypescript, pluginEstree, parserHtml],
 };
 
-const getParser = (lang: CodePreviewProps['language']) => {
+const getParser = (lang: CodeSnippet['label']) => {
   switch (lang) {
-    case 'javascript':
-    case 'jquery':
+    case 'TSX': return 'babel-ts';
+    case 'JSX':
     case 'react':
+    case 'jquery':
       return 'babel';
-    case 'angular':
-      return 'typescript';
-    case 'vue':
-      return 'html';
-    default:
-      return 'babel';
+    case 'vue': return 'html';
+    default: return 'babel';
   }
 };
 
-const getFileExtension = (language: CodePreviewProps['language']) => {
+const getFileExtension = (language: CodeSnippet['label']) => {
   switch (language) {
-    case 'javascript':
-      return 'html';
-    case 'angular':
-      return 'ts';
-    case 'jquery':
-      return 'js';
-    case 'vue':
-      return 'vue';
-    case 'react':
-      return 'tsx';
-    default:
-      return 'txt';
+    case 'TSX': return 'tsx';
+    case 'JSX': return 'jsx';
+    case 'react': return 'tsx';
+    case 'jquery': return 'js';
+    case 'vue': return 'vue';
+    default: return 'txt';
   }
 };
 
-
-interface SnippetBlockProps {
-  filename: string;
-  snippet: string;
-  language: CodePreviewProps['language'];
-}
-
-const SnippetBlock: React.FC<SnippetBlockProps> = ({
-  snippet,
-  language,
-}) => {
+export function CodePreview({ fullCode }: CodePreviewProps) {
+  const [formatted, setFormatted] = useState<
+    { code: string; label: CodeSnippet['label']; filename: string }[]
+  >([]);
+  const [tabIdx, setTabIdx] = useState(0);
   const [copied, setCopied] = useState(false);
   const codeRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!fullCode || !fullCode.length) return;
+      const formattedArr = await Promise.all(
+        fullCode.map(async (snippetObj, idx) => {
+          let filename = '';
+          if (snippetObj.label === 'TSX') filename = `App.tsx`;
+          else if (snippetObj.label === 'JSX') filename = `App.jsx`;
+          else filename = `App.${snippetObj.label.toLowerCase()}`;
+          try {
+            const formatted = await prettier.format(snippetObj.code, {
+              ...basePrettierOptions,
+              parser: getParser(snippetObj.label),
+            });
+            return { code: formatted, label: snippetObj.label, filename };
+          } catch {
+            return { code: snippetObj.code, label: snippetObj.label, filename };
+          }
+        }),
+      );
+      if (!cancelled) setFormatted(formattedArr);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [fullCode]);
+
+  useEffect(() => {
+    setTabIdx(0);
+  }, [formatted.length]);
+
+  if (!fullCode || !fullCode.length) return null;
+  if (!formatted.length) return <p className="text-sm text-gray-500">Loading formatted code…</p>;
+
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(snippet);
+      await navigator.clipboard.writeText(formatted[tabIdx].code);
       if (codeRef.current) {
         const selection = window.getSelection();
         const range = document.createRange();
@@ -88,23 +106,32 @@ const SnippetBlock: React.FC<SnippetBlockProps> = ({
         selection?.removeAllRanges();
         selection?.addRange(range);
       }
-
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {
-    }
+    } catch {}
   };
 
-  return (
-    <div className="mb-6 rounded-lg overflow-hidden border border-base-200">
-      <div className="bg-[#e5eff9] text-gray-600 text-sm px-4 py-2 flex justify-between items-center relative">
-        <div className="font-mono text-xs flex gap-2 items-center">
-          <span className="px-2 py-1 rounded bg-white text-blue-600">
-            {getFileExtension(language).toUpperCase()}
-          </span>
-        </div>
+  const active = formatted[tabIdx];
 
-        <div className="relative">
+  return (
+    <div className="rounded-lg overflow-hidden border border-base-200">
+      <div className="bg-[#e5eff9] text-gray-600 text-sm px-4 py-2 flex justify-between items-center relative">
+        <div className="flex gap-1 font-mono text-xs">
+          {formatted.map((s, i) => (
+            <button
+              key={s.filename}
+              onClick={() => setTabIdx(i)}
+              className={`px-3 py-1 rounded-t border-b-2 transition-all duration-200
+                ${i === tabIdx ? 'border-blue-500 text-blue-700 bg-white shadow-sm' : 'border-transparent text-gray-500 bg-transparent'}
+                hover:bg-blue-50`}
+              style={{ minWidth: 64 }}
+              tabIndex={0}
+            >
+              {s.filename}
+            </button>
+          ))}
+        </div>
+        <div className="relative ml-2">
           <button
             onClick={handleCopy}
             className="text-xs px-2 py-1 rounded bg-white text-blue-600 hover:bg-blue-100"
@@ -112,7 +139,6 @@ const SnippetBlock: React.FC<SnippetBlockProps> = ({
           >
             📋 Copy
           </button>
-
           {copied && (
             <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-10 flex flex-col items-center animate-fade-in-out">
               <div className="w-2 h-2 bg-[#c2dffd] rotate-45 -mb-1"></div>
@@ -121,12 +147,8 @@ const SnippetBlock: React.FC<SnippetBlockProps> = ({
               </div>
             </div>
           )}
-
-
-
         </div>
       </div>
-
       <div
         ref={codeRef}
         className="bg-[#f9fafb] h-175 overflow-y-auto"
@@ -139,7 +161,7 @@ const SnippetBlock: React.FC<SnippetBlockProps> = ({
         }}
       >
         <SyntaxHighlighter
-          language={getFileExtension(language)}
+          language={getFileExtension(active.label)}
           style={prism}
           wrapLines
           wrapLongLines
@@ -152,65 +174,9 @@ const SnippetBlock: React.FC<SnippetBlockProps> = ({
             boxShadow: 'none',
           }}
         >
-          {typeof snippet === 'string'
-            ? snippet
-            : JSON.stringify(snippet, null, 2)}
+          {active.code}
         </SyntaxHighlighter>
       </div>
     </div>
   );
-};
-
-export function CodePreview({ code, language }: CodePreviewProps) {
-  const [formattedSnippets, setFormattedSnippets] =
-    useState<CodeSnippets | null>(null);
-
-
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      if (!code) return;
-      const entries = await Promise.all(
-        Object.entries(code).map(async ([filename, snippet]) => {
-          try {
-            const formatted = await prettier.format(snippet, {
-              ...basePrettierOptions,
-              parser: getParser(language),
-            });
-            return [filename, formatted] as [string, string];
-          } catch {
-            return [filename, snippet];
-          }
-        }),
-      );
-
-      if (!cancelled) setFormattedSnippets(Object.fromEntries(entries));
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [code, language]);
-
-  if (!code) return null;
-
-
-  if (!formattedSnippets) {
-    return <p className="text-sm text-gray-500">Loading formatted code…</p>;
-  }
-
-  return (
-    <div>
-      {Object.entries(formattedSnippets).map(([filename, snippet]) => (
-        <SnippetBlock
-          key={filename}
-          filename={filename}
-          snippet={snippet}
-          language={language}
-        />
-      ))}
-    </div>
-  );
 }
-
