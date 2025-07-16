@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Group, Component } from './types'
-import { Calendar1,Wrench,CalendarDays } from 'lucide-react';
+import { Calendar1, Wrench, CalendarDays } from 'lucide-react'
 
 interface GroupSectionProps {
   groups: Group[]
@@ -19,10 +19,13 @@ const GroupSection: React.FC<GroupSectionProps> = ({
   updateSelection,
   selectComponent,
 }) => {
-  // Default to first group if nothing selected
-  const currentGroupSlug =
-    selectedGroup ||
-    (groups.length > 0 ? groups[0].slug : null)
+  useEffect(() => {
+    if (!selectedGroup && groups.length > 0) {
+      updateSelection('group', groups[0].slug)
+    }
+  }, [selectedGroup, groups, updateSelection])
+
+  const currentGroupSlug = selectedGroup
 
   const groupComponents = components
     .filter((c) =>
@@ -76,21 +79,21 @@ const GroupSection: React.FC<GroupSectionProps> = ({
           <button
             key={component.id}
             className={`
-      flex flex-row items-center justify-left px-4 py-3 rounded-xl border gap-3 min-w-[250px]
-      ${selectedComponent === component.view ? 'border-blue-700 bg-blue-50 text-blue-900 font-semibold' : 'border-gray-200 bg-white text-gray-700'}
-      hover:border-blue-400
-    `}
-
+              flex flex-row items-center justify-left px-4 py-3 rounded-xl border gap-3 min-w-[250px]
+              ${selectedComponent === component.view
+                ? 'border-blue-700 bg-blue-50 text-blue-900 font-semibold'
+                : 'border-gray-200 bg-white text-gray-700'
+              }
+              hover:border-blue-400
+            `}
             onClick={() => updateSelection('component', component.view)}
           >
             <img
-              src={"https://placehold.co/40x40?text=?"}
+              src={'https://placehold.co/40x40?text=?'}
               alt={component.label}
               className="w-8 h-8 object-contain rounded p-1 bg-gray-100"
             />
             {component.label}
-
-
           </button>
         ))}
       </div>
