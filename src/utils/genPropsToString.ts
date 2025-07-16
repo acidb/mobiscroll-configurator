@@ -23,7 +23,12 @@ export function genCodeWithTopVars(
     const hooksObj: Record<string, any> = {};
     const templateObj: Record<string, any> = {};
 
+    const effectiveComponentName = (framework === 'js' || framework === 'jquery')
+        ? componentName.toLowerCase()
+        : componentName;
+
     Object.entries(mergedProps).forEach(([key, value]) => {
+
         if (extracted.includes(key)) {
             extractedValues[key] = value;
             extractedInlineValues[key] = `my${capitalizeFirstLetter(key)}`;
@@ -126,6 +131,7 @@ export function genCodeWithTopVars(
         liveViewInlineProps,
         extractedInlineValues,
         extractedValues,
+        componentName: effectiveComponentName,
     };
 }
 

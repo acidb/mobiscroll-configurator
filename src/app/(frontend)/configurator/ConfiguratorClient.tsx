@@ -123,7 +123,8 @@ export default function ConfiguratorClient({
         templateInlineProps,
         liveViewInlineProps,
         extractedValues,
-        extractedInlineValues
+        extractedInlineValues,
+        componentName: effectiveComponentName
       } = genCodeWithTopVars(
         frameworkObj.slug,
         currentConfig.config.component || '',
@@ -182,7 +183,7 @@ export default function ConfiguratorClient({
       const codeObj = frameworkObj.templates.map(t => ({
         label: t.label,
         code: t.template
-          .replace(/\/\* Component \*\//g, currentConfig.config.component || '')
+          .replace(/\/\* Component \*\//g, effectiveComponentName || '')
 
           .replace(
             /\/\* view \*\//g,
