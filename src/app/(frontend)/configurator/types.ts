@@ -28,6 +28,7 @@ export interface Preset {
   slug: string
   description: string
   component: string
+  sortOrder: number
 }
 
 export interface ConfigurationOption {
