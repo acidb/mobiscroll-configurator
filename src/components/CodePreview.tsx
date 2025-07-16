@@ -165,12 +165,12 @@ export function CodePreview({ code, language }: CodePreviewProps) {
   const [formattedSnippets, setFormattedSnippets] =
     useState<CodeSnippets | null>(null);
 
-  if (!code) return null;
 
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
+      if (!code) return;
       const entries = await Promise.all(
         Object.entries(code).map(async ([filename, snippet]) => {
           try {
@@ -192,6 +192,9 @@ export function CodePreview({ code, language }: CodePreviewProps) {
       cancelled = true;
     };
   }, [code, language]);
+
+  if (!code) return null;
+
 
   if (!formattedSnippets) {
     return <p className="text-sm text-gray-500">Loading formatted code…</p>;

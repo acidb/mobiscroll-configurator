@@ -40,8 +40,10 @@ export default function ConfiguratorClient({
   const [presetObj, setPresetObj] = useState<Preset | null>(null);
   const [currentConfig, setCurrentConfig] = useState<Config | null>(null);
   const [code, setCode] = useState<any>(null);
+
+
   const [props, setProps] = useState<Record<string, any>>({});
-  const [viewProps, setViewProps] = useState<Record<string, any>>({});
+  const [data, setData] = useState<Record<string, any>>({});
 
 
   const selectedPreset = searchParams.get('preset') || null
@@ -69,8 +71,12 @@ export default function ConfiguratorClient({
     if (selectedFramework) {
       const framework = frameworks.find(f => f.slug === selectedFramework);
       setFrameworkObj(framework || null);
-      if (framework && framework.template) {
-        setCode({ main: String(framework.template) });
+      if (framework && frameworkObj && framework.template) {
+        setCode({
+          'App.tsx': frameworkObj.templates?.find(t => t.label === 'TSX')?.template || '',
+          'App.jsx': frameworkObj.templates?.find(t => t.label === 'JSX')?.template || '',
+        });
+
       } else {
         setCode(null);
       }
@@ -111,12 +117,48 @@ export default function ConfiguratorClient({
 
   useEffect(() => {
     if (frameworkObj && currentConfig) {
-      const { topVars, templateInlineProps, liveViewInlineProps } = genCodeWithTopVars(
+      const {
+        topVars,
+        templateInlineProps,
+        liveViewInlineProps,
+        extractedValues,
+        extractedInlineValues
+      } = genCodeWithTopVars(
         frameworkObj.slug,
         currentConfig.config.component || '',
-        props
+        props,
+        currentConfig.config.data,
+        currentConfig.config.hooks,
+        currentConfig.config.templates
       );
       let codeObj: any = {};
+
+      const eventData = extractedValues.data ?? [];
+      const view = extractedValues.view ?? [];
+      const resources = extractedValues.resources ?? [];
+      const invalid = extractedValues.invalid ?? [];
+      const colors = extractedValues.colors ?? [];
+      const template = extractedValues.templates ?? [];
+
+      const inlineData = extractedInlineValues.data ?? [];
+      const inlineResources = extractedInlineValues.resources ?? [];
+      const inlineInvalid = extractedInlineValues.invalid ?? [];
+      const inlineColors = extractedInlineValues.colors ?? [];
+      const inlineHooks =
+        Object.entries(extractedInlineValues.hooks || {})
+          .map(([hook, varName]) => `${hook}={${varName}}`)
+          .join(' ');
+      const inlineTemplate =
+        Object.entries(extractedInlineValues.templates || {})
+          .map(([template, varName]) => `${template}={${varName}}`)
+          .join(' ');
+
+
+      console.log(JSON.stringify(inlineTemplate, null, 2));
+
+
+
+      setData(currentConfig.config.data);
 
       if (frameworkObj.slug === 'angular') {
         const [tsTpl, htmlTpl] = frameworkObj.template.split('//TEMPLATE');
@@ -125,14 +167,70 @@ export default function ConfiguratorClient({
             .replace(/\/\* Component \*\//g, currentConfig.config.component || ''),
           'app.component.html': htmlTpl
             .replace(/\/\* Component \*\//g, currentConfig.config.component?.toLowerCase() || '')
-            .replace(/\/\* Component options \*\//g, templateInlineProps),
-        };
+            .replace(/\/\* Component options \*\//g, templateInlineProps)
 
+        };
       } else {
         codeObj = {
-          'App.tsx': frameworkObj.template
+          'App.tsx': frameworkObj.templates[1].template
             .replace(/\/\* Component \*\//g, currentConfig.config.component || '')
-            .replace(/\/\* variables \*\//g, topVars)
+
+            .replace(
+              /\/\* view \*\//g,
+              `const myView = ${JSON.stringify(view, null, 2)};`
+            )
+            .replace(
+              /\/\* data \*\//g,
+              `const myData = ${JSON.stringify(eventData, null, 2)};`
+            )
+            .replace(
+              /\/\* resources \*\//g,
+              `const myResources = ${JSON.stringify(resources, null, 2)};`
+            )
+            .replace(
+              /\/\* invalids \*\//g,
+              `const myInvalid = ${JSON.stringify(invalid, null, 2)};`
+            )
+
+            .replace(
+              /\/\* colors \*\//g,
+              `const myColors = ${JSON.stringify(colors, null, 2)};`
+            )
+
+            .replace(
+              /\/\* templates \*\//g,
+              `const myTemplate = ${JSON.stringify(template, null, 2)};`
+            )
+
+
+            .replace(
+              /\/\* Component data \*\//g,
+              inlineData ? `data={myData}` : ''
+            )
+            .replace(
+              /\/\* Component resources \*\//g,
+              inlineResources ? `resources={myResources}` : ''
+            )
+            .replace(
+              /\/\* Component invalids \*\//g,
+              inlineInvalid ? `invalids={myInvalid}` : ''
+            )
+            .replace(
+              /\/\* Component colors \*\//g,
+              inlineColors ? `colors={myColors}` : ''
+            )
+            .replace(
+              /\/\* Component hooks \*\//g,
+              inlineHooks ? inlineHooks : ''
+            )
+
+            .replace(
+              /\/\* Component templates \*\//g,
+              inlineTemplate ? inlineTemplate : ''
+            )
+
+
+
             .replace(/\/\* Component options \*\//g, templateInlineProps)
         };
 
@@ -154,12 +252,11 @@ export default function ConfiguratorClient({
       <GroupSection
         groups={groups}
         components={components}
-        selectedGroup={selectedGroup}
+        selectedGroup={selectedGroup || undefined}
         selectedComponent={selectedComponent}
         updateSelection={updateSelection}
         selectComponent={selectComponent}
       />
-
 
       {selectedGroup && selectedComponent && (
         <FrameworkSection
@@ -178,7 +275,6 @@ export default function ConfiguratorClient({
       )}
 
 
-      {/* TODO This is not the final layout this design will be improved */}
       {currentConfig && frameworkObj && groupObj && (
         <div className="mt-12 mx-auto flex flex-col xl:flex-row gap-6 items-start transition-all duration-500 ease-in-out">
 
@@ -205,7 +301,7 @@ export default function ConfiguratorClient({
                 <LivePreview
                   componentName={groupObj.slug}
                   mergedProps={props}
-                  events={[]}
+                  data={data}
                 />
               </div>
             </div>
