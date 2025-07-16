@@ -8,7 +8,6 @@ export function genCodeWithTopVars(
     props: Record<string, any>,
     data?: Record<string, any>,
     hooks?: Record<string, any>,
-    templates?: Record<string, any>,
     extracted: string[] = ['data', 'view', 'resources', 'invalid', 'colors', 'templates', 'hooks']
 ) {
     const topVars: string[] = [];
@@ -18,10 +17,13 @@ export function genCodeWithTopVars(
     const extractedValues: Record<string, any> = {};
     const extractedInlineValues: Record<string, any> = {};
 
-    const mergedProps = { ...props, ...data, ...hooks, ...templates };
+
+    const mergedProps = { ...props, ...data };
+
+    console.log(JSON.stringify(mergedProps, null, 2));
 
     const hooksObj: Record<string, any> = {};
-    const templateObj: Record<string, any> = {};
+
 
     const effectiveComponentName = (framework === 'js' || framework === 'jquery')
         ? componentName.toLowerCase()
@@ -37,11 +39,6 @@ export function genCodeWithTopVars(
 
         if (hooks && typeof value === 'object') {
             hooksObj[key] = value;
-            return;
-        }
-
-        if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
-            templateObj[key] = value;
             return;
         }
 
@@ -106,7 +103,6 @@ export function genCodeWithTopVars(
         }
     });
 
-
     if (Object.keys(hooksObj).length > 0) {
         extractedValues.hooks = hooksObj;
         extractedInlineValues.hooks = {};
@@ -114,13 +110,7 @@ export function genCodeWithTopVars(
             extractedInlineValues.hooks[key] = `my${capitalizeFirstLetter(key)}`;
         }
     }
-    if (Object.keys(templateObj).length > 0) {
-        extractedValues.templates = templateObj;
-        extractedInlineValues.templates = {};
-        for (const key of Object.keys(templateObj)) {
-            extractedInlineValues.templates[key] = `my${capitalizeFirstLetter(key)}`;
-        }
-    }
+
 
 
     return {

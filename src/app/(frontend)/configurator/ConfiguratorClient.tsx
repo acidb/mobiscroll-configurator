@@ -11,6 +11,7 @@ import { LivePreview } from '@/components/LivePreview';
 import { CodePreview } from '@/components/CodePreview';
 import { ConfigurationsSelector } from '@/components/ConfigurationSelector';
 import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString';
+import { templateStrs } from '@/components/reactTemplates';
 
 export default function ConfiguratorClient({
   groups,
@@ -45,7 +46,7 @@ export default function ConfiguratorClient({
 
   const [props, setProps] = useState<Record<string, any>>({});
   const [data, setData] = useState<Record<string, any>>({});
-
+  const [template, setTemplate] = useState<Record<string, any>>({});
 
   const selectedPreset = searchParams.get('preset') || null
 
@@ -131,7 +132,6 @@ export default function ConfiguratorClient({
         props,
         currentConfig.config.data,
         currentConfig.config.hooks,
-        currentConfig.config.templates
       );
 
       function isFilled(val: any) {
@@ -143,13 +143,12 @@ export default function ConfiguratorClient({
       }
 
 
-
       const eventData = extractedValues.data ?? [];
       const view = extractedValues.view ?? [];
       const resources = extractedValues.resources ?? [];
       const invalid = extractedValues.invalid ?? [];
       const colors = extractedValues.colors ?? [];
-      const template = extractedValues.templates ?? [];
+
 
       const inlineData = extractedInlineValues.data ?? [];
       const inlineResources = extractedInlineValues.resources ?? [];
@@ -159,14 +158,34 @@ export default function ConfiguratorClient({
         Object.entries(extractedInlineValues.hooks || {})
           .map(([hook, varName]) => `${hook}={${varName}}`)
           .join(' ');
-      const inlineTemplate =
-        Object.entries(extractedInlineValues.templates || {})
-          .map(([template, varName]) => `${template}={${varName}}`)
-          .join(' ');
+
+
+      console.log(currentConfig.config.templates);
+
+
+      function getComponentTemplateProps(templates: Record<string, string>): string {
+        if (!templates) return '';
+        return Object.entries(templates)
+          .map(([prop, fnName]) => `${prop}={${fnName}}`)
+          .join('\n  ');
+      }
+
+      const componentTemplateProps = getComponentTemplateProps(currentConfig.config.templates);
+
+
+
+      function getTemplateStrBlock(templates: Record<string, string>, lang = 'tsx') {
+        if (!templates) return '';
+        return Object.values(templates)
+          .map(fnName => templateStrs(lang as any)[fnName])
+          .filter(Boolean)
+          .join('\n\n');
+      }
 
 
 
       setData(currentConfig.config.data);
+      setTemplate(currentConfig.config.templates);
 
       const hasData = isFilled(eventData);
       const hasResources = isFilled(resources);
@@ -207,7 +226,7 @@ export default function ConfiguratorClient({
           )
           .replace(
             /\/\* templates \*\//g,
-            hasTemplate ? `const myTemplate = ${JSON.stringify(template, null, 2)};` : ''
+            '\n\n' + getTemplateStrBlock(currentConfig.config.templates, t.label)
           )
           .replace(
             /\/\* Component data \*\//g,
@@ -219,7 +238,7 @@ export default function ConfiguratorClient({
           )
           .replace(
             /\/\* Component invalids \*\//g,
-            hasInlineInvalid ? `invalids={myInvalid}` : ''
+            hasInlineInvalid ? `invalid={myInvalid}` : ''
           )
           .replace(
             /\/\* Component colors \*\//g,
@@ -231,8 +250,9 @@ export default function ConfiguratorClient({
           )
           .replace(
             /\/\* Component templates \*\//g,
-            inlineTemplate ? inlineTemplate : ''
+            componentTemplateProps
           )
+
           .replace(/\/\* Component options \*\//g, templateInlineProps)
 
       }));
@@ -306,6 +326,7 @@ export default function ConfiguratorClient({
                   componentName={groupObj.slug}
                   mergedProps={props}
                   data={data}
+                  template={template}
                 />
               </div>
             </div>
