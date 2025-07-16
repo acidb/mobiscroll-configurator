@@ -32,24 +32,17 @@ const basePrettierOptions = {
 
 const getParser = (lang: CodeSnippet['label']) => {
   switch (lang) {
-    case 'TSX': return 'babel-ts';
+    case 'TSX':
+      return 'typescript';
     case 'JSX':
     case 'react':
+      return 'babel';
     case 'jquery':
       return 'babel';
-    case 'vue': return 'html';
-    default: return 'babel';
-  }
-};
-
-const getFileExtension = (language: CodeSnippet['label']) => {
-  switch (language) {
-    case 'TSX': return 'tsx';
-    case 'JSX': return 'jsx';
-    case 'react': return 'tsx';
-    case 'jquery': return 'js';
-    case 'vue': return 'vue';
-    default: return 'txt';
+    case 'vue':
+      return 'html';
+    default:
+      return 'babel';
   }
 };
 
@@ -77,7 +70,8 @@ export function CodePreview({ fullCode }: CodePreviewProps) {
               parser: getParser(snippetObj.label),
             });
             return { code: formatted, label: snippetObj.label, filename };
-          } catch {
+          } catch (error) {
+            console.log(error);
             return { code: snippetObj.code, label: snippetObj.label, filename };
           }
         }),
@@ -108,7 +102,7 @@ export function CodePreview({ fullCode }: CodePreviewProps) {
       }
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {}
+    } catch { }
   };
 
   const active = formatted[tabIdx];
