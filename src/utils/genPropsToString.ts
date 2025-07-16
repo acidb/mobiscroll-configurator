@@ -26,46 +26,81 @@ export function genCodeWithTopVars(
     Object.entries(mergedProps).forEach(([key, value]) => {
         if (extracted.includes(key)) {
             extractedValues[key] = value;
-            extractedInlineValues[key] = (`my${capitalizeFirstLetter(key)}`);
+            extractedInlineValues[key] = `my${capitalizeFirstLetter(key)}`;
+            return;
         }
-        else if (hooks && typeof value === 'object') {
+
+        if (hooks && typeof value === 'object') {
             hooksObj[key] = value;
+            return;
         }
-        else if (hooks && typeof value === 'object') {
+
+        if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
             templateObj[key] = value;
+            return;
         }
-        else if (typeof value === 'string') {
-            if (framework === 'react') {
-                templateInlineProps.push(`${key}="${value}"`);
-            } else if (framework === 'angular') {
-                templateInlineProps.push(`[${key}]="'${value.replace(/'/g, "\\'")}'"`);
-            } else if (framework === 'vue') {
-                templateInlineProps.push(`:${key}="'${value.replace(/'/g, "\\'")}'"`);
-            } else {
-                templateInlineProps.push(`${key}: "${value}"`);
+
+        let formatted = '';
+
+        if (typeof value === 'string') {
+            const escaped = value.replace(/'/g, "\\'");
+            switch (framework) {
+                case 'react':
+                    formatted = `${key}="${value}"`;
+                    break;
+                case 'angular':
+                    formatted = `[${key}]="${escaped}"`;
+                    break;
+                case 'vue':
+                    formatted = `:${key}="'${escaped}'"`;
+                    break;
+                case 'jquery':
+                    formatted = `${key}: '${escaped}'`;
+                    break;
+                default:
+                    formatted = `${key}: "${value}"`;
             }
         } else if (typeof value === 'boolean' || typeof value === 'number') {
-            if (framework === 'react') {
-                templateInlineProps.push(`${key}={${value}}`);
-            } else if (framework === 'angular') {
-                templateInlineProps.push(`[${key}]="${value}"`);
-            } else if (framework === 'vue') {
-                templateInlineProps.push(`:${key}="${value}"`);
-            } else {
-                templateInlineProps.push(`${key}: ${value}`);
+            switch (framework) {
+                case 'react':
+                    formatted = `${key}={${value}}`;
+                    break;
+                case 'angular':
+                    formatted = `[${key}]="${value}"`;
+                    break;
+                case 'vue':
+                    formatted = `:${key}="${value}"`;
+                    break;
+                case 'jquery':
+                    formatted = `${key}: ${value}`;
+                    break;
+                default:
+                    formatted = `${key}: ${value},`;
             }
         } else if (typeof value !== 'undefined') {
-            if (framework === 'react') {
-                templateInlineProps.push(`${key}={${JSON.stringify(value)}}`);
-            } else if (framework === 'angular') {
-                templateInlineProps.push(`[${key}]="${key}"`);
-            } else if (framework === 'vue') {
-                templateInlineProps.push(`:${key}="${key}"`);
-            } else {
-                templateInlineProps.push(`${key}: ${JSON.stringify(value)}`);
+            switch (framework) {
+                case 'react':
+                    formatted = `${key}={${JSON.stringify(value)}}`;
+                    break;
+                case 'angular':
+                    formatted = `[${key}]="${key}"`;
+                    break;
+                case 'vue':
+                    formatted = `:${key}="${key}"`;
+                    break;
+                case 'jquery':
+                    formatted = `${key}: ${JSON.stringify(value)}`;
+                    break;
+                default:
+                    formatted = `${key}: ${JSON.stringify(value)}`;
             }
         }
+
+        if (formatted) {
+            templateInlineProps.push(formatted);
+        }
     });
+
 
     if (Object.keys(hooksObj).length > 0) {
         extractedValues.hooks = hooksObj;
