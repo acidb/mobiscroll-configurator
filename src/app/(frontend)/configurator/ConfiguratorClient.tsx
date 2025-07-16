@@ -133,6 +133,16 @@ export default function ConfiguratorClient({
         currentConfig.config.templates
       );
 
+      function isFilled(val: any) {
+        if (Array.isArray(val)) return val.length > 0;
+        if (typeof val === 'object' && val !== null) return Object.keys(val).length > 0;
+        if (typeof val === 'string') return val.length > 0;
+        if (val === undefined || val === null) return false;
+        return true;
+      }
+
+
+
       const eventData = extractedValues.data ?? [];
       const view = extractedValues.view ?? [];
       const resources = extractedValues.resources ?? [];
@@ -154,55 +164,65 @@ export default function ConfiguratorClient({
           .join(' ');
 
 
-      console.log(JSON.stringify(inlineTemplate, null, 2));
-
-
 
       setData(currentConfig.config.data);
+
+      const hasData = isFilled(eventData);
+      const hasResources = isFilled(resources);
+      const hasInvalid = isFilled(invalid);
+      const hasColors = isFilled(colors);
+      const hasTemplate = isFilled(template);
+
+      const hasInlineData = hasData && isFilled(inlineData);
+      const hasInlineResources = hasResources && isFilled(inlineResources);
+      const hasInlineInvalid = hasInvalid && isFilled(inlineInvalid);
+      const hasInlineColors = hasColors && isFilled(inlineColors);
+
 
       const codeObj = frameworkObj.templates.map(t => ({
         label: t.label,
         code: t.template
           .replace(/\/\* Component \*\//g, currentConfig.config.component || '')
+
           .replace(
             /\/\* view \*\//g,
-            `const myView = ${JSON.stringify(view, null, 2)};`
+            isFilled(view) ? `const myView = ${JSON.stringify(view, null, 2)};` : ''
           )
           .replace(
             /\/\* data \*\//g,
-            `const myData = ${JSON.stringify(eventData, null, 2)};`
+            hasData ? `const myData = ${JSON.stringify(eventData, null, 2)};` : ''
           )
           .replace(
             /\/\* resources \*\//g,
-            `const myResources = ${JSON.stringify(resources, null, 2)};`
+            hasResources ? `const myResources = ${JSON.stringify(resources, null, 2)};` : ''
           )
           .replace(
             /\/\* invalids \*\//g,
-            `const myInvalid = ${JSON.stringify(invalid, null, 2)};`
+            hasInvalid ? `const myInvalid = ${JSON.stringify(invalid, null, 2)};` : ''
           )
           .replace(
             /\/\* colors \*\//g,
-            `const myColors = ${JSON.stringify(colors, null, 2)};`
+            hasColors ? `const myColors = ${JSON.stringify(colors, null, 2)};` : ''
           )
           .replace(
             /\/\* templates \*\//g,
-            `const myTemplate = ${JSON.stringify(template, null, 2)};`
+            hasTemplate ? `const myTemplate = ${JSON.stringify(template, null, 2)};` : ''
           )
           .replace(
             /\/\* Component data \*\//g,
-            inlineData ? `data={myData}` : ''
+            hasInlineData ? `data={myData}` : ''
           )
           .replace(
             /\/\* Component resources \*\//g,
-            inlineResources ? `resources={myResources}` : ''
+            hasInlineResources ? `resources={myResources}` : ''
           )
           .replace(
             /\/\* Component invalids \*\//g,
-            inlineInvalid ? `invalids={myInvalid}` : ''
+            hasInlineInvalid ? `invalids={myInvalid}` : ''
           )
           .replace(
             /\/\* Component colors \*\//g,
-            inlineColors ? `colors={myColors}` : ''
+            hasInlineColors ? `colors={myColors}` : ''
           )
           .replace(
             /\/\* Component hooks \*\//g,
