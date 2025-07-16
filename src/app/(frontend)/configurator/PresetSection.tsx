@@ -12,16 +12,18 @@ const PresetSection: React.FC<PresetSectionProps> = ({
   updateSelection,
   selectedPreset,
 }) => {
+  const sortedPresets = [...filteredPresets].sort((a, b) => a.sortOrder - b.sortOrder);
+
   return (
     <section className="mb-12">
       <h2 className="text-3xl font-extrabold mb-6 text-gray-900">3. Choose a starting point</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {filteredPresets.length === 0 && (
+        {sortedPresets.length === 0 && (
           <p className="text-gray-400 italic">
             Select a component and framework to display presets.
           </p>
         )}
-        {filteredPresets.map((preset) => {
+        {sortedPresets.map((preset) => {
           const isSelected = preset.slug === selectedPreset
           return (
             <div
@@ -31,10 +33,9 @@ const PresetSection: React.FC<PresetSectionProps> = ({
                 p-6 rounded-lg border
                 cursor-pointer
                 transition-shadow duration-300 ease-in-out
-                ${
-                  isSelected
-                    ? 'bg-indigo-100 border-indigo-500 shadow-lg'
-                    : 'bg-white border-gray-200 hover:shadow-md hover:border-indigo-400'
+                ${isSelected
+                  ? 'bg-indigo-100 border-indigo-500 shadow-lg'
+                  : 'bg-white border-gray-200 hover:shadow-md hover:border-indigo-400'
                 }
               `}
             >
