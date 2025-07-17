@@ -206,6 +206,7 @@ export default function ConfiguratorClient({
 
       setData(currentConfig.config.data);
       setTemplate(currentConfig.config.templates);
+      setHooks(currentConfig.config.hooks);
 
       const hasData = isFilled(eventData);
       const hasResources = isFilled(resources);
@@ -352,6 +353,7 @@ export default function ConfiguratorClient({
                   mergedProps={props}
                   data={data}
                   template={template}
+                  hooks={hooks}
                 />
               </div>
             </div>

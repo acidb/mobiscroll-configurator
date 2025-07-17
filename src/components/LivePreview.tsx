@@ -7,10 +7,11 @@ import {
     getJson,
     Datepicker,
     MbscEventClickEvent,
+    Toast
 } from '@mobiscroll/react';
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
 import { templateCodes } from './reactTemplates';
-
+import { hookCodes } from './reactHooks';
 
 const componentMap: Record<string, React.ElementType> = {
     eventcalendar: Eventcalendar,
@@ -24,6 +25,7 @@ export interface LivePreviewProps {
     mergedProps: Record<string, any>;
     data?: any;
     template?: any;
+    hooks?: any;
 }
 
 export const LivePreview: React.FC<LivePreviewProps> = ({
@@ -31,16 +33,29 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     mergedProps,
     data = [],
     template,
+    hooks,
 }) => {
     const Component = componentMap[componentName];
-
     const {
         data: eventData = [],
         resources = [],
         invalid = []
     } = data || {};
 
+    const [toastOpen, setToastOpen] = useState(false);
+    const [toastText, setToastText] = useState('');
+
+    const handleEventClick = useCallback((args: MbscEventClickEvent) => {
+        setToastText(args.event.title ?? '');
+        setToastOpen(true);
+    }, []);
+
+    const customHandlers: { key: string; fn: (...args: any[]) => void }[] = [
+        { key: 'myEventClick', fn: handleEventClick },
+    ];
+
     const templateProps: Record<string, any> = {};
+    const hookProps: Record<string, any> = {};
 
     if (template && typeof template === 'object') {
         for (const [propName, templateKey] of Object.entries(template as Record<string, string>)) {
@@ -50,6 +65,23 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         }
     }
 
+    if (hooks && typeof hooks === 'object') {
+        for (const [propName, hookKey] of Object.entries(hooks as Record<string, string>)) {
+            if (typeof hookKey === 'string' && hookCodes[hookKey]) {
+                hookProps[propName] = hookCodes[hookKey];
+            }
+        }
+    }
+    if (hooks && typeof hooks === 'object') {
+        for (const [propName, hookKey] of Object.entries(hooks as Record<string, string>)) {
+            const handlerObj = customHandlers.find(h => h.key === hookKey);
+            if (handlerObj) {
+                hookProps[propName] = handlerObj.fn;
+            } else if (typeof hookKey === 'string' && hookCodes[hookKey]) {
+                hookProps[propName] = hookCodes[hookKey];
+            }
+        }
+    }
 
     return (
         <>
@@ -62,6 +94,12 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                         resources={resources}
                         invalid={invalid}
                         {...templateProps}
+                        {...hookProps}
+                    />
+                    <Toast
+                        message={toastText}
+                        isOpen={toastOpen}
+                        onClose={() => setToastOpen(false)}
                     />
                 </div>
             </div>

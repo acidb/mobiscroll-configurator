@@ -1,6 +1,4 @@
-import { Eventcalendar, getJson, setOptions, Toast ,MbscEventClickEvent} from '@mobiscroll/react';
-
-
+// reactHooks.ts
 export function toVueEventName(hookName: string): string {
     let name = hookName.startsWith('on') ? hookName.slice(2) : hookName;
     return name
@@ -9,38 +7,42 @@ export function toVueEventName(hookName: string): string {
         .toLowerCase();
 }
 
-
-
 export const hooks = {
     myEventClick: {
-        fn: (event: any) => {
-            alert('Event clicked! ' + (event.title || ''));
-        },
+        fn: () => { },
         code: {
             tsx: `
-const myEventClick = useCallback((args: MbscEventClickEvent) => {
-  alert('Event clicked! ' + (args?.event?.title || ''));
-}, []);
+ const handleEventClick = useCallback((args: MbscEventClickEvent) => {
+        setToastText(args.event.title ?? '');
+        setToastOpen(true);
+    }, []);
 `.trim(),
             jsx: `
-const myEventClick = (args) => {
-  alert('Event clicked! ' + (args?.event?.title || ''));
-};
+ const handleEventClick = useCallback((args) => {
+    setToastText(args.event.title);
+    setToastOpen(true);
+  }, []);
+
 `.trim(),
-            vue: `
-const myEventClick = (args) => {
-  alert('Event clicked! ' + (args?.event?.title || ''));
-};
+            sfcjs: `
+function handleEventClick(args) {
+  toastMessage.value = args.event.title
+  isToastOpen.value = true
+}
+`.trim(),
+            sfcts: `
+function handleEventClick(args: MbscEventClickEvent) {
+  toastMessage.value = args.event.title || ''
+  isToastOpen.value = true
+}
 `.trim()
         }
     },
 };
 
-
 export const hookCodes = Object.fromEntries(
     Object.entries(hooks).map(([k, v]) => [k, v.fn])
 );
-
 
 type Lang = 'TSX' | 'JSX' | 'VUE' | 'SFCJS' | 'SFCTS' | 'SFC TS' | 'SFC JS';
 
