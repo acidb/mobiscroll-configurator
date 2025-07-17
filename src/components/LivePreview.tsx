@@ -1,8 +1,17 @@
 'use client'
 
-import React from 'react';
-import { Eventcalendar, Select, Datepicker } from "@mobiscroll/react";
+import React, { useEffect, useCallback, useState } from 'react';
+import {
+    Eventcalendar,
+    Select,
+    getJson,
+    Datepicker,
+    MbscEventClickEvent,
+    Toast
+} from '@mobiscroll/react';
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
+import { templateCodes } from './reactTemplates';
+import { hookCodes } from './reactHooks';
 
 const componentMap: Record<string, React.ElementType> = {
     eventcalendar: Eventcalendar,
@@ -12,30 +21,111 @@ const componentMap: Record<string, React.ElementType> = {
 
 
 export interface LivePreviewProps {
-    componentName: string;    // Name of the Mobiscroll Component;
-    mergedProps: Record<string, any>;  // configuration props merged from the preset and configuratorSelector
-    events?: any; // events that will be displayed one the component
+    componentName: string;
+    mergedProps: Record<string, any>;
+    data?: any;
+    template?: any;
+    hooks?: any;
+    isScheduler: boolean;
 }
 
 export const LivePreview: React.FC<LivePreviewProps> = ({
     componentName,
     mergedProps,
-    events = [],
+    data = [],
+    template,
+    hooks,
+    isScheduler,
 }) => {
     const Component = componentMap[componentName];
+    const {
+        data: eventData = [],
+        resources = [],
+        invalid = []
+    } = data || {};
 
+    const [toastOpen, setToastOpen] = useState(false);
+    const [toastText, setToastText] = useState('');
+
+    const handleEventClick = useCallback((args: MbscEventClickEvent) => {
+        setToastText(args.event.title ?? '');
+        setToastOpen(true);
+    }, []);
+
+    const customHandlers: { key: string; fn: (...args: any[]) => void }[] = [
+        { key: 'myEventClick', fn: handleEventClick },
+    ];
+
+    const templateProps: Record<string, any> = {};
+    const hookProps: Record<string, any> = {};
+
+    if (template && typeof template === 'object') {
+        for (const [propName, templateKey] of Object.entries(template as Record<string, string>)) {
+            if (typeof templateKey === 'string' && templateCodes[templateKey]) {
+                templateProps[propName] = templateCodes[templateKey];
+            }
+        }
+    }
+
+    if (hooks && typeof hooks === 'object') {
+        for (const [propName, hookKey] of Object.entries(hooks as Record<string, string>)) {
+            if (typeof hookKey === 'string' && hookCodes[hookKey]) {
+                hookProps[propName] = hookCodes[hookKey];
+            }
+        }
+    }
+    if (hooks && typeof hooks === 'object') {
+        for (const [propName, hookKey] of Object.entries(hooks as Record<string, string>)) {
+            const handlerObj = customHandlers.find(h => h.key === hookKey);
+            if (handlerObj) {
+                hookProps[propName] = handlerObj.fn;
+            } else if (typeof hookKey === 'string' && hookCodes[hookKey]) {
+                hookProps[propName] = hookCodes[hookKey];
+            }
+        }
+    }
+
+
+    console.log(isScheduler);
     return (
-        <div className="mockup-phone">
-            <div className="mockup-phone-camera z-50" />
-            <div className="mockup-phone-display">
-                <Component
-                    {...mergedProps}
-                    {...(componentName === "Eventcalendar" ? { data: events } : {})}
-                />
-
-                {/* TODOO Something is wrong with the select component need to be fixed */}
-            </div>
-        </div>
+        <>
+            {isScheduler ? (
+                <div className="mockup-window border border-base-300 w-full">
+                    <Component
+                        {...mergedProps}
+                        data={eventData}
+                        resources={resources}
+                        invalid={invalid}
+                        {...templateProps}
+                        {...hookProps}
+                    />
+                    <Toast
+                        message={toastText}
+                        isOpen={toastOpen}
+                        onClose={() => setToastOpen(false)}
+                    />
+                </div>
+            ) : (
+                <div className="mockup-phone">
+                    <div className="mockup-phone-camera z-50" />
+                    <div className="mockup-phone-display">
+                        <Component
+                            {...mergedProps}
+                            data={eventData}
+                            resources={resources}
+                            invalid={invalid}
+                            {...templateProps}
+                            {...hookProps}
+                        />
+                        <Toast
+                            message={toastText}
+                            isOpen={toastOpen}
+                            onClose={() => setToastOpen(false)}
+                        />
+                    </div>
+                </div>
+            )}
+        </>
     );
 };
 

@@ -11,6 +11,8 @@ import { LivePreview } from '@/components/LivePreview';
 import { CodePreview } from '@/components/CodePreview';
 import { ConfigurationsSelector } from '@/components/ConfigurationSelector';
 import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString';
+import { templateStrs } from '@/components/reactTemplates';
+import { toVueEventName, hookStrs } from '@/components/reactHooks';
 
 export default function ConfiguratorClient({
   groups,
@@ -40,9 +42,13 @@ export default function ConfiguratorClient({
   const [presetObj, setPresetObj] = useState<Preset | null>(null);
   const [currentConfig, setCurrentConfig] = useState<Config | null>(null);
   const [code, setCode] = useState<any>(null);
-  const [props, setProps] = useState<Record<string, any>>({});
-  const [viewProps, setViewProps] = useState<Record<string, any>>({});
+  const [language, setLanguage] = useState<any>(null);
 
+
+  const [props, setProps] = useState<Record<string, any>>({});
+  const [data, setData] = useState<Record<string, any>>({});
+  const [template, setTemplate] = useState<Record<string, any>>({});
+  const [hooks, setHooks] = useState<Record<string, any>>({});
 
   const selectedPreset = searchParams.get('preset') || null
 
@@ -69,8 +75,12 @@ export default function ConfiguratorClient({
     if (selectedFramework) {
       const framework = frameworks.find(f => f.slug === selectedFramework);
       setFrameworkObj(framework || null);
-      if (framework && framework.template) {
-        setCode({ main: String(framework.template) });
+      if (framework && frameworkObj && framework.template) {
+        setCode({
+          'App.tsx': frameworkObj.templates?.find(t => t.label === 'TSX')?.template || '',
+          'App.jsx': frameworkObj.templates?.find(t => t.label === 'JSX')?.template || '',
+        });
+
       } else {
         setCode(null);
       }
@@ -111,32 +121,173 @@ export default function ConfiguratorClient({
 
   useEffect(() => {
     if (frameworkObj && currentConfig) {
-      const { topVars, templateInlineProps, liveViewInlineProps } = genCodeWithTopVars(
+      const {
+        topVars,
+        templateInlineProps,
+        liveViewInlineProps,
+        extractedValues,
+        extractedInlineValues,
+        componentName: effectiveComponentName
+      } = genCodeWithTopVars(
         frameworkObj.slug,
         currentConfig.config.component || '',
-        props
+        props,
+        currentConfig.config.data,
       );
-      let codeObj: any = {};
 
-      if (frameworkObj.slug === 'angular') {
-        const [tsTpl, htmlTpl] = frameworkObj.template.split('//TEMPLATE');
-        codeObj = {
-          'app.component.ts': tsTpl
-            .replace(/\/\* Component \*\//g, currentConfig.config.component || ''),
-          'app.component.html': htmlTpl
-            .replace(/\/\* Component \*\//g, currentConfig.config.component?.toLowerCase() || '')
-            .replace(/\/\* Component options \*\//g, templateInlineProps),
-        };
-
-      } else {
-        codeObj = {
-          'App.tsx': frameworkObj.template
-            .replace(/\/\* Component \*\//g, currentConfig.config.component || '')
-            .replace(/\/\* variables \*\//g, topVars)
-            .replace(/\/\* Component options \*\//g, templateInlineProps)
-        };
-
+      function isFilled(val: any) {
+        if (Array.isArray(val)) return val.length > 0;
+        if (typeof val === 'object' && val !== null) return Object.keys(val).length > 0;
+        if (typeof val === 'string') return val.length > 0;
+        if (val === undefined || val === null) return false;
+        return true;
       }
+
+      const eventData = extractedValues.data ?? [];
+      const view = extractedValues.view ?? [];
+      const resources = extractedValues.resources ?? [];
+      const invalid = extractedValues.invalid ?? [];
+      const colors = extractedValues.colors ?? [];
+
+
+      const inlineData = extractedInlineValues.data ?? [];
+      const inlineResources = extractedInlineValues.resources ?? [];
+      const inlineInvalid = extractedInlineValues.invalid ?? [];
+      const inlineColors = extractedInlineValues.colors ?? [];
+
+
+      function getComponentTemplateProps(templates: Record<string, string>): string {
+        if (!templates) return '';
+        return Object.entries(templates)
+          .map(([prop, fnName]) => `${prop}={${fnName}}`)
+          .join('\n  ');
+      }
+
+
+
+      function getComponentHookProps(hooks: Record<string, string>): string {
+        if (!hooks) return '';
+        if (frameworkObj?.slug === 'vue') {
+          return Object.entries(hooks)
+            .map(([prop, fnName]) => `@${toVueEventName(prop)}="${fnName}"`)
+            .join('\n  ');
+        }
+        return Object.entries(hooks)
+          .map(([prop, fnName]) => `${prop}={${fnName}}`)
+          .join('\n  ');
+      }
+
+
+      const componentTemplateProps = getComponentTemplateProps(currentConfig.config.templates);
+      const componentHookProps = getComponentHookProps(currentConfig.config.hooks);
+
+
+      function getTemplateStrBlock(templates: Record<string, string>, lang = 'tsx') {
+        if (!templates) return '';
+        return Object.values(templates)
+          .map(fnName => templateStrs(lang as any)[fnName])
+          .filter(Boolean)
+          .join('\n\n');
+      }
+
+      function getHooksStrBlock(hooks: Record<string, string>, lang = 'tsx') {
+        if (!hooks) return '';
+        return Object.values(hooks)
+          .map(fnName => hookStrs(lang as any)[fnName])
+          .filter(Boolean)
+          .join('\n\n');
+      }
+
+
+
+
+
+
+
+      setData(currentConfig.config.data);
+      setTemplate(currentConfig.config.templates);
+      setHooks(currentConfig.config.hooks);
+
+      const hasData = isFilled(eventData);
+      const hasResources = isFilled(resources);
+      const hasInvalid = isFilled(invalid);
+      const hasColors = isFilled(colors);
+
+      const hasInlineData = hasData && isFilled(inlineData);
+      const hasInlineResources = hasResources && isFilled(inlineResources);
+      const hasInlineInvalid = hasInvalid && isFilled(inlineInvalid);
+      const hasInlineColors = hasColors && isFilled(inlineColors);
+
+
+      const codeObj = frameworkObj.templates.map(t => ({
+        label: t.label,
+        code: t.template
+          .replace(/\/\* Component \*\//g, effectiveComponentName || '')
+
+          .replace(
+            /\/\* view \*\//g,
+            isFilled(view) ? `const myView = ${JSON.stringify(view, null, 2)};` : ''
+          )
+          .replace(
+            /\/\* data \*\//g,
+            hasData ? `const myData = ${JSON.stringify(eventData, null, 2)};` : ''
+          )
+          .replace(
+            /\/\* resources \*\//g,
+            hasResources ? `const myResources = ${JSON.stringify(resources, null, 2)};` : ''
+          )
+          .replace(
+            /\/\* invalids \*\//g,
+            hasInvalid ? `const myInvalid = ${JSON.stringify(invalid, null, 2)};` : ''
+          )
+          .replace(
+            /\/\* colors \*\//g,
+            hasColors ? `const myColors = ${JSON.stringify(colors, null, 2)};` : ''
+          )
+          .replace(
+            /\/\* templates \*\//g,
+            '\n\n' + getTemplateStrBlock(currentConfig.config.templates, t.label)
+          )
+
+          .replace(
+            /\/\* hooks \*\//g,
+            '\n\n' + getHooksStrBlock(currentConfig.config.hooks, t.label)
+          )
+
+          .replace(
+            /\/\* Component data \*\//g,
+            hasInlineData ? `data={myData}` : ''
+          )
+          .replace(
+            /\/\* Component resources \*\//g,
+            hasInlineResources ? `resources={myResources}` : ''
+          )
+          .replace(
+            /\/\* Component invalids \*\//g,
+            hasInlineInvalid ? `invalid={myInvalid}` : ''
+          )
+          .replace(
+            /\/\* Component colors \*\//g,
+            hasInlineColors ? `colors={myColors}` : ''
+          )
+          .replace(
+            /\/\* Component hooks \*\//g,
+            componentHookProps
+          )
+
+          .replace(
+            /\/\* Component templates \*\//g,
+            componentTemplateProps
+          )
+
+          .replace(/\/\* Component options \*\//g, templateInlineProps)
+
+      }));
+
+      const finalCode = codeObj.map(obj => obj.code);
+      const finalLanguage = codeObj.map(obj => obj.label);
+
+      setLanguage(finalLanguage);
       setCode(codeObj);
     }
   }, [frameworkObj, currentConfig, props]);
@@ -149,17 +300,26 @@ export default function ConfiguratorClient({
     router.push(`${pathname}?${newQuery.toString()}`, { scroll: false })
   }
 
+
+
+  const isScheduler =
+    selectedComponent === 'scheduler' ||
+    selectedComponent === 'timeline';
+
+  const previewAreaClass = `w-full xl:w-[80%] gap-8 flex ${isScheduler ? 'flex-col-reverse ' : 'flex-col lg:flex-row'
+    } gap-1 transition-all duration-500 ease-in-out`;
+
+
   return (
     <div className="w-full px-4 bg-white">
       <GroupSection
         groups={groups}
         components={components}
-        selectedGroup={selectedGroup}
+        selectedGroup={selectedGroup || undefined}
         selectedComponent={selectedComponent}
         updateSelection={updateSelection}
         selectComponent={selectComponent}
       />
-
 
       {selectedGroup && selectedComponent && (
         <FrameworkSection
@@ -178,7 +338,6 @@ export default function ConfiguratorClient({
       )}
 
 
-      {/* TODO This is not the final layout this design will be improved */}
       {currentConfig && frameworkObj && groupObj && (
         <div className="mt-12 mx-auto flex flex-col xl:flex-row gap-6 items-start transition-all duration-500 ease-in-out">
 
@@ -191,24 +350,31 @@ export default function ConfiguratorClient({
             />
           </div>
 
-          <div className="w-full xl:w-[80%] flex flex-col lg:flex-row gap-1 transition-all duration-500 ease-in-out">
+          <div className={previewAreaClass}>
             <div className="w-full overflow-auto max-w-full transition-all duration-500 ease-in-out">
-              <CodePreview code={code} language={
-                ['javascript', 'angular', 'jquery', 'vue', 'react'].includes(frameworkObj.slug)
-                  ? frameworkObj.slug as 'javascript' | 'angular' | 'jquery' | 'vue' | 'react'
-                  : 'javascript'
-              } />
+              <CodePreview fullCode={code}
+              />
             </div>
 
-            <div className="flex flex-col  justify-center items-center  max-w-[400px] w-full mx-auto lg:mx-0 min-h-[700px]  sm:scale-[0.6] md:scale-[0.7] lg:scale-[1]">
-              <div className="transform origin-top scale-100 md:scale-[1] lg:scale-[1] transition-transform duration-300">
+            <div
+              className={
+                isScheduler
+                  ? "w-full min-h-[700px] flex flex-col justify-center items-center p-0 m-0" // No max-w, no scaling
+                  : "flex flex-col justify-center items-center max-w-[400px] w-full mx-auto lg:mx-0 min-h-[700px] sm:scale-[0.6] md:scale-[0.7] lg:scale-[1]"
+              }
+            >
+              <div className={isScheduler ? "w-full h-full" : "transform origin-top scale-100 md:scale-[1] lg:scale-[1] transition-transform duration-300"}>
                 <LivePreview
                   componentName={groupObj.slug}
                   mergedProps={props}
-                  events={[]}
+                  data={data}
+                  template={template}
+                  hooks={hooks}
+                  isScheduler={isScheduler}
                 />
               </div>
             </div>
+
 
           </div>
         </div>

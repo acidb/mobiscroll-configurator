@@ -14,11 +14,18 @@ export interface Component {
   sortOrder: number
 }
 
+
+export interface FrameworkTemplate {
+  label: string;
+  template: string;
+}
+
 export interface Framework {
   id: string
   name: string
   slug: string
   template: string
+  templates: FrameworkTemplate[];
   icon: string
 }
 
@@ -34,6 +41,9 @@ export interface Preset {
 export interface ConfigurationOption {
   component: string;
   props: Record<string, any>;
+  data: Record<string, any>;
+  hooks: Record<string, any>;
+  templates: Record<string, any>;
 }
 
 export interface Config {
