@@ -4,7 +4,7 @@ import { useScreenSize } from '@/utils/useScreenSize';
 import { ResourceList } from './ResourceList';
 import { DataList } from './DataList';
 import { BooleanConfig } from './BooleanConfig';
-import { Settings2 } from 'lucide-react';
+import { Settings2, ChartPie } from 'lucide-react';
 import StepperSection from '../app/(frontend)/configurator/StepperSection'
 import { Component, Framework, Preset, Config, Group } from '../app/(frontend)/configurator/types'
 
@@ -21,7 +21,7 @@ interface pGroup {
 
 const GROUPS: pGroup[] = [
     {
-        label: "Component Options",
+        label: "Toggle Options",
         description: "You can adjust the component by turning the options on and off.",
         match: (key: string, value: unknown): boolean => typeof value === 'boolean',
     },
@@ -126,16 +126,6 @@ export function ConfigurationsSelector({
     function renderContent() {
         return (
             <div className="w-full min-h-screen h-screen space-y-8">
-                <StepperSection
-                    groups={groups}
-                    components={components}
-                    filteredPresets={filteredPresets}
-                    selectedGroup={selectedGroup}
-                    selectedComponent={selectedComponent}
-                    selectedPreset={selectedPreset}
-                    updateSelection={updateSelection}
-                    updateSelections={updateSelections}
-                />
 
                 {GROUPS.map((group, gi) => {
                     const fields = Object.entries(configurations).filter(([key, value]) =>
@@ -155,6 +145,7 @@ export function ConfigurationsSelector({
 
                                     if (typeof value === 'boolean') {
                                         return (
+
                                             <BooleanConfig
                                                 key={prop}
                                                 value={!!selected[prop]}
@@ -162,6 +153,7 @@ export function ConfigurationsSelector({
                                                 label={prop}
                                                 id={prop}
                                             />
+
                                         );
                                     }
 
@@ -231,22 +223,36 @@ export function ConfigurationsSelector({
     return (
         <div
             className="
-    sticky top-16 
-    h-[calc(100vh-4rem)]  // 4rem = 64px
-    xl:border xl:border-gray-200 xl:rounded-2xl xl:p-2 
-    bg-white
-    flex flex-col
-"
+                sticky top-16 
+                h-[calc(100vh-4rem)]
+                xl:border xl:border-gray-200 xl:rounded-2xl xl:p-2 
+                bg-white
+                flex flex-col
+            "
             style={{ maxHeight: 'calc(100vh - 64px)' }}
         >
-            {/* ...header... */}
+
             <div className="flex gap-2 justify-left items-center mb-4 px-1 py-2">
                 <div className="flex items-center bg-blue-500 rounded-xl p-2">
                     <Settings2 className="text-white" size={20} />
                 </div>
                 <span className="font-semibold text-gray-800 text-l">Configurations</span>
             </div>
-            {/* Content wrapper */}
+            <div className="mb-2">
+                <span className="font-semibold text-gray-700 text-sm">Your configuration</span>
+                <span className="block text-xs text-gray-400 mt-1">You can adjust you configurations by choosing other template or components </span>
+            </div>
+
+            <StepperSection
+                groups={groups}
+                components={components}
+                filteredPresets={filteredPresets}
+                selectedGroup={selectedGroup}
+                selectedComponent={selectedComponent}
+                selectedPreset={selectedPreset}
+                updateSelection={updateSelection}
+                updateSelections={updateSelections}
+            />
             <div className="flex-1 overflow-y-auto pr-1">{renderContent()}</div>
         </div>
 

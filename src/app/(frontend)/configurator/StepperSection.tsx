@@ -68,12 +68,12 @@ const StepperSection: React.FC<StepperSectionProps> = ({
 
 
     return (
-        <div className="w-full">
+        <div className="w-full mb-2 border-b-1 border-gray-200">
 
             <div className="flex flex-row flex-wrap gap-2 mb-2 w-full">
                 {selectedGroup && (
                     <button
-                        className="btn btn-sm w-auto max-w-xs truncate"
+                        className="btn btn-sm w-auto max-w-xs truncate hover:btn-error"
                         onClick={() => updateSelection("group", null)}
                     >
                         <span className="truncate">{groupObj?.name}</span>
@@ -82,7 +82,7 @@ const StepperSection: React.FC<StepperSectionProps> = ({
                 )}
                 {selectedComponent && (
                     <button
-                        className="btn btn-sm w-auto max-w-xs truncate"
+                        className="btn btn-sm w-auto max-w-xs truncate hover:btn-error"
                         onClick={() => updateSelection("component", null)}
                     >
                         <span className="truncate">{componentObj?.label}</span>
@@ -91,7 +91,7 @@ const StepperSection: React.FC<StepperSectionProps> = ({
                 )}
                 {selectedPreset && (
                     <button
-                        className="btn btn-sm w-auto max-w-xs truncate"
+                        className="btn btn-sm w-auto max-w-xs truncate hover:btn-error"
                         onClick={() => updateSelection("preset", null)}
                     >
                         <span className="truncate">{presetObj?.name}</span>
@@ -102,7 +102,7 @@ const StepperSection: React.FC<StepperSectionProps> = ({
             <div className={`collapse rounded-none ${open === "group" ? "collapse-open" : "collapse-close"}`}>
                 <div className="collapse-content">
                     <p className="text-gray-400 italic">
-                        Start by choosing a group below.
+                        Step 1. Start by choosing a group below.
                     </p>
 
                     <div className="flex flex-wrap gap-3">
@@ -145,17 +145,14 @@ const StepperSection: React.FC<StepperSectionProps> = ({
 
             </div>
 
-            <div
-                className={`collapse  rounded-none ${open === "component" ? "collapse-open" : "collapse-close"
-                    }`}
-            >
+            <div className={`collapse  rounded-none ${open === "component" ? "collapse-open" : "collapse-close"}`}>
 
 
                 <div className="collapse-content">
                     {selectedGroup ? (
                         <>
                             <p className="text-gray-400 italic">
-                                Select a component.
+                                Step 2. Select a component.
                             </p>
                             <div className="flex flex-wrap gap-3">
 
@@ -213,7 +210,7 @@ const StepperSection: React.FC<StepperSectionProps> = ({
                         ) : (
                             <div className="flex flex-col gap-2">
                                 <p className="text-gray-400 italic">
-                                    Select a component to display presets.
+                                    Step 3. Select a component to display presets.
                                 </p>
                                 {filteredPresets.map((preset) => {
                                     const isSelected = preset.slug === selectedPreset;
@@ -250,6 +247,8 @@ const StepperSection: React.FC<StepperSectionProps> = ({
                     )}
                 </div>
             </div>
+
+           
         </div>
     );
 };
