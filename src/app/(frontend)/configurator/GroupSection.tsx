@@ -19,7 +19,6 @@ const GroupSection: React.FC<GroupSectionProps> = ({
   updateSelection,
   selectComponent,
 }) => {
-  // Default to first group if nothing selected
   const currentGroupSlug =
     selectedGroup ||
     (groups.length > 0 ? groups[0].slug : null)

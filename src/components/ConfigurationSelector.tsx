@@ -5,20 +5,21 @@ import { ResourceList } from './ResourceList';
 import { DataList } from './DataList';
 import { BooleanConfig } from './BooleanConfig';
 import { Settings2 } from 'lucide-react';
+import StepperSection from '../app/(frontend)/configurator/StepperSection'
+import { Component, Framework, Preset, Config, Group } from '../app/(frontend)/configurator/types'
 
-// In this enum can be defined the options for the select inputs
+
 const ENUM_OPTIONS: Record<string, string[]> = {
     groupBy: ["date", "resource"],
 };
 
-interface Group {
+interface pGroup {
     label: string;
     description: string;
     match: (key: string, value: unknown) => boolean;
 }
 
-// TODOO: This groups need to be adjusted and more precise
-const GROUPS: Group[] = [
+const GROUPS: pGroup[] = [
     {
         label: "Component Options",
         description: "You can adjust the component by turning the options on and off.",
@@ -47,12 +48,30 @@ interface ConfigurationsSelectorProps {
     configurations: Record<string, any>;
     onChange: (selected: SelectedConfig) => void;
     selected: SelectedConfig;
+
+    groups: Group[];
+    components: Component[];
+    filteredPresets: Preset[];
+    selectedGroup: string | null;
+    selectedComponent: string | null;
+    selectedPreset: string | null;
+    updateSelection: (key: string, value: string | null) => void;
+    updateSelections: (updates: Record<string, string | null>) => void;
 }
 
 export function ConfigurationsSelector({
     configurations,
     onChange,
     selected,
+
+    groups,
+    components,
+    filteredPresets,
+    selectedGroup,
+    selectedComponent,
+    selectedPreset,
+    updateSelection,
+    updateSelections,
 }: ConfigurationsSelectorProps) {
 
     const screenSize = useScreenSize();
@@ -106,7 +125,18 @@ export function ConfigurationsSelector({
 
     function renderContent() {
         return (
-            <>
+            <div className="w-full min-h-screen h-screen space-y-8">
+                <StepperSection
+                    groups={groups}
+                    components={components}
+                    filteredPresets={filteredPresets}
+                    selectedGroup={selectedGroup}
+                    selectedComponent={selectedComponent}
+                    selectedPreset={selectedPreset}
+                    updateSelection={updateSelection}
+                    updateSelections={updateSelections}
+                />
+
                 {GROUPS.map((group, gi) => {
                     const fields = Object.entries(configurations).filter(([key, value]) =>
                         group.match(key, value)
@@ -194,21 +224,31 @@ export function ConfigurationsSelector({
                         </div>
                     );
                 })}
-            </>
+            </div>
         );
     }
 
     return (
-        <div className="w-full space-y-8">
-            <div className="xl:bg-white xl:border xl:border-gray-200 xl:rounded-2xl xl:p-2 lg:shadow-sm">
-                <div className="flex gap-2 justify-left items-center mb-4 px-1 py-2">
-                    <div className="flex items-center bg-blue-500 rounded-xl p-2">
-                        <Settings2 className="text-white" size={20} />
-                    </div>
-                    <span className="font-semibold text-gray-800 text-l">Configurations</span>
+        <div
+            className="
+    sticky top-16 
+    h-[calc(100vh-4rem)]  // 4rem = 64px
+    xl:border xl:border-gray-200 xl:rounded-2xl xl:p-2 
+    bg-white
+    flex flex-col
+"
+            style={{ maxHeight: 'calc(100vh - 64px)' }}
+        >
+            {/* ...header... */}
+            <div className="flex gap-2 justify-left items-center mb-4 px-1 py-2">
+                <div className="flex items-center bg-blue-500 rounded-xl p-2">
+                    <Settings2 className="text-white" size={20} />
                 </div>
-                {renderContent()}
+                <span className="font-semibold text-gray-800 text-l">Configurations</span>
             </div>
+            {/* Content wrapper */}
+            <div className="flex-1 overflow-y-auto pr-1">{renderContent()}</div>
         </div>
+
     );
 }

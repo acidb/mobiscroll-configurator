@@ -14,6 +14,10 @@ import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString
 import { templateStrs } from '@/components/reactTemplates';
 import { toVueEventName, hookStrs } from '@/components/reactHooks';
 
+const Skeleton = ({ className = "" }) => (
+  <div className="skeleton h-32 w-32"></div>
+);
+
 export default function ConfiguratorClient({
   groups,
   components,
@@ -44,6 +48,9 @@ export default function ConfiguratorClient({
   const [code, setCode] = useState<any>(null);
   const [language, setLanguage] = useState<any>(null);
 
+  const isLoading = !(currentConfig && frameworkObj && groupObj && code);
+
+
 
   const [props, setProps] = useState<Record<string, any>>({});
   const [data, setData] = useState<Record<string, any>>({});
@@ -51,6 +58,19 @@ export default function ConfiguratorClient({
   const [hooks, setHooks] = useState<Record<string, any>>({});
 
   const selectedPreset = searchParams.get('preset') || null
+
+  function updateSelections(updates: Record<string, string | null>) {
+    const newQuery = new URLSearchParams(searchParams.toString());
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value) {
+        newQuery.set(key, value);
+      } else {
+        newQuery.delete(key);
+      }
+    });
+    router.push(`${pathname}?${newQuery.toString()}`, { scroll: false });
+  }
+
 
   const updateSelection = (key: string, value: string | null) => {
     const newQuery = new URLSearchParams(searchParams.toString())
@@ -327,59 +347,63 @@ export default function ConfiguratorClient({
 
 
   return (
-    <div className="w-full px-4 bg-white">
-      <GroupSection
-        groups={groups}
-        components={components}
-        selectedGroup={selectedGroup || undefined}
-        selectedComponent={selectedComponent}
-        updateSelection={updateSelection}
-        selectComponent={selectComponent}
-      />
+    <div className="w-full h-full">
 
-      {selectedGroup && selectedComponent && (
-        <FrameworkSection
-          frameworks={frameworks}
-          selectedFramework={selectedFramework}
-          selectedComponent={selectedComponent}
-          updateSelection={updateSelection}
-        />
-      )}
-      {selectedGroup && selectedComponent && selectedFramework && (
-        <PresetSection
-          filteredPresets={filteredPresets}
-          updateSelection={updateSelection}
-          selectedPreset={selectedPreset}
-        />
-      )}
+      <div className="flex flex-col xl:flex-row gap-6 items-start transition-all duration-500 ease-in-out">
+        <div className="w-full lg:w-[20%] mg:w-[5%] xl:sticky xl:top-3 self-start">
+          <ConfigurationsSelector
+            configurations={currentConfig?.config.props ?? {}}
+            onChange={setProps}
+            selected={props}
+            groups={groups}
+            components={components}
+            filteredPresets={filteredPresets}
+            selectedGroup={selectedGroup}
+            selectedComponent={selectedComponent}
+            selectedPreset={selectedPreset}
+            updateSelection={updateSelection}
+            updateSelections={updateSelections}
+          />
+        </div>
 
 
-      {currentConfig && frameworkObj && groupObj && (
-        <div className="mt-12 mx-auto flex flex-col xl:flex-row gap-6 items-start transition-all duration-500 ease-in-out">
 
 
-          <div className="w-full lg:w-[20%] mg:w-[5%] xl:sticky xl:top-3 self-start">
-            <ConfigurationsSelector
-              configurations={currentConfig?.config.props ?? {}}
-              onChange={setProps}
-              selected={props}
-            />
-          </div>
 
-          <div className={previewAreaClass}>
-            <div className="w-full overflow-auto max-w-full transition-all duration-500 ease-in-out">
-              <CodePreview fullCode={code}
+        <div className={previewAreaClass}>
+          <div className={`flex flex-col w-full overflow-auto max-w-full transition-all duration-500 ease-in-out`}>
+            <>
+              <FrameworkSection
+                frameworks={frameworks}
+                selectedFramework={selectedFramework}
+                selectedComponent={selectedComponent}
+                updateSelection={updateSelection}
               />
-            </div>
-
-            <div
-              className={
-                isScheduler
-                  ? "w-full min-h-[700px] flex flex-col justify-center items-center p-0 m-0"
-                  : "flex flex-col justify-center items-center max-w-[400px] w-full mx-auto lg:mx-0 min-h-[700px] sm:scale-[0.6] md:scale-[0.7] lg:scale-[1]"
-              }
-            >
+              {isLoading ? (
+                <div className="skeleton min-h-[250px] h-full w-full flex flex-col items-center justify-center animate-pulse">
+                  <p className="text-gray-500 text-lg italic text-center">
+                    Select configuration in the left side panel
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <CodePreview fullCode={code} />
+                </>
+              )}
+            </>
+          </div>
+          <div
+            className={
+              isScheduler
+                ? "w-full min-h-[700px] flex flex-col justify-center items-center p-0 m-0"
+                : "flex flex-col justify-center items-center max-w-[400px] w-full mx-auto lg:mx-0 min-h-[700px] sm:scale-[0.6] md:scale-[0.7] lg:scale-[1]"
+            }
+          >
+            {isLoading ? (
+              <div className="skeleton h-full w-full"></div>
+            ) : (
               <div className={isScheduler ? "w-full h-full" : "transform origin-top scale-100 md:scale-[1] lg:scale-[1] transition-transform duration-300"}>
+
                 <LivePreview
                   componentName={groupObj.slug}
                   mergedProps={props}
@@ -388,14 +412,15 @@ export default function ConfiguratorClient({
                   hooks={hooks}
                   isScheduler={isScheduler}
                 />
+
               </div>
-            </div>
-
-
+            )}
           </div>
         </div>
 
-      )}
+      </div>
+
+
     </div>
   )
 }
