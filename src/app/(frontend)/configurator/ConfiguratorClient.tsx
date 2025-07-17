@@ -127,7 +127,7 @@ export default function ConfiguratorClient({
         liveViewInlineProps,
         extractedValues,
         extractedInlineValues,
-        componentName: effectiveComponentName
+        componentName: effectiveComponentName,
       } = genCodeWithTopVars(
         frameworkObj.slug,
         currentConfig.config.component || '',
@@ -149,12 +149,10 @@ export default function ConfiguratorClient({
       const invalid = extractedValues.invalid ?? [];
       const colors = extractedValues.colors ?? [];
 
-
       const inlineData = extractedInlineValues.data ?? [];
       const inlineResources = extractedInlineValues.resources ?? [];
       const inlineInvalid = extractedInlineValues.invalid ?? [];
       const inlineColors = extractedInlineValues.colors ?? [];
-
 
       function getComponentTemplateProps(templates: Record<string, string>): string {
         if (!templates) return '';
@@ -162,8 +160,6 @@ export default function ConfiguratorClient({
           .map(([prop, fnName]) => `${prop}={${fnName}}`)
           .join('\n  ');
       }
-
-
 
       function getComponentHookProps(hooks: Record<string, string>): string {
         if (!hooks) return '';
@@ -177,15 +173,44 @@ export default function ConfiguratorClient({
           .join('\n  ');
       }
 
+      function formatFrameworkProp(key: string, varName: string): string {
+        switch (frameworkObj?.slug) {
+          case 'react':
+            return `${key}={${varName}}`;
+          case 'vue':
+            return `:${key}="${varName}"`;
+          case 'angular':
+            return `[${key}]="${varName}"`;
+          case 'jquery':
+            return `${key}: ${varName},`;
+          default:
+            return `${key}: ${varName},`;
+        }
+      }
+
+      function toUnquotedObjectString(data: any, indentLevel = 2): string {
+        if (!data) return '[]';
+        const indent = ' '.repeat(indentLevel * 2);
+        if (Array.isArray(data)) {
+          if (data.length === 0) return '[]';
+          return `[\n${data
+            .map((item) =>
+              `${indent}  {\n${Object.entries(item)
+                .map(([key, value]) => `${indent}    ${key}: ${typeof value === 'string' ? `"${value}"` : value}`)
+                .join(',\n')}\n${indent}  }`
+            )
+            .join(',\n')}\n${indent}]`;
+        }
+        return JSON.stringify(data, null, 2);
+      }
 
       const componentTemplateProps = getComponentTemplateProps(currentConfig.config.templates);
       const componentHookProps = getComponentHookProps(currentConfig.config.hooks);
 
-
       function getTemplateStrBlock(templates: Record<string, string>, lang = 'tsx') {
         if (!templates) return '';
         return Object.values(templates)
-          .map(fnName => templateStrs(lang as any)[fnName])
+          .map((fnName) => templateStrs(lang as any)?.[fnName] || '')
           .filter(Boolean)
           .join('\n\n');
       }
@@ -193,16 +218,10 @@ export default function ConfiguratorClient({
       function getHooksStrBlock(hooks: Record<string, string>, lang = 'tsx') {
         if (!hooks) return '';
         return Object.values(hooks)
-          .map(fnName => hookStrs(lang as any)[fnName])
+          .map((fnName) => hookStrs(lang as any)?.[fnName] || '')
           .filter(Boolean)
           .join('\n\n');
       }
-
-
-
-
-
-
 
       setData(currentConfig.config.data);
       setTemplate(currentConfig.config.templates);
@@ -218,74 +237,71 @@ export default function ConfiguratorClient({
       const hasInlineInvalid = hasInvalid && isFilled(inlineInvalid);
       const hasInlineColors = hasColors && isFilled(inlineColors);
 
-
-      const codeObj = frameworkObj.templates.map(t => ({
+      const codeObj = frameworkObj.templates.map((t) => ({
         label: t.label,
         code: t.template
           .replace(/\/\* Component \*\//g, effectiveComponentName || '')
-
+          .replace(
+            /\/\* imports \*\//g,
+            frameworkObj.slug === 'vue' ? "import { ref } from 'vue';\n" : ''
+          )
           .replace(
             /\/\* view \*\//g,
-            isFilled(view) ? `const myView = ${JSON.stringify(view, null, 2)};` : ''
+            isFilled(view)
+              ? frameworkObj.slug === 'vue'
+                ? `const myView = ref(${toUnquotedObjectString(view, 2)});`
+                : `const myView = ${JSON.stringify(view, null, 2)};`
+              : '',
           )
           .replace(
             /\/\* data \*\//g,
-            hasData ? `const myData = ${JSON.stringify(eventData, null, 2)};` : ''
+            hasData
+              ? frameworkObj.slug === 'vue'
+                ? `const myData = ref(${toUnquotedObjectString(eventData, 2)});`
+                : `const myData = ${JSON.stringify(eventData, null, 2)};`
+              : '',
           )
           .replace(
             /\/\* resources \*\//g,
-            hasResources ? `const myResources = ${JSON.stringify(resources, null, 2)};` : ''
+            hasResources
+              ? frameworkObj.slug === 'vue'
+                ? `const myResources = ref(${toUnquotedObjectString(resources, 2)});`
+                : `const myResources = ${JSON.stringify(resources, null, 2)};`
+              : '',
           )
           .replace(
             /\/\* invalids \*\//g,
-            hasInvalid ? `const myInvalid = ${JSON.stringify(invalid, null, 2)};` : ''
+            hasInvalid
+              ? frameworkObj.slug === 'vue'
+                ? `const myInvalid = ref(${toUnquotedObjectString(invalid, 2)});`
+                : `const myInvalid = ${JSON.stringify(invalid, null, 2)};`
+              : '',
           )
           .replace(
             /\/\* colors \*\//g,
-            hasColors ? `const myColors = ${JSON.stringify(colors, null, 2)};` : ''
+            hasColors
+              ? frameworkObj.slug === 'vue'
+                ? `const myColors = ref(${toUnquotedObjectString(colors, 2)});`
+                : `const myColors = ${JSON.stringify(colors, null, 2)};`
+              : '',
           )
-          .replace(
-            /\/\* templates \*\//g,
-            '\n\n' + getTemplateStrBlock(currentConfig.config.templates, t.label)
-          )
-
-          .replace(
-            /\/\* hooks \*\//g,
-            '\n\n' + getHooksStrBlock(currentConfig.config.hooks, t.label)
-          )
-
-          .replace(
-            /\/\* Component data \*\//g,
-            hasInlineData ? `data={myData}` : ''
-          )
+          .replace(/\/\* templates \*\//g, '\n\n' + getTemplateStrBlock(currentConfig.config.templates, t.label))
+          .replace(/\/\* hooks \*\//g, '\n\n' + getHooksStrBlock(currentConfig.config.hooks, t.label))
+          .replace(/\/\* Component data \*\//g, hasInlineData ? formatFrameworkProp('data', 'myData') : '')
           .replace(
             /\/\* Component resources \*\//g,
-            hasInlineResources ? `resources={myResources}` : ''
+            hasInlineResources ? formatFrameworkProp('resources', 'myResources') : '',
           )
-          .replace(
-            /\/\* Component invalids \*\//g,
-            hasInlineInvalid ? `invalid={myInvalid}` : ''
-          )
-          .replace(
-            /\/\* Component colors \*\//g,
-            hasInlineColors ? `colors={myColors}` : ''
-          )
-          .replace(
-            /\/\* Component hooks \*\//g,
-            componentHookProps
-          )
-
-          .replace(
-            /\/\* Component templates \*\//g,
-            componentTemplateProps
-          )
-
+          .replace(/\/\* Component invalids \*\//g, hasInlineInvalid ? formatFrameworkProp('invalid', 'myInvalid') : '')
+          .replace(/\/\* Component colors \*\//g, hasInlineColors ? formatFrameworkProp('colors', 'myColors') : '')
+          .replace(/\/\* Component hooks \*\//g, componentHookProps)
+          .replace(/\/\* Component templates \*\//g, componentTemplateProps)
           .replace(/\/\* Component options \*\//g, templateInlineProps)
-
+          .replace(/\/\* \w+ \*\//g, ''),
       }));
 
-      const finalCode = codeObj.map(obj => obj.code);
-      const finalLanguage = codeObj.map(obj => obj.label);
+      const finalCode = codeObj.map((obj) => obj.code);
+      const finalLanguage = codeObj.map((obj) => obj.label);
 
       setLanguage(finalLanguage);
       setCode(codeObj);
@@ -359,7 +375,7 @@ export default function ConfiguratorClient({
             <div
               className={
                 isScheduler
-                  ? "w-full min-h-[700px] flex flex-col justify-center items-center p-0 m-0" // No max-w, no scaling
+                  ? "w-full min-h-[700px] flex flex-col justify-center items-center p-0 m-0"
                   : "flex flex-col justify-center items-center max-w-[400px] w-full mx-auto lg:mx-0 min-h-[700px] sm:scale-[0.6] md:scale-[0.7] lg:scale-[1]"
               }
             >
