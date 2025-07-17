@@ -256,4 +256,3 @@ export const templateStrs = (lang: Lang = 'TSX') =>
       return [k, v.code[key as keyof typeof v.code]];
     })
   );
-

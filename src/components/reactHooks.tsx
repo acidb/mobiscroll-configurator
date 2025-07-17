@@ -1,6 +1,6 @@
 // reactHooks.ts
 export function toVueEventName(hookName: string): string {
-    let name = hookName.startsWith('on') ? hookName.slice(2) : hookName;
+    const name = hookName.startsWith('on') ? hookName.slice(2) : hookName;
     return name
         .replace(/([A-Z])/g, '-$1')
         .replace(/^-/, '')
