@@ -101,7 +101,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                         invalid={invalid}
                         {...templateProps}
                         {...hookProps}
-                        className="min-h-[600px]"
+                        className="min-h-[700px] max-h-[700px]"
                     />
                     <Toast
                         message={toastText}
