@@ -26,6 +26,7 @@ export interface LivePreviewProps {
     data?: any;
     template?: any;
     hooks?: any;
+    isScheduler: boolean;
 }
 
 export const LivePreview: React.FC<LivePreviewProps> = ({
@@ -34,6 +35,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     data = [],
     template,
     hooks,
+    isScheduler,
 }) => {
     const Component = componentMap[componentName];
     const {
@@ -83,11 +85,12 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         }
     }
 
+
+    console.log(isScheduler);
     return (
         <>
-            <div className="mockup-phone">
-                <div className="mockup-phone-camera z-50" />
-                <div className="mockup-phone-display">
+            {isScheduler ? (
+                <div className="mockup-window border border-base-300 w-full">
                     <Component
                         {...mergedProps}
                         data={eventData}
@@ -102,11 +105,27 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                         onClose={() => setToastOpen(false)}
                     />
                 </div>
-            </div>
-
-
+            ) : (
+                <div className="mockup-phone">
+                    <div className="mockup-phone-camera z-50" />
+                    <div className="mockup-phone-display">
+                        <Component
+                            {...mergedProps}
+                            data={eventData}
+                            resources={resources}
+                            invalid={invalid}
+                            {...templateProps}
+                            {...hookProps}
+                        />
+                        <Toast
+                            message={toastText}
+                            isOpen={toastOpen}
+                            onClose={() => setToastOpen(false)}
+                        />
+                    </div>
+                </div>
+            )}
         </>
-
     );
 };
 

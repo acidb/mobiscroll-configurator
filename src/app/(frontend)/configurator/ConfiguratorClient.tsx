@@ -300,6 +300,16 @@ export default function ConfiguratorClient({
     router.push(`${pathname}?${newQuery.toString()}`, { scroll: false })
   }
 
+
+
+  const isScheduler =
+    selectedComponent === 'scheduler' ||
+    selectedComponent === 'timeline';
+
+  const previewAreaClass = `w-full xl:w-[80%] gap-8 flex ${isScheduler ? 'flex-col-reverse ' : 'flex-col lg:flex-row'
+    } gap-1 transition-all duration-500 ease-in-out`;
+
+
   return (
     <div className="w-full px-4 bg-white">
       <GroupSection
@@ -340,23 +350,31 @@ export default function ConfiguratorClient({
             />
           </div>
 
-          <div className="w-full xl:w-[80%] gap-8 flex flex-col lg:flex-row gap-1 transition-all duration-500 ease-in-out">
+          <div className={previewAreaClass}>
             <div className="w-full overflow-auto max-w-full transition-all duration-500 ease-in-out">
               <CodePreview fullCode={code}
               />
             </div>
 
-            <div className="flex flex-col  justify-center items-center  max-w-[400px] w-full mx-auto lg:mx-0 min-h-[700px]  sm:scale-[0.6] md:scale-[0.7] lg:scale-[1]">
-              <div className="transform origin-top scale-100 md:scale-[1] lg:scale-[1] transition-transform duration-300">
+            <div
+              className={
+                isScheduler
+                  ? "w-full min-h-[700px] flex flex-col justify-center items-center p-0 m-0" // No max-w, no scaling
+                  : "flex flex-col justify-center items-center max-w-[400px] w-full mx-auto lg:mx-0 min-h-[700px] sm:scale-[0.6] md:scale-[0.7] lg:scale-[1]"
+              }
+            >
+              <div className={isScheduler ? "w-full h-full" : "transform origin-top scale-100 md:scale-[1] lg:scale-[1] transition-transform duration-300"}>
                 <LivePreview
                   componentName={groupObj.slug}
                   mergedProps={props}
                   data={data}
                   template={template}
                   hooks={hooks}
+                  isScheduler={isScheduler}
                 />
               </div>
             </div>
+
 
           </div>
         </div>
