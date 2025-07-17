@@ -12,6 +12,7 @@ import { CodePreview } from '@/components/CodePreview';
 import { ConfigurationsSelector } from '@/components/ConfigurationSelector';
 import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString';
 import { templateStrs } from '@/components/reactTemplates';
+import { toVueEventName, hookStrs } from '@/components/reactHooks';
 
 export default function ConfiguratorClient({
   groups,
@@ -47,6 +48,7 @@ export default function ConfiguratorClient({
   const [props, setProps] = useState<Record<string, any>>({});
   const [data, setData] = useState<Record<string, any>>({});
   const [template, setTemplate] = useState<Record<string, any>>({});
+  const [hooks, setHooks] = useState<Record<string, any>>({});
 
   const selectedPreset = searchParams.get('preset') || null
 
@@ -131,7 +133,6 @@ export default function ConfiguratorClient({
         currentConfig.config.component || '',
         props,
         currentConfig.config.data,
-        currentConfig.config.hooks,
       );
 
       function isFilled(val: any) {
@@ -141,7 +142,6 @@ export default function ConfiguratorClient({
         if (val === undefined || val === null) return false;
         return true;
       }
-
 
       const eventData = extractedValues.data ?? [];
       const view = extractedValues.view ?? [];
@@ -154,13 +154,6 @@ export default function ConfiguratorClient({
       const inlineResources = extractedInlineValues.resources ?? [];
       const inlineInvalid = extractedInlineValues.invalid ?? [];
       const inlineColors = extractedInlineValues.colors ?? [];
-      const inlineHooks =
-        Object.entries(extractedInlineValues.hooks || {})
-          .map(([hook, varName]) => `${hook}={${varName}}`)
-          .join(' ');
-
-
-      console.log(currentConfig.config.templates);
 
 
       function getComponentTemplateProps(templates: Record<string, string>): string {
@@ -170,8 +163,23 @@ export default function ConfiguratorClient({
           .join('\n  ');
       }
 
-      const componentTemplateProps = getComponentTemplateProps(currentConfig.config.templates);
 
+
+      function getComponentHookProps(hooks: Record<string, string>): string {
+        if (!hooks) return '';
+        if (frameworkObj?.slug === 'vue') {
+          return Object.entries(hooks)
+            .map(([prop, fnName]) => `@${toVueEventName(prop)}="${fnName}"`)
+            .join('\n  ');
+        }
+        return Object.entries(hooks)
+          .map(([prop, fnName]) => `${prop}={${fnName}}`)
+          .join('\n  ');
+      }
+
+
+      const componentTemplateProps = getComponentTemplateProps(currentConfig.config.templates);
+      const componentHookProps = getComponentHookProps(currentConfig.config.hooks);
 
 
       function getTemplateStrBlock(templates: Record<string, string>, lang = 'tsx') {
@@ -182,6 +190,18 @@ export default function ConfiguratorClient({
           .join('\n\n');
       }
 
+      function getHooksStrBlock(hooks: Record<string, string>, lang = 'tsx') {
+        if (!hooks) return '';
+        return Object.values(hooks)
+          .map(fnName => hookStrs(lang as any)[fnName])
+          .filter(Boolean)
+          .join('\n\n');
+      }
+
+
+
+
+
 
 
       setData(currentConfig.config.data);
@@ -191,7 +211,6 @@ export default function ConfiguratorClient({
       const hasResources = isFilled(resources);
       const hasInvalid = isFilled(invalid);
       const hasColors = isFilled(colors);
-      const hasTemplate = isFilled(template);
 
       const hasInlineData = hasData && isFilled(inlineData);
       const hasInlineResources = hasResources && isFilled(inlineResources);
@@ -228,6 +247,12 @@ export default function ConfiguratorClient({
             /\/\* templates \*\//g,
             '\n\n' + getTemplateStrBlock(currentConfig.config.templates, t.label)
           )
+
+          .replace(
+            /\/\* hooks \*\//g,
+            '\n\n' + getHooksStrBlock(currentConfig.config.hooks, t.label)
+          )
+
           .replace(
             /\/\* Component data \*\//g,
             hasInlineData ? `data={myData}` : ''
@@ -246,8 +271,9 @@ export default function ConfiguratorClient({
           )
           .replace(
             /\/\* Component hooks \*\//g,
-            inlineHooks ? inlineHooks : ''
+            componentHookProps
           )
+
           .replace(
             /\/\* Component templates \*\//g,
             componentTemplateProps
@@ -260,7 +286,6 @@ export default function ConfiguratorClient({
       const finalCode = codeObj.map(obj => obj.code);
       const finalLanguage = codeObj.map(obj => obj.label);
 
-      console.log(finalLanguage);
       setLanguage(finalLanguage);
       setCode(codeObj);
     }

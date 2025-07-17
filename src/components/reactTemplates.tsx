@@ -1,10 +1,11 @@
 // This is the idea how the templates can be added 
 
 import React from 'react';
+import { MbscResource } from '@mobiscroll/react';
 
 export const templates = {
   resourceTemplate: {
-    fn: (resource: any) => (
+    fn: (resource: MbscResource) => (
       <div className="px-3 py-2 bg-blue-50 border-l-4 border-blue-600 rounded flex flex-col">
         <span className="font-semibold text-blue-800">{resource.name}</span>
         <span className="text-xs text-blue-400">Resource ID: {resource.id}</span>
@@ -15,7 +16,7 @@ export const templates = {
     ),
     code: {
       tsx: `
-const resourceTemplate = useCallback((resource: any) => (
+const resourceTemplate = useCallback((resource: MbscResource) => (
   <div className="px-3 py-2 bg-blue-50 border-l-4 border-blue-600 rounded flex flex-col">
     <span className="font-semibold text-blue-800">{resource.name}</span>
     <span className="text-xs text-blue-400">Resource ID: {resource.id}</span>
@@ -239,8 +240,6 @@ const scheduleEventContentTemplate = (event) => {
 `.trim()
     }
   },
-
-
 
 };
 

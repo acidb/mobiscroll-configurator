@@ -7,7 +7,6 @@ export function genCodeWithTopVars(
     componentName: string,
     props: Record<string, any>,
     data?: Record<string, any>,
-    hooks?: Record<string, any>,
     extracted: string[] = ['data', 'view', 'resources', 'invalid', 'colors', 'templates', 'hooks']
 ) {
     const topVars: string[] = [];
@@ -34,11 +33,6 @@ export function genCodeWithTopVars(
         if (extracted.includes(key)) {
             extractedValues[key] = value;
             extractedInlineValues[key] = `my${capitalizeFirstLetter(key)}`;
-            return;
-        }
-
-        if (hooks && typeof value === 'object') {
-            hooksObj[key] = value;
             return;
         }
 
@@ -124,6 +118,8 @@ export function genCodeWithTopVars(
         componentName: effectiveComponentName,
     };
 }
+
+
 
 
 export function filterInvalidProps(obj: any): any {
