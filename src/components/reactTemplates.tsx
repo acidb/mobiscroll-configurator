@@ -1,7 +1,5 @@
-// This is the idea how the templates can be added 
-
-import React from 'react';
-import { MbscResource } from '@mobiscroll/react';
+import React, { useCallback } from 'react';
+import { MbscCalendarEventData, MbscResource } from '@mobiscroll/react';
 
 export const templates = {
   resourceTemplate: {
@@ -38,29 +36,29 @@ const resourceTemplate = (resource) => (
 )
 `.trim(),
       sfcjs: `
-  
-    <template #resourceTemplate="resource">
-      <div class="px-3 py-2 bg-blue-50 border-l-4 border-blue-600 rounded flex flex-col">
-        <span class="font-semibold text-blue-800">{{ resource.name }}</span>
-        <span class="text-xs text-blue-400">Resource ID: {{ resource.id }}</span>
-        <span class="text-xs text-blue-400 italic mt-1">
-          This is a test template to check rendering.
-        </span>
-      </div>
-    </template>
+<template #resourceTemplate="resource">
+  <div class="px-3 py-2 bg-blue-50 border-l-4 border-blue-600 rounded flex flex-col">
+    <span class="font-semibold text-blue-800">{{ resource.name }}</span>
+    <span class="text-xs text-blue-400">Resource ID: {{ resource.id }}</span>
+    <span class="text-xs text-blue-400 italic mt-1">
+      This is a test template to check rendering.
+    </span>
+  </div>
+</template>
 `.trim(),
       sfcts: `
-    <template #resourceTemplate="resource">
-      <div class="px-3 py-2 bg-blue-50 border-l-4 border-blue-600 rounded flex flex-col">
-        <span class="font-semibold text-blue-800">{{ resource.name }}</span>
-        <span class="text-xs text-blue-400">Resource ID: {{ resource.id }}</span>
-        <span class="text-xs text-blue-400 italic mt-1">
-          This is a test template to check rendering.
-        </span>
-      </div>
-    </template>
+<template #resourceTemplate="resource">
+  <div class="px-3 py-2 bg-blue-50 border-l-4 border-blue-600 rounded flex flex-col">
+    <span class="font-semibold text-blue-800">{{ resource.name }}</span>
+    <span class="text-xs text-blue-400">Resource ID: {{ resource.id }}</span>
+    <span class="text-xs text-blue-400 italic mt-1">
+      This is a test template to check rendering.
+    </span>
+  </div>
+</template>
 `.trim(),
-      template: `<ng-template #resourceTemplate let-resource>
+      template: `
+<ng-template #resourceTemplate let-resource>
   <div class="px-3 py-2 bg-blue-50 border-l-4 border-blue-600 rounded flex flex-col">
     <span class="font-semibold text-blue-800">{{ resource.name }}</span>
     <span class="text-xs text-blue-400">Resource ID: {{ resource.id }}</span>
@@ -69,41 +67,11 @@ const resourceTemplate = (resource) => (
     </span>
   </div>
 </ng-template>
-      `.trim(),
-    }
-  },
-  eventTemplate: {
-    fn: (event: any) => (
-      <div>{event.title}</div>
-    ),
-    code: {
-      tsx: `
-const eventTemplate = useCallback((event: any) => (
-  <div>
-    {event.title}
-  </div>
-), []);
 `.trim(),
-      jsx: `
-const eventTemplate = (event) => (
-  <div>
-    {event.title}
-  </div>
-)
-`.trim(),
-      vue: `
-const eventTemplate = (event) => {
-  return (
-    <div>
-      {event.title}
-    </div>
-  );
-}
-`.trim()
-    }
+    },
   },
   resourceAvatarTemplate: {
-    fn: (resource: any) => (
+    fn: (resource: MbscResource) => (
       <div className="flex items-center gap-3 p-1">
         {resource.img && (
           <img
@@ -122,7 +90,7 @@ const eventTemplate = (event) => {
     ),
     code: {
       tsx: `
-const resourceAvatarTemplate = useCallback((resource: any) => (
+const resourceAvatarTemplate = useCallback((resource: MbscResource) => (
   <div className="flex items-center gap-3 p-1">
     {resource.img && (
       <img
@@ -178,179 +146,133 @@ const resourceAvatarTemplate = (resource) => {
     </div>
   );
 }
-`.trim()
-    }
+`.trim(),
+    },
   },
-  scheduleEventContentTemplate: {
-    fn: (event: any) => (
-      <div className="flex flex-col">
-        <span className="font-semibold text-blue-800">
-          {event.type === 'availability' ? 'Available' : event.type}
-        </span>
+  eventTemplate: {
+    fn: (event: MbscCalendarEventData) => (
+      <div className="flex flex-col p-2">
+        <span className="font-semibold text-blue-800">{event.title}</span>
         <span className="text-xs text-gray-500">
-          {event.start} - {event.end}
+          {event.allDay ? event.allDay : `${event.start} - ${event.end}`}
         </span>
-        {event.tooltip && (
-          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        {event.isMultiDay && (
+          <span className="text-xs text-blue-400">
+            {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+          </span>
+        )}
+        {event.original?.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
         )}
       </div>
     ),
     code: {
       tsx: `
-const scheduleEventContentTemplate = useCallback((event: any) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
+const eventTemplate = useCallback((event: MbscCalendarEventData) => (
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
     <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
     </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
     )}
   </div>
 ), []);
 `.trim(),
       jsx: `
-const scheduleEventContentTemplate = (event) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
+const eventTemplate = ('event) => (
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
     <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
     </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
     )}
   </div>
 )
 `.trim(),
       vue: `
-const scheduleEventContentTemplate = (event) => {
+const eventTemplate = (event) => {
   return (
-    <div class="flex flex-col">
-      <span class="font-semibold text-blue-800">
-        {event.type === 'availability' ? 'Available' : event.type}
-      </span>
+    <div class="flex flex-col p-2">
+      <span class="font-semibold text-blue-800">{event.title}</span>
       <span class="text-xs text-gray-500">
-        {event.start} - {event.end}
+        {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
       </span>
-      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
-        {event.tooltip}
+      <span v-if="event.isMultiDay" class="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+      <span v-if="event.original?.tooltip" class="text-xs text-blue-400 italic">
+        {event.original.tooltip}
       </span>
     </div>
   );
 }
-`.trim()
-    }
-  },
-  renderLabelContentTemplate:
-  {
-    fn: (event: any) => (
-      <div className="flex flex-col">
-        <span className="font-semibold text-blue-800">
-          {event.type === 'availability' ? 'Available' : event.type}
-        </span>
-        <span className="text-xs text-gray-500">
-          {event.start} - {event.end}
-        </span>
-        {event.tooltip && (
-          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
-        )}
-      </div>
-    ),
-    code: {
-      tsx: `
-const renderLabelContentTemplate = useCallback((event: any) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
-    <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
-    </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
-    )}
-  </div>
-), []);
 `.trim(),
-      jsx: `
-const renderLabelContentTemplate = (event) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
-    <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
-    </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
-    )}
-  </div>
-)
-`.trim(),
-      vue: `
-const renderLabelContentTemplate = (event) => {
-  return (
-    <div class="flex flex-col">
-      <span class="font-semibold text-blue-800">
-        {event.type === 'availability' ? 'Available' : event.type}
-      </span>
-      <span class="text-xs text-gray-500">
-        {event.start} - {event.end}
-      </span>
-      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
-        {event.tooltip}
-      </span>
-    </div>
-  );
-}
-`.trim()
-    }
+    },
   },
   renderEventTemplate: {
-    fn: (event: any) => (
-      <div className="flex flex-col">
-        <span className="font-semibold text-blue-800">
-          {event.type === 'availability' ? 'Available' : event.type}
-        </span>
+    fn: (event: MbscCalendarEventData) => (
+      <div className="flex flex-col p-2">
+        <span className="font-semibold text-blue-800">{event.title}</span>
         <span className="text-xs text-gray-500">
-          {event.start} - {event.end}
+          {event.allDay ? event.allDay : `${event.start} - ${event.end}`}
         </span>
-        {event.tooltip && (
-          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        {event.isMultiDay && (
+          <span className="text-xs text-blue-400">
+            {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+          </span>
+        )}
+        {event.original?.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
         )}
       </div>
     ),
     code: {
       tsx: `
-const renderEventTemplate = useCallback((event: any) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
+const renderEventTemplate = useCallback((event: MbscCalendarEventData) => (
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
     <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
     </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
     )}
   </div>
 ), []);
 `.trim(),
       jsx: `
 const renderEventTemplate = (event) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
     <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
     </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
     )}
   </div>
 )
@@ -358,64 +280,295 @@ const renderEventTemplate = (event) => (
       vue: `
 const renderEventTemplate = (event) => {
   return (
-    <div class="flex flex-col">
-      <span class="font-semibold text-blue-800">
-        {event.type === 'availability' ? 'Available' : event.type}
-      </span>
+    <div class="flex flex-col p-2">
+      <span class="font-semibold text-blue-800">{event.title}</span>
       <span class="text-xs text-gray-500">
-        {event.start} - {event.end}
+        {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
       </span>
-      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
-        {event.tooltip}
+      <span v-if="event.isMultiDay" class="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+      <span v-if="event.original?.tooltip" class="text-xs text-blue-400 italic">
+        {event.original.tooltip}
       </span>
     </div>
   );
 }
-`.trim()
-    }
+`.trim(),
+    },
   },
-  renderItemTemplate:
-  {
-    fn: (event: any) => (
-      <div className="flex flex-col">
-        <span className="font-semibold text-blue-800">
-          {event.type === 'availability' ? 'Available' : event.type}
-        </span>
+  renderEvent: {
+    fn: (event: MbscCalendarEventData) => (
+      <div className="flex flex-col p-2">
+        <span className="font-semibold text-blue-800">{event.title}</span>
         <span className="text-xs text-gray-500">
-          {event.start} - {event.end}
+          {event.allDay ? event.allDay : `${event.start} - ${event.end}`}
         </span>
-        {event.tooltip && (
-          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        {event.isMultiDay && (
+          <span className="text-xs text-blue-400">
+            {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+          </span>
+        )}
+        {event.original?.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
         )}
       </div>
     ),
     code: {
       tsx: `
-const renderItemTemplate = useCallback((event: any) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
+const renderEvent = useCallback((event: MbscCalendarEventData) => (
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
     <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
     </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
+    )}
+  </div>
+), []);
+`.trim(),
+      jsx: `
+const renderEvent = (event) => (
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
+    <span className="text-xs text-gray-500">
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
+    </span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
+    )}
+  </div>
+)
+`.trim(),
+      vue: `
+const renderEvent = (event) => {
+  return (
+    <div class="flex flex-col p-2">
+      <span class="font-semibold text-blue-800">{event.title}</span>
+      <span class="text-xs text-gray-500">
+        {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
+      </span>
+      <span v-if="event.isMultiDay" class="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+      <span v-if="event.original?.tooltip" class="text-xs text-blue-400 italic">
+        {event.original.tooltip}
+      </span>
+    </div>
+  );
+}
+`.trim(),
+    },
+  },
+  renderLabelContentTemplate: {
+    fn: (event: MbscCalendarEventData) => (
+      <div className="flex flex-col p-2">
+        <span className="font-semibold text-blue-800">{event.title}</span>
+        <span className="text-xs text-gray-500">
+          {event.allDay ? event.allDay : `${event.start} - ${event.end}`}
+        </span>
+        {event.isMultiDay && (
+          <span className="text-xs text-blue-400">
+            {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+          </span>
+        )}
+        {event.original?.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
+        )}
+      </div>
+    ),
+    code: {
+      tsx: `
+const renderLabelContentTemplate = useCallback((event: MbscCalendarEventData) => (
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
+    <span className="text-xs text-gray-500">
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
+    </span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
+    )}
+  </div>
+), []);
+`.trim(),
+      jsx: `
+const renderLabelContentTemplate = (event) => (
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
+    <span className="text-xs text-gray-500">
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
+    </span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
+    )}
+  </div>
+)
+`.trim(),
+      vue: `
+const renderLabelContentTemplate = (event) => {
+  return (
+    <div class="flex flex-col p-2">
+      <span class="font-semibold text-blue-800">{event.title}</span>
+      <span class="text-xs text-gray-500">
+        {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
+      </span>
+      <span v-if="event.isMultiDay" class="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+      <span v-if="event.original?.tooltip" class="text-xs text-blue-400 italic">
+        {event.original.tooltip}
+      </span>
+    </div>
+  );
+}
+`.trim(),
+    },
+  },
+  scheduleEventContentTemplate: {
+    fn: (event: MbscCalendarEventData) => (
+      <div className="flex flex-col p-2">
+        <span className="font-semibold text-blue-800">{event.title}</span>
+        <span className="text-xs text-gray-500">
+          {event.allDay ? event.allDay : `${event.start} - ${event.end}`}
+        </span>
+        {event.isMultiDay && (
+          <span className="text-xs text-blue-400">
+            {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+          </span>
+        )}
+        {event.original?.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
+        )}
+      </div>
+    ),
+    code: {
+      tsx: `
+const scheduleEventContentTemplate = useCallback((event: MbscCalendarEventData) => (
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
+    <span className="text-xs text-gray-500">
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
+    </span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
+    )}
+  </div>
+), []);
+`.trim(),
+      jsx: `
+const scheduleEventContentTemplate = (event) => (
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
+    <span className="text-xs text-gray-500">
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
+    </span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
+    )}
+  </div>
+)
+`.trim(),
+      vue: `
+const scheduleEventContentTemplate = (event) => {
+  return (
+    <div class="flex flex-col p-2">
+      <span class="font-semibold text-blue-800">{event.title}</span>
+      <span class="text-xs text-gray-500">
+        {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
+      </span>
+      <span v-if="event.isMultiDay" class="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+      <span v-if="event.original?.tooltip" class="text-xs text-blue-400 italic">
+        {event.original.tooltip}
+      </span>
+    </div>
+  );
+}
+`.trim(),
+    },
+  },
+  renderItemTemplate: {
+    fn: (event: MbscCalendarEventData) => (
+      <div className="flex flex-col p-2">
+        <span className="font-semibold text-blue-800">{event.title}</span>
+        <span className="text-xs text-gray-500">
+          {event.allDay ? event.allDay : `${event.start} - ${event.end}`}
+        </span>
+        {event.isMultiDay && (
+          <span className="text-xs text-blue-400">
+            {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+          </span>
+        )}
+        {event.original?.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
+        )}
+      </div>
+    ),
+    code: {
+      tsx: `
+const renderItemTemplate = useCallback((event: MbscCalendarEventData) => (
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
+    <span className="text-xs text-gray-500">
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
+    </span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
     )}
   </div>
 ), []);
 `.trim(),
       jsx: `
 const renderItemTemplate = (event) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
     <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
     </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
     )}
   </div>
 )
@@ -423,127 +576,73 @@ const renderItemTemplate = (event) => (
       vue: `
 const renderItemTemplate = (event) => {
   return (
-    <div class="flex flex-col">
-      <span class="font-semibold text-blue-800">
-        {event.type === 'availability' ? 'Available' : event.type}
-      </span>
+    <div class="flex flex-col p-2">
+      <span class="font-semibold text-blue-800">{event.title}</span>
       <span class="text-xs text-gray-500">
-        {event.start} - {event.end}
+        {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
       </span>
-      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
-        {event.tooltip}
+      <span v-if="event.isMultiDay" class="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+      <span v-if="event.original?.tooltip" class="text-xs text-blue-400 italic">
+        {event.original.tooltip}
       </span>
     </div>
   );
 }
-`.trim()
-    }
+`.trim(),
+    },
   },
-  renderCalendarHeaderTemplate: {
-    fn: (event: any) => (
-      <div className="flex flex-col">
-        <span className="font-semibold text-blue-800">
-          {event.type === 'availability' ? 'Available' : event.type}
-        </span>
+  renderSlotTemplate: {
+    fn: (event: MbscCalendarEventData) => (
+      <div className="flex flex-col p-2">
+        <span className="font-semibold text-blue-800">{event.title}</span>
         <span className="text-xs text-gray-500">
-          {event.start} - {event.end}
+          {event.allDay ? event.allDay : `${event.start} - ${event.end}`}
         </span>
-        {event.tooltip && (
-          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        {event.isMultiDay && (
+          <span className="text-xs text-blue-400">
+            {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+          </span>
+        )}
+        {event.original?.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
         )}
       </div>
     ),
     code: {
       tsx: `
-const renderCalendarHeaderTemplate = useCallback((event: any) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
+const renderSlotTemplate = useCallback((event: MbscCalendarEventData) => (
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
     <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
     </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
     )}
-  </div>
-), []);
-`.trim(),
-      jsx: `
-const renderCalendarHeaderTemplate = (event) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
-    <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
-    </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
-    )}
-  </div>
-)
-`.trim(),
-      vue: `
-const renderCalendarHeaderTemplate = (event) => {
-  return (
-    <div class="flex flex-col">
-      <span class="font-semibold text-blue-800">
-        {event.type === 'availability' ? 'Available' : event.type}
-      </span>
-      <span class="text-xs text-gray-500">
-        {event.start} - {event.end}
-      </span>
-      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
-        {event.tooltip}
-      </span>
-    </div>
-  );
-}
-`.trim()
-    }
-  },
-  renderSlotTemplate: {
-    fn: (event: any) => (
-      <div className="flex flex-col">
-        <span className="font-semibold text-blue-800">
-          {event.type === 'availability' ? 'Available' : event.type}
-        </span>
-        <span className="text-xs text-gray-500">
-          {event.start} - {event.end}
-        </span>
-        {event.tooltip && (
-          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
-        )}
-      </div>
-    ),
-    code: {
-      tsx: `    
-const renderSlotTemplate = useCallback((event: any) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
-    <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
-    </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
     )}
   </div>
 ), []);
 `.trim(),
       jsx: `
 const renderSlotTemplate = (event) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
     <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
     </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
     )}
   </div>
 )
@@ -551,63 +650,73 @@ const renderSlotTemplate = (event) => (
       vue: `
 const renderSlotTemplate = (event) => {
   return (
-    <div class="flex flex-col">
-      <span class="font-semibold text-blue-800">
-        {event.type === 'availability' ? 'Available' : event.type}
-      </span>
+    <div class="flex flex-col p-2">
+      <span class="font-semibold text-blue-800">{event.title}</span>
       <span class="text-xs text-gray-500">
-        {event.start} - {event.end}
+        {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
       </span>
-      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
-        {event.tooltip}
+      <span v-if="event.isMultiDay" class="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+      <span v-if="event.original?.tooltip" class="text-xs text-blue-400 italic">
+        {event.original.tooltip}
       </span>
     </div>
   );
 }
-`.trim()
-    }
+`.trim(),
+    },
   },
   renderHeaderTemplate: {
-    fn: (event: any) => (
-      <div className="flex flex-col">
-        <span className="font-semibold text-blue-800">
-          {event.type === 'availability' ? 'Available' : event.type}
-        </span>
+    fn: (event: MbscCalendarEventData) => (
+      <div className="flex flex-col p-2">
+        <span className="font-semibold text-blue-800">{event.title}</span>
         <span className="text-xs text-gray-500">
-          {event.start} - {event.end}
+          {event.allDay ? event.allDay : `${event.start} - ${event.end}`}
         </span>
-        {event.tooltip && (
-          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        {event.isMultiDay && (
+          <span className="text-xs text-blue-400">
+            {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+          </span>
+        )}
+        {event.original?.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
         )}
       </div>
     ),
     code: {
       tsx: `
-const renderHeaderTemplate = useCallback((event: any) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
+const renderHeaderTemplate = useCallback((event: MbscCalendarEventData) => (
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
     <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
     </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
     )}
   </div>
 ), []);
 `.trim(),
       jsx: `
 const renderHeaderTemplate = (event) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
     <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
     </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
     )}
   </div>
 )
@@ -615,63 +724,73 @@ const renderHeaderTemplate = (event) => (
       vue: `
 const renderHeaderTemplate = (event) => {
   return (
-    <div class="flex flex-col">
-      <span class="font-semibold text-blue-800">
-        {event.type === 'availability' ? 'Available' : event.type}
-      </span>
+    <div class="flex flex-col p-2">
+      <span class="font-semibold text-blue-800">{event.title}</span>
       <span class="text-xs text-gray-500">
-        {event.start} - {event.end}
+        {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
       </span>
-      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
-        {event.tooltip}
+      <span v-if="event.isMultiDay" class="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+      <span v-if="event.original?.tooltip" class="text-xs text-blue-400 italic">
+        {event.original.tooltip}
       </span>
     </div>
   );
 }
-`.trim()
-    }
+`.trim(),
+    },
   },
   taskResourceTemplate: {
-    fn: (event: any) => (
-      <div className="flex flex-col">
-        <span className="font-semibold text-blue-800">
-          {event.type === 'availability' ? 'Available' : event.type}
-        </span>
+    fn: (event: MbscCalendarEventData) => (
+      <div className="flex flex-col p-2">
+        <span className="font-semibold text-blue-800">{event.title}</span>
         <span className="text-xs text-gray-500">
-          {event.start} - {event.end}
+          {event.allDay ? event.allDay : `${event.start} - ${event.end}`}
         </span>
-        {event.tooltip && (
-          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        {event.isMultiDay && (
+          <span className="text-xs text-blue-400">
+            {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+          </span>
+        )}
+        {event.original?.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
         )}
       </div>
     ),
     code: {
       tsx: `
-const taskResourceTemplate = useCallback((event: any) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
+const taskResourceTemplate = useCallback((event: MbscCalendarEventData) => (
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
     <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
     </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
     )}
   </div>
 ), []);
 `.trim(),
       jsx: `
 const taskResourceTemplate = (event) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
     <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
     </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
     )}
   </div>
 )
@@ -679,63 +798,73 @@ const taskResourceTemplate = (event) => (
       vue: `
 const taskResourceTemplate = (event) => {
   return (
-    <div class="flex flex-col">
-      <span class="font-semibold text-blue-800">
-        {event.type === 'availability' ? 'Available' : event.type}
-      </span>
+    <div class="flex flex-col p-2">
+      <span class="font-semibold text-blue-800">{event.title}</span>
       <span class="text-xs text-gray-500">
-        {event.start} - {event.end}
+        {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
       </span>
-      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
-        {event.tooltip}
+      <span v-if="event.isMultiDay" class="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+      <span v-if="event.original?.tooltip" class="text-xs text-blue-400 italic">
+        {event.original.tooltip}
       </span>
     </div>
   );
 }
-`.trim()
-    }
+`.trim(),
+    },
   },
   taskHeaderTemplate: {
-    fn: (event: any) => (
-      <div className="flex flex-col">
-        <span className="font-semibold text-blue-800">
-          {event.type === 'availability' ? 'Available' : event.type}
-        </span>
+    fn: (event: MbscCalendarEventData) => (
+      <div className="flex flex-col p-2">
+        <span className="font-semibold text-blue-800">{event.title}</span>
         <span className="text-xs text-gray-500">
-          {event.start} - {event.end}
+          {event.allDay ? event.allDay : `${event.start} - ${event.end}`}
         </span>
-        {event.tooltip && (
-          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        {event.isMultiDay && (
+          <span className="text-xs text-blue-400">
+            {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+          </span>
+        )}
+        {event.original?.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
         )}
       </div>
     ),
     code: {
       tsx: `
-const taskHeaderTemplate = useCallback((event: any) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
+const taskHeaderTemplate = useCallback((event: MbscCalendarEventData) => (
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
     <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
     </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
     )}
   </div>
 ), []);
 `.trim(),
       jsx: `
 const taskHeaderTemplate = (event) => (
-  <div className="flex flex-col">
-    <span className="font-semibold text-blue-800">
-      {event.type === 'availability' ? 'Available' : event.type}
-    </span>
+  <div className="flex flex-col p-2">
+    <span className="font-semibold text-blue-800">{event.title}</span>
     <span className="text-xs text-gray-500">
-      {event.start} - {event.end}
+      {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
     </span>
-    {event.tooltip && (
-      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    {event.isMultiDay && (
+      <span className="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+    )}
+    {event.original?.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.original.tooltip}</span>
     )}
   </div>
 )
@@ -743,23 +872,23 @@ const taskHeaderTemplate = (event) => (
       vue: `
 const taskHeaderTemplate = (event) => {
   return (
-    <div class="flex flex-col">
-      <span class="font-semibold text-blue-800">
-        {event.type === 'availability' ? 'Available' : event.type}
-      </span>
+    <div class="flex flex-col p-2">
+      <span class="font-semibold text-blue-800">{event.title}</span>
       <span class="text-xs text-gray-500">
-        {event.start} - {event.end}
+        {event.allDay ? event.allDay : \`\${event.start} - \${event.end}\`}
       </span>
-      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
-        {event.tooltip}
+      <span v-if="event.isMultiDay" class="text-xs text-blue-400">
+        {event.lastDay ? 'Last day of multi-day event' : 'Multi-day event'}
+      </span>
+      <span v-if="event.original?.tooltip" class="text-xs text-blue-400 italic">
+        {event.original.tooltip}
       </span>
     </div>
   );
 }
-`.trim()
-    }
-  }
-
+`.trim(),
+    },
+  },
 };
 
 export const templateCodes = Object.fromEntries(
@@ -775,4 +904,3 @@ export const templateStrs = (lang: Lang = 'TSX') =>
       return [k, v.code[key as keyof typeof v.code]];
     })
   );
-
