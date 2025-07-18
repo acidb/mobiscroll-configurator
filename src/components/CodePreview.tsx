@@ -176,7 +176,7 @@ export function CodePreview({ fullCode }: CodePreviewProps) {
             boxShadow: 'none',
           }}
         >
-          {active.code}
+          {active?.code}
         </SyntaxHighlighter>
       </div>
     </div>

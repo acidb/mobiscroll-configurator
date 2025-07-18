@@ -13,7 +13,7 @@ import { toVueEventName, hookStrs } from '@/components/reactHooks'
 
 
 export type CodeSnippet = {
-  label: 'TSX' | 'JSX' | 'jquery' | 'vue' | 'react' | 'component' | 'template';
+  label: 'TSX' | 'JSX' | 'jquery' | 'vue' | 'react' | 'Component' | 'Template' | 'SFC JS' | 'SFC TS';
   code: string;
 };
 
