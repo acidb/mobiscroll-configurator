@@ -35,6 +35,7 @@ const getParser = (lang: CodeSnippet['label']) => {
     case 'TSX':
       return 'typescript';
     case 'JSX':
+      return 'babel';
     case 'SFC JS':
       return 'vue';
     case 'SFC TS':
