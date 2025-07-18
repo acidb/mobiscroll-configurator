@@ -5,7 +5,7 @@ import { Config } from '@/app/(frontend)/configurator/types'
 interface ConfigDropdownProps {
     onChange: (selected: Record<string, any>) => void
     configs: Config[]
-    selectedPreset: string | null // Add selectedPreset prop
+    selectedPreset: string | null
 }
 
 export function ConfigDropdown({ onChange, configs, selectedPreset }: ConfigDropdownProps) {
@@ -20,7 +20,6 @@ export function ConfigDropdown({ onChange, configs, selectedPreset }: ConfigDrop
         const addonConfigTitle = urlParams.get('addonconfigtitle')
 
         if (!hasNonAddonConfig) {
-            // If no non-addon config exists, reset selection
             setSelectedConfig('')
             setError('Please select a main configuration first')
             if (addonConfigTitle) {

@@ -59,12 +59,17 @@ const resourceTemplate = (resource) => (
         </span>
       </div>
     </template>
-
-<script setup lang="ts">
-// setup data goes he
-
-}
-`.trim()
+`.trim(),
+      template: `<ng-template #resourceTemplate let-resource>
+  <div class="px-3 py-2 bg-blue-50 border-l-4 border-blue-600 rounded flex flex-col">
+    <span class="font-semibold text-blue-800">{{ resource.name }}</span>
+    <span class="text-xs text-blue-400">Resource ID: {{ resource.id }}</span>
+    <span class="text-xs text-blue-400 italic mt-1">
+      This is a test template to check rendering.
+    </span>
+  </div>
+</ng-template>
+      `.trim(),
     }
   },
   eventTemplate: {
@@ -240,6 +245,392 @@ const scheduleEventContentTemplate = (event) => {
 `.trim()
     }
   },
+  renderLabelContentTemplate:
+  {
+    fn: (event: any) => (
+      <div className="flex flex-col">
+        <span className="font-semibold text-blue-800">
+          {event.type === 'availability' ? 'Available' : event.type}
+        </span>
+        <span className="text-xs text-gray-500">
+          {event.start} - {event.end}
+        </span>
+        {event.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        )}
+      </div>
+    ),
+    code: {
+      tsx: `
+const renderLabelContentTemplate = useCallback((event: any) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+), []);
+`.trim(),
+      jsx: `
+const renderLabelContentTemplate = (event) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+)
+`.trim(),
+      vue: `
+const renderLabelContentTemplate = (event) => {
+  return (
+    <div class="flex flex-col">
+      <span class="font-semibold text-blue-800">
+        {event.type === 'availability' ? 'Available' : event.type}
+      </span>
+      <span class="text-xs text-gray-500">
+        {event.start} - {event.end}
+      </span>
+      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
+        {event.tooltip}
+      </span>
+    </div>
+  );
+}
+`.trim()
+    }
+  },
+  renderEventTemplate: {
+    fn: (event: any) => (
+      <div className="flex flex-col">
+        <span className="font-semibold text-blue-800">
+          {event.type === 'availability' ? 'Available' : event.type}
+        </span>
+        <span className="text-xs text-gray-500">
+          {event.start} - {event.end}
+        </span>
+        {event.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        )}
+      </div>
+    ),
+    code: {
+      tsx: `
+const renderEventTemplate = useCallback((event: any) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+), []);
+`.trim(),
+      jsx: `
+const renderEventTemplate = (event) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+)
+`.trim(),
+      vue: `
+const renderEventTemplate = (event) => {
+  return (
+    <div class="flex flex-col">
+      <span class="font-semibold text-blue-800">
+        {event.type === 'availability' ? 'Available' : event.type}
+      </span>
+      <span class="text-xs text-gray-500">
+        {event.start} - {event.end}
+      </span>
+      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
+        {event.tooltip}
+      </span>
+    </div>
+  );
+}
+`.trim()
+    }
+  },
+  renderItemTemplate:
+  {
+    fn: (event: any) => (
+      <div className="flex flex-col">
+        <span className="font-semibold text-blue-800">
+          {event.type === 'availability' ? 'Available' : event.type}
+        </span>
+        <span className="text-xs text-gray-500">
+          {event.start} - {event.end}
+        </span>
+        {event.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        )}
+      </div>
+    ),
+    code: {
+      tsx: `
+const renderItemTemplate = useCallback((event: any) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+), []);
+`.trim(),
+      jsx: `
+const renderItemTemplate = (event) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+)
+`.trim(),
+      vue: `
+const renderItemTemplate = (event) => {
+  return (
+    <div class="flex flex-col">
+      <span class="font-semibold text-blue-800">
+        {event.type === 'availability' ? 'Available' : event.type}
+      </span>
+      <span class="text-xs text-gray-500">
+        {event.start} - {event.end}
+      </span>
+      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
+        {event.tooltip}
+      </span>
+    </div>
+  );
+}
+`.trim()
+    }
+  },
+  renderCalendarHeaderTemplate: {
+    fn: (event: any) => (
+      <div className="flex flex-col">
+        <span className="font-semibold text-blue-800">
+          {event.type === 'availability' ? 'Available' : event.type}
+        </span>
+        <span className="text-xs text-gray-500">
+          {event.start} - {event.end}
+        </span>
+        {event.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        )}
+      </div>
+    ),
+    code: {
+      tsx: `
+const renderCalendarHeaderTemplate = useCallback((event: any) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+), []);
+`.trim(),
+      jsx: `
+const renderCalendarHeaderTemplate = (event) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+)
+`.trim(),
+      vue: `
+const renderCalendarHeaderTemplate = (event) => {
+  return (
+    <div class="flex flex-col">
+      <span class="font-semibold text-blue-800">
+        {event.type === 'availability' ? 'Available' : event.type}
+      </span>
+      <span class="text-xs text-gray-500">
+        {event.start} - {event.end}
+      </span>
+      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
+        {event.tooltip}
+      </span>
+    </div>
+  );
+}
+`.trim()
+    }
+  },
+  renderSlotTemplate: {
+    fn: (event: any) => (
+      <div className="flex flex-col">
+        <span className="font-semibold text-blue-800">
+          {event.type === 'availability' ? 'Available' : event.type}
+        </span>
+        <span className="text-xs text-gray-500">
+          {event.start} - {event.end}
+        </span>
+        {event.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        )}
+      </div>
+    ),
+    code: {
+      tsx: `    
+const renderSlotTemplate = useCallback((event: any) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+), []);
+`.trim(),
+      jsx: `
+const renderSlotTemplate = (event) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+)
+`.trim(),
+      vue: `
+const renderSlotTemplate = (event) => {
+  return (
+    <div class="flex flex-col">
+      <span class="font-semibold text-blue-800">
+        {event.type === 'availability' ? 'Available' : event.type}
+      </span>
+      <span class="text-xs text-gray-500">
+        {event.start} - {event.end}
+      </span>
+      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
+        {event.tooltip}
+      </span>
+    </div>
+  );
+}
+`.trim()
+    }
+  },
+  renderHeaderTemplate: {
+    fn: (event: any) => (
+      <div className="flex flex-col">
+        <span className="font-semibold text-blue-800">
+          {event.type === 'availability' ? 'Available' : event.type}
+        </span>
+        <span className="text-xs text-gray-500">
+          {event.start} - {event.end}
+        </span>
+        {event.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        )}
+      </div>
+    ),
+    code: {
+      tsx: `
+const renderHeaderTemplate = useCallback((event: any) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+), []);
+`.trim(),
+      jsx: `
+const renderHeaderTemplate = (event) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+)
+`.trim(),
+      vue: `
+const renderHeaderTemplate = (event) => {
+  return (
+    <div class="flex flex-col">
+      <span class="font-semibold text-blue-800">
+        {event.type === 'availability' ? 'Available' : event.type}
+      </span>
+      <span class="text-xs text-gray-500">
+        {event.start} - {event.end}
+      </span>
+      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
+        {event.tooltip}
+      </span>
+    </div>
+  );
+}
+`.trim()
+    }
+  }
 
 };
 
@@ -247,7 +638,7 @@ export const templateCodes = Object.fromEntries(
   Object.entries(templates).map(([k, v]) => [k, v.fn])
 );
 
-type Lang = 'TSX' | 'JSX' | 'JS' | 'SFCJS' | 'SFCTS' | 'SFC TS' | 'SFC JS';
+type Lang = 'TSX' | 'JSX' | 'JS' | 'SFCJS' | 'SFCTS' | 'SFC TS' | 'SFC JS' | 'TEMPLATE';
 
 export const templateStrs = (lang: Lang = 'TSX') =>
   Object.fromEntries(

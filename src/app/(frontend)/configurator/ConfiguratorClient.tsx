@@ -11,9 +11,25 @@ import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString
 import { templateStrs } from '@/components/reactTemplates'
 import { toVueEventName, hookStrs } from '@/components/reactHooks'
 
-const Skeleton = ({ className = "" }) => (
-  <div className={`skeleton h-32 w-32 ${className}`}></div>
-)
+
+export type CodeSnippet = {
+  label: 'TSX' | 'JSX' | 'jquery' | 'vue' | 'react' | 'Component' | 'Template' | 'SFC JS' | 'SFC TS';
+  code: string;
+};
+
+export const exampleSnippets: CodeSnippet[] = [
+  {
+    label: 'TSX',
+    code: `
+import React from 'react';
+
+export default function HelloWorld() {
+  return <div>Hello, world!</div>;
+}
+`.trim(),
+  }
+];
+
 
 export default function ConfiguratorClient({
   groups,
@@ -198,6 +214,8 @@ export default function ConfiguratorClient({
         return true
       }
 
+
+
       const eventData = extractedValues.data ?? []
       const view = extractedValues.view ?? []
       const resources = extractedValues.resources ?? []
@@ -210,7 +228,17 @@ export default function ConfiguratorClient({
       const inlineColors = extractedInlineValues.colors ?? []
 
       function getComponentTemplateProps(templates: Record<string, string>): string {
-        if (!templates) return ''
+        if (!templates) return '';
+        if (frameworkObj?.slug === 'angular') {
+          return Object.entries(templates)
+            .map(([prop, fnName]) => `[${prop}]="${fnName}"`)
+            .join('\n  ');
+        } else if (frameworkObj?.slug === 'javascript' || frameworkObj?.slug === 'jquery') {
+          return Object.entries(templates)
+            .map(([prop, fnName]) => `${prop}:${fnName}`)
+            .join('\n  ');
+        }
+
         return Object.entries(templates)
           .map(([prop, fnName]) => `${prop}={${fnName}}`)
           .join('\n  ')
@@ -221,7 +249,16 @@ export default function ConfiguratorClient({
         if (frameworkObj?.slug === 'vue') {
           return Object.entries(hooks)
             .map(([prop, fnName]) => `@${toVueEventName(prop)}="${fnName}"`)
-            .join('\n  ')
+            .join('\n  ');
+        }
+        else if (frameworkObj?.slug === 'javascript' || frameworkObj?.slug === 'jquery') {
+          return Object.entries(hooks)
+            .map(([prop, fnName]) => `${prop}:${fnName}`)
+            .join('\n  ');
+        } else if (frameworkObj?.slug === 'angular') {
+          return Object.entries(hooks)
+            .map(([prop, fnName]) => `(${prop})="${fnName}()"`)
+            .join('\n  ');
         }
         return Object.entries(hooks)
           .map(([prop, fnName]) => `${prop}={${fnName}}`)
@@ -243,21 +280,37 @@ export default function ConfiguratorClient({
         }
       }
 
-      function toUnquotedObjectString(data: any, indentLevel = 2): string {
-        if (!data) return '[]'
-        const indent = ' '.repeat(indentLevel * 2)
+      function toUnquotedObjectString(
+        data: any,
+        indentLevel = 2
+      ): string {
+        if (data === undefined) return 'undefined';
+        if (data === null) return 'null';
+        if (typeof data === 'string') return `"${data}"`;
+        if (typeof data === 'number' || typeof data === 'boolean') return String(data);
+
+        const indent = ' '.repeat(indentLevel * 2);
+
         if (Array.isArray(data)) {
-          if (data.length === 0) return '[]'
-          return `[\n${data
-            .map((item) =>
-              `${indent}  {\n${Object.entries(item)
-                .map(([key, value]) => `${indent}    ${key}: ${typeof value === 'string' ? `"${value}"` : value}`)
-                .join(',\n')}\n${indent}  }`
-            )
-            .join(',\n')}\n${indent}]`
+          if (!data.length) return '[]';
+          return '[\n' +
+            data
+              .map(item => indent + toUnquotedObjectString(item, indentLevel + 1))
+              .join(',\n') +
+            '\n' + ' '.repeat((indentLevel - 1) * 2) + ']';
         }
-        return JSON.stringify(data, null, 2)
+
+        if (typeof data === 'object') {
+          const entries = Object.entries(data).map(
+            ([key, value]) =>
+              `${indent}${key}: ${toUnquotedObjectString(value, indentLevel + 1)}`
+          );
+          return '{\n' + entries.join(',\n') + '\n' + ' '.repeat((indentLevel - 1) * 2) + '}';
+        }
+
+        return String(data);
       }
+
 
       const componentTemplateProps = getComponentTemplateProps(currentConfig.config.templates)
       const componentHookProps = getComponentHookProps(currentConfig.config.hooks)
@@ -265,10 +318,14 @@ export default function ConfiguratorClient({
       function getTemplateStrBlock(templates: Record<string, string>, lang = 'tsx') {
         if (!templates) return ''
         return Object.values(templates)
-          .map((fnName) => templateStrs(lang as any)?.[fnName] || '')
+          .map((fnName) => {
+            console.log('[getTemplateStrBlock] Mapping fnName:', fnName);
+            return templateStrs(lang as any)?.[fnName] || '';
+          })
           .filter(Boolean)
           .join('\n\n')
       }
+
 
       function getHooksStrBlock(hooks: Record<string, string>, lang = 'tsx') {
         if (!hooks) return ''
@@ -278,6 +335,8 @@ export default function ConfiguratorClient({
           .join('\n\n')
       }
 
+      const typeImports = currentConfig.config.types || [];
+      const reactHookImports = currentConfig.config.reactHooks || [];
       setData(currentConfig.config.data)
       setTemplate(currentConfig.config.templates)
       setHooks(currentConfig.config.hooks)
@@ -300,6 +359,20 @@ export default function ConfiguratorClient({
             /\/\* imports \*\//g,
             frameworkObj.slug === 'vue' ? "import { ref } from 'vue';\n" : ''
           )
+          .replace(
+            /\/\* type \*\//g,
+            typeImports.length
+              ? `${typeImports.join(', ')}`
+              : ''
+          )
+
+          .replace(
+            /\/\* react hooks \*\//g,
+            reactHookImports.length
+              ? `${reactHookImports.join(', ')}`
+              : ''
+          )
+
           .replace(
             /\/\* view \*\//g,
             isFilled(view)
@@ -358,6 +431,8 @@ export default function ConfiguratorClient({
       const finalCode = codeObj.map((obj) => obj.code)
       const finalLanguage = codeObj.map((obj) => obj.label)
 
+      console.log(codeObj);
+
       setLanguage(finalLanguage)
       setCode(codeObj)
     }
@@ -407,11 +482,7 @@ export default function ConfiguratorClient({
                 updateSelection={updateSelection}
               />
               {isLoading ? (
-                <div className="skeleton min-h-[250px] h-full w-full flex flex-col items-center justify-center animate-pulse">
-                  <p className="text-gray-500 text-lg italic text-center">
-                    Select configuration in the left side panel
-                  </p>
-                </div>
+                <CodePreview fullCode={exampleSnippets} />
               ) : (
                 <CodePreview fullCode={code} />
               )}
@@ -425,7 +496,19 @@ export default function ConfiguratorClient({
             }
           >
             {isLoading ? (
-              <div className="skeleton h-full w-full"></div>
+              isScheduler ? (
+                <div className="mockup-window bg-white border border-base-300 w-full rounded-mg min-h-[700px] max-h-[700px]">
+                  <img alt="wallpaper" src="https://img.daisyui.com/images/stock/453966.webp" />
+
+                </div>
+              ) : (
+                <div className="mockup-phone">
+                  <div className="mockup-phone-camera z-50" />
+                  <div className="mockup-phone-display">
+                    <img alt="wallpaper" src="https://img.daisyui.com/images/stock/453966.webp" />
+                  </div>
+                </div>
+              )
             ) : (
               <div
                 className={
