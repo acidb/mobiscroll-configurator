@@ -1,6 +1,5 @@
 import React from 'react';
 import { MbscCalendarEventData, MbscResource } from '@mobiscroll/react';
-import Image from 'next/image';
 
 export const templates = {
   resourceTemplate: {
@@ -75,7 +74,7 @@ const resourceTemplate = (resource) => (
     fn: (resource: MbscResource) => (
       <div className="flex items-center gap-3 p-1">
         {resource.img && (
-          <Image
+          <img
             src={resource.img}
             alt={resource.name}
             className="rounded-full w-8 h-8 object-cover border border-blue-200"
