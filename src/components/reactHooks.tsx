@@ -247,8 +247,38 @@ function handleEventUpdate(args: MbscEventUpdateEvent) {
 }
 `.trim()
         }
+    },
+    myTaskCreate: {
+        fn: () => { },
+        code: {
+            tsx: `
+ const handleTaskCreate = useCallback((args: MbscTaskCreateEvent) => {
+        setToastText(args.task.title ?? '');
+        setToastOpen(true);
+    }, []);
+`.trim(),
+            jsx: `
+ const handleTaskCreate = useCallback((args) => {
+    setToastText(args.task.title);
+    setToastOpen(true);
+  }, []);
+
+`.trim(),
+            sfcjs: `
+function handleTaskCreate(args) {
+  toastMessage.value = args.task.title
+  isToastOpen.value = true
+}
+`.trim(),
+            sfcts: `
+function handleTaskCreate(args: MbscTaskCreateEvent) {
+  toastMessage.value = args.task.title || ''
+  isToastOpen.value = true
+}
+`.trim()
+        }
     }
-    
+
 };
 
 export const hookCodes = Object.fromEntries(
