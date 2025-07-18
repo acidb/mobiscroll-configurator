@@ -221,7 +221,7 @@ export interface Preset {
   name: string;
   slug: string;
   description?: string | null;
-  component: string | Component;
+  component: (string | Component)[];
   frameworks: (string | Framework)[];
   tags?:
     | {

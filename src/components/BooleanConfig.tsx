@@ -14,29 +14,23 @@ export const BooleanConfig: React.FC<BooleanConfigProps> = ({
     id,
 }) => (
     <div className="flex items-center justify-between py-2 ">
-
-        <kbd className="kbd rounded-sm"> {label}</kbd>
-
-        <button
-            type="button"
-            id={id}
-            className={`
-        relative w-11 h-6 rounded-full transition bg-gray-200
-       ${value ? "bg-green-500" : "bg-gray-200"}
-        focus:outline-none focus:ring-2 focus:ring-blue-400
-      `}
-            aria-pressed={value}
-            aria-label={label}
+        <kbd
+            className="
+    kbd rounded-sm cursor-pointer select-none
+    border-b-2
+    transition-all duration-100
+    active:scale-95
+    active:shadow-none
+    active:border-b-1
+    focus:outline-none
+  "
             onClick={() => onChange(!value)}
+            tabIndex={0}
         >
-            <span
-                className={`
-          absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform
-          ${value ? "translate-x-5" : ""}
-        `}
-            />
-        </button>
+            {label}
+        </kbd>
 
+        <input type="checkbox" checked={value} onClick={() => onChange(!value)} className="toggle toggle-success" />
     </div>
 
 
