@@ -38,6 +38,8 @@ export interface Preset {
 }
 
 export interface ConfigurationOption {
+  type: string;
+  title: string;
   component: string;
   props: Record<string, any>;
   data: Record<string, any>;
