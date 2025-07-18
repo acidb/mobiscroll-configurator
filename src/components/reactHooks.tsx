@@ -12,26 +12,26 @@ export const hooks = {
         fn: () => { },
         code: {
             tsx: `
- const handleEventClick = useCallback((args: MbscEventClickEvent) => {
+ const myEventClick = useCallback((args: MbscEventClickEvent) => {
         setToastText(args.event.title ?? '');
         setToastOpen(true);
     }, []);
 `.trim(),
             jsx: `
- const handleEventClick = useCallback((args) => {
+ const myEventClick = useCallback((args) => {
     setToastText(args.event.title);
     setToastOpen(true);
   }, []);
 
 `.trim(),
             sfcjs: `
-function handleEventClick(args) {
+function myEventClick(args) {
   toastMessage.value = args.event.title
   isToastOpen.value = true
 }
 `.trim(),
             sfcts: `
-function handleEventClick(args: MbscEventClickEvent) {
+function myEventClick(args: MbscEventClickEvent) {
   toastMessage.value = args.event.title || ''
   isToastOpen.value = true
 }
