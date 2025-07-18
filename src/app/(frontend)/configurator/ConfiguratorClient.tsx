@@ -214,6 +214,8 @@ export default function ConfiguratorClient({
         return true
       }
 
+
+
       const eventData = extractedValues.data ?? []
       const view = extractedValues.view ?? []
       const resources = extractedValues.resources ?? []
@@ -278,21 +280,37 @@ export default function ConfiguratorClient({
         }
       }
 
-      function toUnquotedObjectString(data: any, indentLevel = 2): string {
-        if (!data) return '[]'
-        const indent = ' '.repeat(indentLevel * 2)
+      function toUnquotedObjectString(
+        data: any,
+        indentLevel = 2
+      ): string {
+        if (data === undefined) return 'undefined';
+        if (data === null) return 'null';
+        if (typeof data === 'string') return `"${data}"`;
+        if (typeof data === 'number' || typeof data === 'boolean') return String(data);
+
+        const indent = ' '.repeat(indentLevel * 2);
+
         if (Array.isArray(data)) {
-          if (data.length === 0) return '[]'
-          return `[\n${data
-            .map((item) =>
-              `${indent}  {\n${Object.entries(item)
-                .map(([key, value]) => `${indent}    ${key}: ${typeof value === 'string' ? `"${value}"` : value}`)
-                .join(',\n')}\n${indent}  }`
-            )
-            .join(',\n')}\n${indent}]`
+          if (!data.length) return '[]';
+          return '[\n' +
+            data
+              .map(item => indent + toUnquotedObjectString(item, indentLevel + 1))
+              .join(',\n') +
+            '\n' + ' '.repeat((indentLevel - 1) * 2) + ']';
         }
-        return JSON.stringify(data, null, 2)
+
+        if (typeof data === 'object') {
+          const entries = Object.entries(data).map(
+            ([key, value]) =>
+              `${indent}${key}: ${toUnquotedObjectString(value, indentLevel + 1)}`
+          );
+          return '{\n' + entries.join(',\n') + '\n' + ' '.repeat((indentLevel - 1) * 2) + '}';
+        }
+
+        return String(data);
       }
+
 
       const componentTemplateProps = getComponentTemplateProps(currentConfig.config.templates)
       const componentHookProps = getComponentHookProps(currentConfig.config.hooks)
@@ -412,6 +430,8 @@ export default function ConfiguratorClient({
 
       const finalCode = codeObj.map((obj) => obj.code)
       const finalLanguage = codeObj.map((obj) => obj.label)
+
+      console.log(codeObj);
 
       setLanguage(finalLanguage)
       setCode(codeObj)
