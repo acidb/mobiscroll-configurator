@@ -46,6 +46,7 @@ export interface ConfigurationOption {
   hooks: Record<string, any>;
   templates: Record<string, any>;
   types: string[];
+  reactHooks: string[];
 }
 
 export interface Config {

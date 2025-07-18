@@ -318,7 +318,7 @@ export default function ConfiguratorClient({
       }
 
       const typeImports = currentConfig.config.types || [];
-      console.log('Types' + currentConfig.config.types)
+      const reactHookImports = currentConfig.config.reactHooks || [];
       setData(currentConfig.config.data)
       setTemplate(currentConfig.config.templates)
       setHooks(currentConfig.config.hooks)
@@ -348,6 +348,12 @@ export default function ConfiguratorClient({
               : ''
           )
 
+          .replace(
+            /\/\* react hooks \*\//g,
+            reactHookImports.length
+              ? `${reactHookImports.join(', ')}`
+              : ''
+          )
 
           .replace(
             /\/\* view \*\//g,
