@@ -210,7 +210,17 @@ export default function ConfiguratorClient({
       const inlineColors = extractedInlineValues.colors ?? []
 
       function getComponentTemplateProps(templates: Record<string, string>): string {
-        if (!templates) return ''
+        if (!templates) return '';
+        if (frameworkObj?.slug === 'angular') {
+          return Object.entries(templates)
+            .map(([prop, fnName]) => `[${prop}]="${fnName}"`)
+            .join('\n  ');
+        } else if (frameworkObj?.slug === 'javascript' || frameworkObj?.slug === 'jquery') {
+          return Object.entries(templates)
+            .map(([prop, fnName]) => `${prop}:${fnName}`)
+            .join('\n  ');
+        }
+
         return Object.entries(templates)
           .map(([prop, fnName]) => `${prop}={${fnName}}`)
           .join('\n  ')
@@ -221,7 +231,16 @@ export default function ConfiguratorClient({
         if (frameworkObj?.slug === 'vue') {
           return Object.entries(hooks)
             .map(([prop, fnName]) => `@${toVueEventName(prop)}="${fnName}"`)
-            .join('\n  ')
+            .join('\n  ');
+        }
+        else if (frameworkObj?.slug === 'javascript' || frameworkObj?.slug === 'jquery') {
+          return Object.entries(hooks)
+            .map(([prop, fnName]) => `${prop}:${fnName}`)
+            .join('\n  ');
+        } else if (frameworkObj?.slug === 'angular') {
+          return Object.entries(hooks)
+            .map(([prop, fnName]) => `(${prop})="${fnName}()"`)
+            .join('\n  ');
         }
         return Object.entries(hooks)
           .map(([prop, fnName]) => `${prop}={${fnName}}`)
@@ -265,10 +284,14 @@ export default function ConfiguratorClient({
       function getTemplateStrBlock(templates: Record<string, string>, lang = 'tsx') {
         if (!templates) return ''
         return Object.values(templates)
-          .map((fnName) => templateStrs(lang as any)?.[fnName] || '')
+          .map((fnName) => {
+            console.log('[getTemplateStrBlock] Mapping fnName:', fnName);
+            return templateStrs(lang as any)?.[fnName] || '';
+          })
           .filter(Boolean)
           .join('\n\n')
       }
+
 
       function getHooksStrBlock(hooks: Record<string, string>, lang = 'tsx') {
         if (!hooks) return ''

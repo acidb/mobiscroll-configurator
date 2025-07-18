@@ -59,12 +59,17 @@ const resourceTemplate = (resource) => (
         </span>
       </div>
     </template>
-
-<script setup lang="ts">
-// setup data goes he
-
-}
-`.trim()
+`.trim(),
+      template: `<ng-template #resourceTemplate let-resource>
+  <div class="px-3 py-2 bg-blue-50 border-l-4 border-blue-600 rounded flex flex-col">
+    <span class="font-semibold text-blue-800">{{ resource.name }}</span>
+    <span class="text-xs text-blue-400">Resource ID: {{ resource.id }}</span>
+    <span class="text-xs text-blue-400 italic mt-1">
+      This is a test template to check rendering.
+    </span>
+  </div>
+</ng-template>
+      `.trim(),
     }
   },
   eventTemplate: {
@@ -247,7 +252,7 @@ export const templateCodes = Object.fromEntries(
   Object.entries(templates).map(([k, v]) => [k, v.fn])
 );
 
-type Lang = 'TSX' | 'JSX' | 'JS' | 'SFCJS' | 'SFCTS' | 'SFC TS' | 'SFC JS';
+type Lang = 'TSX' | 'JSX' | 'JS' | 'SFCJS' | 'SFCTS' | 'SFC TS' | 'SFC JS' | 'TEMPLATE';
 
 export const templateStrs = (lang: Lang = 'TSX') =>
   Object.fromEntries(
