@@ -317,6 +317,8 @@ export default function ConfiguratorClient({
           .join('\n\n')
       }
 
+      const typeImports = currentConfig.config.types || [];
+      console.log('Types' + currentConfig.config.types)
       setData(currentConfig.config.data)
       setTemplate(currentConfig.config.templates)
       setHooks(currentConfig.config.hooks)
@@ -339,6 +341,14 @@ export default function ConfiguratorClient({
             /\/\* imports \*\//g,
             frameworkObj.slug === 'vue' ? "import { ref } from 'vue';\n" : ''
           )
+          .replace(
+            /\/\* type \*\//g,
+            typeImports.length
+              ? `${typeImports.join(', ')}`
+              : ''
+          )
+
+
           .replace(
             /\/\* view \*\//g,
             isFilled(view)
@@ -462,7 +472,7 @@ export default function ConfiguratorClient({
             {isLoading ? (
               isScheduler ? (
                 <div className="mockup-window bg-white border border-base-300 w-full rounded-mg min-h-[700px] max-h-[700px]">
-                    <img alt="wallpaper" src="https://img.daisyui.com/images/stock/453966.webp" />
+                  <img alt="wallpaper" src="https://img.daisyui.com/images/stock/453966.webp" />
 
                 </div>
               ) : (

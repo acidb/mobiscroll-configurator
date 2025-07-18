@@ -45,6 +45,7 @@ export interface ConfigurationOption {
   data: Record<string, any>;
   hooks: Record<string, any>;
   templates: Record<string, any>;
+  types: string[];
 }
 
 export interface Config {
