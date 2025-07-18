@@ -630,6 +630,134 @@ const renderHeaderTemplate = (event) => {
 }
 `.trim()
     }
+  },
+  taskResourceTemplate: {
+    fn: (event: any) => (
+      <div className="flex flex-col">
+        <span className="font-semibold text-blue-800">
+          {event.type === 'availability' ? 'Available' : event.type}
+        </span>
+        <span className="text-xs text-gray-500">
+          {event.start} - {event.end}
+        </span>
+        {event.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        )}
+      </div>
+    ),
+    code: {
+      tsx: `
+const taskResourceTemplate = useCallback((event: any) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+), []);
+`.trim(),
+      jsx: `
+const taskResourceTemplate = (event) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+)
+`.trim(),
+      vue: `
+const taskResourceTemplate = (event) => {
+  return (
+    <div class="flex flex-col">
+      <span class="font-semibold text-blue-800">
+        {event.type === 'availability' ? 'Available' : event.type}
+      </span>
+      <span class="text-xs text-gray-500">
+        {event.start} - {event.end}
+      </span>
+      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
+        {event.tooltip}
+      </span>
+    </div>
+  );
+}
+`.trim()
+    }
+  },
+  taskHeaderTemplate: {
+    fn: (event: any) => (
+      <div className="flex flex-col">
+        <span className="font-semibold text-blue-800">
+          {event.type === 'availability' ? 'Available' : event.type}
+        </span>
+        <span className="text-xs text-gray-500">
+          {event.start} - {event.end}
+        </span>
+        {event.tooltip && (
+          <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+        )}
+      </div>
+    ),
+    code: {
+      tsx: `
+const taskHeaderTemplate = useCallback((event: any) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+), []);
+`.trim(),
+      jsx: `
+const taskHeaderTemplate = (event) => (
+  <div className="flex flex-col">
+    <span className="font-semibold text-blue-800">
+      {event.type === 'availability' ? 'Available' : event.type}
+    </span>
+    <span className="text-xs text-gray-500">
+      {event.start} - {event.end}
+    </span>
+    {event.tooltip && (
+      <span className="text-xs text-blue-400 italic">{event.tooltip}</span>
+    )}
+  </div>
+)
+`.trim(),
+      vue: `
+const taskHeaderTemplate = (event) => {
+  return (
+    <div class="flex flex-col">
+      <span class="font-semibold text-blue-800">
+        {event.type === 'availability' ? 'Available' : event.type}
+      </span>
+      <span class="text-xs text-gray-500">
+        {event.start} - {event.end}
+      </span>
+      <span v-if="event.tooltip" class="text-xs text-blue-400 italic">
+        {event.tooltip}
+      </span>
+    </div>
+  );
+}
+`.trim()
+    }
   }
 
 };
