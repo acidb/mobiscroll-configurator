@@ -25,6 +25,7 @@ export const Presets: CollectionConfig = {
       name: 'component',
       type: 'relationship',
       relationTo: 'components',
+      hasMany: true,
       required: true,
     },
     {
