@@ -60,7 +60,7 @@ export default function ConfiguratorClient({
   const [currentConfig, setCurrentConfig] = useState<Config | null>(null)
   const [code, setCode] = useState<any>(null)
   const [language, setLanguage] = useState<any>(null)
-  const [props, setProps] = useState<Record<string, any>>({})
+  const [props, setProps] = useState<Record<string, string>>({})
   const [data, setData] = useState<Record<string, any>>({})
   const [template, setTemplate] = useState<Record<string, any>>({})
   const [hooks, setHooks] = useState<Record<string, any>>({})

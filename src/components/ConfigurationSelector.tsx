@@ -82,7 +82,8 @@ export function ConfigurationsSelector({
         }
     }, [screenSize])
 
-    function updateValue(prop: string, value: any) {
+
+    function updateValue(prop: string, value: any ) {
         const newSelected = { ...selected, [prop]: value }
         onChange(newSelected)
         updateUrl(newSelected)

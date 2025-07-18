@@ -15,13 +15,11 @@ export async function fetchConfiguratorData(context: any) {
       collection: 'components',
     })
 
-    let groupId = null
     if (group) {
       const groupResult = await payload.find({
         collection: 'groups',
         where: { slug: { equals: group } },
       })
-      groupId = groupResult.docs[0]?.id || null
     }
 
     let componentId = null

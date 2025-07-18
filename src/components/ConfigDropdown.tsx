@@ -3,7 +3,7 @@ import { updateUrl } from '@/utils/updateUrl'
 import { Config } from '@/app/(frontend)/configurator/types'
 
 interface ConfigDropdownProps {
-    onChange: (selected: Record<string, any>) => void
+    onChange: (selected: Record<string, string>) => void
     configs: Config[]
     selectedPreset: string | null
 }

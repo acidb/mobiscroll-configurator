@@ -1,5 +1,6 @@
 import React from 'react'
 import { Framework } from './types'
+import Image from 'next/image'
 
 interface FrameworkSectionProps {
   frameworks: Framework[]
@@ -35,7 +36,15 @@ const FrameworkSection: React.FC<FrameworkSectionProps> = ({
               aria-disabled={isDisabled}
             >
               <div className="flex items-center space-x-2 ">
-                <img src={framework.icon} alt={framework.name} className="w-8 h-8" />
+                <Image
+                  src={framework.icon}
+                  alt={framework.name}
+                  width={32}
+                  height={32}
+                  className="w-8 h-8"
+                  unoptimized 
+                />
+
                 <span className="font-medium">{framework.name}</span>
               </div>
             </button>
