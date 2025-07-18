@@ -11,9 +11,25 @@ import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString
 import { templateStrs } from '@/components/reactTemplates'
 import { toVueEventName, hookStrs } from '@/components/reactHooks'
 
-const Skeleton = ({ className = "" }) => (
-  <div className={`skeleton h-32 w-32 ${className}`}></div>
-)
+
+export type CodeSnippet = {
+  label: 'TSX' | 'JSX' | 'jquery' | 'vue' | 'react' | 'component' | 'template';
+  code: string;
+};
+
+export const exampleSnippets: CodeSnippet[] = [
+  {
+    label: 'TSX',
+    code: `
+import React from 'react';
+
+export default function HelloWorld() {
+  return <div>Hello, world!</div>;
+}
+`.trim(),
+  }
+];
+
 
 export default function ConfiguratorClient({
   groups,
@@ -430,11 +446,7 @@ export default function ConfiguratorClient({
                 updateSelection={updateSelection}
               />
               {isLoading ? (
-                <div className="skeleton min-h-[250px] h-full w-full flex flex-col items-center justify-center animate-pulse">
-                  <p className="text-gray-500 text-lg italic text-center">
-                    Select configuration in the left side panel
-                  </p>
-                </div>
+                <CodePreview fullCode={exampleSnippets} />
               ) : (
                 <CodePreview fullCode={code} />
               )}
@@ -448,7 +460,19 @@ export default function ConfiguratorClient({
             }
           >
             {isLoading ? (
-              <div className="skeleton h-full w-full"></div>
+              isScheduler ? (
+                <div className="mockup-window bg-white border border-base-300 w-full rounded-mg min-h-[700px] max-h-[700px]">
+                    <img alt="wallpaper" src="https://img.daisyui.com/images/stock/453966.webp" />
+
+                </div>
+              ) : (
+                <div className="mockup-phone">
+                  <div className="mockup-phone-camera z-50" />
+                  <div className="mockup-phone-display">
+                    <img alt="wallpaper" src="https://img.daisyui.com/images/stock/453966.webp" />
+                  </div>
+                </div>
+              )
             ) : (
               <div
                 className={

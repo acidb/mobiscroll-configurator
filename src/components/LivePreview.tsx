@@ -92,7 +92,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     return (
         <>
             {isScheduler ? (
-                <div className="mockup-window border border-base-300 w-full rounded-mg">
+                <div className="mockup-window border  bg-white border-base-300 w-full rounded-mg">
                     <Component
                         themeVariant="light"
                         {...mergedProps}

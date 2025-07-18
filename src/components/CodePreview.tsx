@@ -9,7 +9,7 @@ import parserTypescript from 'prettier/plugins/typescript';
 import pluginEstree from 'prettier/plugins/estree';
 import parserHtml from 'prettier/plugins/html';
 
-type CodeSnippet = {
+export type CodeSnippet = {
   label: 'TSX' | 'JSX' | 'jquery' | 'vue' | 'react' | 'component' | 'template';
   code: string;
 };
