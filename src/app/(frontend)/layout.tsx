@@ -18,9 +18,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={geist.className}  data-theme="light">
       <body className="min-h-[100vh] flex flex-col bg-background text-foreground">
-        <Header />
+        {/* <Header /> */}
 
-        <main className="flex-1 flex items-start p-8">
+        <main className="flex-1 flex items-start">
           <div className="w-full p-6">{children}</div>
         </main>
 

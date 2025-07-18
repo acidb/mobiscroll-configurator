@@ -10,7 +10,7 @@ import pluginEstree from 'prettier/plugins/estree';
 import parserHtml from 'prettier/plugins/html';
 
 type CodeSnippet = {
-  label: 'TSX' | 'JSX' | 'jquery' | 'vue' | 'react';
+  label: 'TSX' | 'JSX' | 'jquery' | 'vue' | 'react' | 'component' | 'template';
   code: string;
 };
 interface CodePreviewProps {
@@ -41,8 +41,12 @@ const getParser = (lang: CodeSnippet['label']) => {
       return 'babel';
     case 'vue':
       return 'html';
+    case 'component':
+      return 'html';
+    case 'template':
+      return 'html';
     default:
-      return 'babel';
+      return 'typescript';
   }
 };
 

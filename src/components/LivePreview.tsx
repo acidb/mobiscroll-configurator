@@ -20,6 +20,7 @@ const componentMap: Record<string, React.ElementType> = {
 };
 
 
+
 export interface LivePreviewProps {
     componentName: string;
     mergedProps: Record<string, any>;
@@ -86,18 +87,21 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     }
 
 
+
     console.log(isScheduler);
     return (
         <>
             {isScheduler ? (
-                <div className="mockup-window border border-base-300 w-full">
+                <div className="mockup-window border border-base-300 w-full rounded-mg">
                     <Component
+                        themeVariant="light"
                         {...mergedProps}
                         data={eventData}
                         resources={resources}
                         invalid={invalid}
                         {...templateProps}
                         {...hookProps}
+                        className="min-h-[700px] max-h-[700px]"
                     />
                     <Toast
                         message={toastText}
@@ -110,6 +114,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                     <div className="mockup-phone-camera z-50" />
                     <div className="mockup-phone-display">
                         <Component
+                            themeVariant="light"
                             {...mergedProps}
                             data={eventData}
                             resources={resources}

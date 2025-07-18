@@ -38,6 +38,7 @@ export function genCodeWithTopVars(
 
         let formatted = '';
 
+
         if (typeof value === 'string') {
             const escaped = value.replace(/'/g, "\\'");
             switch (framework) {

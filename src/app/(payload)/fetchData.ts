@@ -37,7 +37,10 @@ export async function fetchConfiguratorData(context: any) {
       componentId = componentResult.docs[0]?.id || null
     }
 
-    const frameworksResult = await payload.find({ collection: 'frameworks' })
+    const frameworksResult = await payload.find({
+      collection: 'frameworks',
+    })
+
     const presetsResult = await payload.find({
       collection: 'presets',
       where: componentId ? { component: { equals: componentId } } : {},
@@ -47,11 +50,31 @@ export async function fetchConfiguratorData(context: any) {
     const selectedPresetObj = presetsResult.docs.find(p => p.slug === selectedPreset)
     const selectedPresetId = selectedPresetObj?.id
 
-    const configsResult = await payload.find({
+    // Fetch the first non-addon configuration
+    const nonAddonConfigResult = await payload.find({
       collection: 'configs',
-      where: selectedPresetId ? { preset: { equals: selectedPresetId } } : {},
+      where: {
+        and: [
+          selectedPresetId ? { preset: { equals: selectedPresetId } } : {},
+          { 'config.type': { not_equals: 'addon' } },
+        ],
+      },
       limit: 1,
     })
+
+    // Fetch all addon configurations
+    const addonConfigsResult = await payload.find({
+      collection: 'configs',
+      where: {
+        and: [
+          selectedPresetId ? { preset: { equals: selectedPresetId } } : {},
+          { 'config.type': { equals: 'addon' } },
+        ],
+      },
+    })
+
+    // Combine non-addon and addon configs
+    const configs = [...nonAddonConfigResult.docs, ...addonConfigsResult.docs]
 
     const result = {
       props: {
@@ -62,7 +85,7 @@ export async function fetchConfiguratorData(context: any) {
         selectedGroup: group || null,
         selectedComponent: component || null,
         selectedFramework: framework || null,
-        configs: configsResult.docs,
+        configs: configs,
       },
     }
 
@@ -84,4 +107,3 @@ export async function fetchConfiguratorData(context: any) {
     }
   }
 }
-

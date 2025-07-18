@@ -19,13 +19,9 @@ const GroupSection: React.FC<GroupSectionProps> = ({
   updateSelection,
   selectComponent,
 }) => {
-  useEffect(() => {
-    if (!selectedGroup && groups.length > 0) {
-      updateSelection('group', groups[0].slug)
-    }
-  }, [selectedGroup, groups, updateSelection])
-
-  const currentGroupSlug = selectedGroup
+  const currentGroupSlug =
+    selectedGroup ||
+    (groups.length > 0 ? groups[0].slug : null)
 
   const groupComponents = components
     .filter((c) =>

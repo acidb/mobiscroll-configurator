@@ -15,14 +15,10 @@ export const BooleanConfig: React.FC<BooleanConfigProps> = ({
     id,
     helperText,
 }) => (
-    <div className="flex items-center justify-between py-2">
+    <div className="flex items-center justify-between py-2 ">
 
-        <label
-            htmlFor={id}
-            className="block text-sm font-medium text-gray-700 mb-1"
-        >
-            <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">  {label}</code>
-        </label>
+        <kbd className="kbd rounded-sm"> {label}</kbd>
+
         <button
             type="button"
             id={id}
