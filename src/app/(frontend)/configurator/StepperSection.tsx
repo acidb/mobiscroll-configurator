@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Group, Component, Preset } from "./types";
 import { Calendar1, Wrench, CalendarDays } from "lucide-react";
-import { ChevronDown, ChevronLeft, X } from "lucide-react";
+import { X } from "lucide-react";
 
 
 interface StepperSectionProps {
@@ -15,7 +15,6 @@ interface StepperSectionProps {
     updateSelections: (updates: Record<string, string | null>) => void;
 }
 
-const steps = ["group", "component", "preset"] as const;
 
 const StepperSection: React.FC<StepperSectionProps> = ({
     groups,
@@ -48,9 +47,6 @@ const StepperSection: React.FC<StepperSectionProps> = ({
         if (selectedPreset && open === "preset") setOpen(null);
     }, [selectedPreset]);
 
-    function handleOpen(section: "group" | "component" | "preset") {
-        setOpen(section);
-    }
 
     React.useEffect(() => {
         if (!selectedGroup) {

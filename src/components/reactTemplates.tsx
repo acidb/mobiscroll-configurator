@@ -1,5 +1,6 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { MbscCalendarEventData, MbscResource } from '@mobiscroll/react';
+import Image from 'next/image';
 
 export const templates = {
   resourceTemplate: {
@@ -74,7 +75,7 @@ const resourceTemplate = (resource) => (
     fn: (resource: MbscResource) => (
       <div className="flex items-center gap-3 p-1">
         {resource.img && (
-          <img
+          <Image
             src={resource.img}
             alt={resource.name}
             className="rounded-full w-8 h-8 object-cover border border-blue-200"
@@ -895,7 +896,7 @@ export const templateCodes = Object.fromEntries(
   Object.entries(templates).map(([k, v]) => [k, v.fn])
 );
 
-type Lang = 'TSX' | 'JSX' | 'JS' | 'SFCJS' | 'SFCTS' | 'SFC TS' | 'SFC JS' | 'TEMPLATE';
+export type Lang = 'TSX' | 'JSX' | 'JS' | 'SFCJS' | 'SFCTS' | 'SFC TS' | 'SFC JS' | 'TEMPLATE' | 'HTML' | 'JS';
 
 export const templateStrs = (lang: Lang = 'TSX') =>
   Object.fromEntries(

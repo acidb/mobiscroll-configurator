@@ -9,9 +9,6 @@ import StepperSection from '../app/(frontend)/configurator/StepperSection'
 import { Component, Preset, Config, Group } from '@/app/(frontend)/configurator/types'
 import { ConfigDropdown } from './ConfigDropdown'
 
-const ENUM_OPTIONS: Record<string, string[]> = {
-    groupBy: ['date', 'resource'],
-}
 
 interface pGroup {
     label: string
@@ -42,10 +39,10 @@ const GROUPS: pGroup[] = [
     },
 ]
 
-type SelectedConfig = Record<string, any>
+type SelectedConfig = Record<string, string>
 
 interface ConfigurationsSelectorProps {
-    configurations: Record<string, any>
+    configurations: Record<string, string>
     onChange: (selected: SelectedConfig) => void
     selected: SelectedConfig
     groups: Group[]

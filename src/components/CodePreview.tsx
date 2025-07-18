@@ -10,7 +10,7 @@ import pluginEstree from 'prettier/plugins/estree';
 import parserHtml from 'prettier/plugins/html';
 
 export type CodeSnippet = {
-  label: 'TSX' | 'JSX' | 'jquery' | 'vue' | 'react' | 'Component' | 'Template' | 'SFC JS' | 'SFC TS';
+  label: 'TSX' | 'JSX' | 'jquery' | 'vue' | 'react' | 'Component' | 'Template' | 'SFC JS' | 'SFC TS' | 'HTML' | 'JS';
   code: string;
 };
 interface CodePreviewProps {
@@ -50,6 +50,10 @@ const getParser = (lang: CodeSnippet['label']) => {
       return 'typescript';
     case 'Template':
       return 'html';
+    case 'HTML':
+      return 'html';
+    case 'JS':
+      return 'babel';
     default:
       return 'typescript';
   }
@@ -68,7 +72,7 @@ export function CodePreview({ fullCode }: CodePreviewProps) {
     (async () => {
       if (!fullCode || !fullCode.length) return;
       const formattedArr = await Promise.all(
-        fullCode.map(async (snippetObj, idx) => {
+        fullCode.map(async (snippetObj) => {
           let filename = '';
           if (snippetObj.label === 'TSX') filename = `App.tsx`;
           else if (snippetObj.label === 'JSX') filename = `App.jsx`;

@@ -71,7 +71,7 @@ export function ConfigDropdown({ onChange, configs, selectedPreset }: ConfigDrop
             <div className="mb-2">
                 <span className="font-semibold text-gray-700 text-sm">Select Addon Configuration</span>
                 <span className="block text-xs text-gray-400 mt-1">
-                    Choose an existing configuration with type 'addon' for the selected preset
+                    Choose an existing configuration with type addon for the selected preset
                 </span>
             </div>
             {error && <div className="text-red-500 text-xs mb-2">{error}</div>}

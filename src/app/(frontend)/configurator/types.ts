@@ -41,10 +41,10 @@ export interface ConfigurationOption {
   type: string;
   title: string;
   component: string;
-  props: Record<string, any>;
-  data: Record<string, any>;
-  hooks: Record<string, any>;
-  templates: Record<string, any>;
+  props: Record<string, string>;
+  data: Record<string, string>;
+  hooks: Record<string, string>;
+  templates: Record<string, string>;
   types: string[];
   reactHooks: string[];
 }

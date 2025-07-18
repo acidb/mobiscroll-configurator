@@ -5,7 +5,6 @@ interface BooleanConfigProps {
     onChange: (val: boolean) => void;
     label: string;
     id?: string;
-    helperText?: string;
 }
 
 export const BooleanConfig: React.FC<BooleanConfigProps> = ({
@@ -13,7 +12,6 @@ export const BooleanConfig: React.FC<BooleanConfigProps> = ({
     onChange,
     label,
     id,
-    helperText,
 }) => (
     <div className="flex items-center justify-between py-2 ">
 
