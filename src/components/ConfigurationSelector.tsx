@@ -8,7 +8,7 @@ import { Settings2 } from 'lucide-react'
 import StepperSection from '../app/(frontend)/configurator/StepperSection'
 import { Component, Preset, Config, Group } from '@/app/(frontend)/configurator/types'
 import { ConfigDropdown } from './ConfigDropdown'
-import { ChevronUp, ChevronDown, FileCode2, ToggleLeft, Hash, Database, Text } from 'lucide-react'
+import { ChevronUp, ChevronDown, ToggleLeft, Hash, Database, Text } from 'lucide-react'
 
 
 
@@ -46,7 +46,8 @@ const GROUPS: pGroup[] = [
     },
 ]
 
-type SelectedConfig = Record<string, string>
+type SelectedConfig = Record<string, string | number | boolean | null>;
+
 
 interface ConfigurationsSelectorProps {
     configurations: Record<string, string>
@@ -90,11 +91,16 @@ export function ConfigurationsSelector({
     }, [screenSize])
 
 
-    function updateValue(prop: string, value: any) {
+    function updateValue(prop: string, value: string | number | boolean) {
         const newSelected = { ...selected, [prop]: value }
         onChange(newSelected)
-        updateUrl(newSelected)
+        updateUrl(
+            Object.fromEntries(
+                Object.entries(newSelected).map(([k, v]) => [k, String(v)])
+            )
+        )
     }
+
 
     const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
@@ -115,7 +121,6 @@ export function ConfigurationsSelector({
                     if (!fields.length) return null;
 
                     const open = !collapsed[group.label];
-                    const Icon = group.icon;
 
                     return (
                         <div
@@ -156,7 +161,13 @@ export function ConfigurationsSelector({
                                                     <input
                                                         type="number"
                                                         id={prop}
-                                                        value={selected[prop] ?? value}
+                                                        value={
+                                                            typeof selected[prop] === "string"
+                                                                ? selected[prop]
+                                                                : typeof selected[prop] === "number"
+                                                                    ? selected[prop]
+                                                                    : ""
+                                                        }
                                                         onChange={e => updateValue(prop, Number(e.target.value))}
                                                         className="input input-sm w-24 text-sm"
                                                     />
@@ -186,20 +197,20 @@ export function ConfigurationsSelector({
                                                 </div>
                                             )
                                         }
-                                        if (typeof value === 'string') {
-                                            return (
-                                                <div key={idx}>
-                                                    <kbd className="kbd rounded-sm">{prop}</kbd>
-                                                    <input
-                                                        type="text"
-                                                        id={prop}
-                                                        value={selected[prop] ?? value}
-                                                        onChange={e => updateValue(prop, e.target.value)}
-                                                        className="input input-bordered w-full text-sm mt-1"
-                                                    />
-                                                </div>
-                                            )
-                                        }
+                                        // if (typeof value === 'string') {
+                                        //     return (
+                                        //         <div key={idx}>
+                                        //             <kbd className="kbd rounded-sm">{prop}</kbd>
+                                        //             <input
+                                        //                 type="text"
+                                        //                 id={prop}
+                                        //                 value={selected[prop] ?? value}
+                                        //                 onChange={e => updateValue(prop, e.target.value)}
+                                        //                 className="input input-bordered w-full text-sm mt-1"
+                                        //             />
+                                        //         </div>
+                                        //     )
+                                        // }
                                         return null;
                                     })}
                                 </div>

@@ -8,12 +8,13 @@ import { LivePreview } from '@/components/LivePreview'
 import { CodePreview } from '@/components/CodePreview'
 import { ConfigurationsSelector } from '@/components/ConfigurationSelector'
 import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString'
-import { templateStrs } from '@/components/reactTemplates'
+import { templateStrs , Lang} from '@/components/reactTemplates'
 import { toVueEventName, hookStrs } from '@/components/reactHooks'
+// import Image from "next/image";
 
 
 export type CodeSnippet = {
-  label: 'TSX' | 'JSX' | 'jquery' | 'vue' | 'react' | 'Component' | 'Template' | 'SFC JS' | 'SFC TS';
+  label: 'TSX' | 'JSX' | 'jquery' | 'vue' | 'react' | 'Component' | 'Template' | 'SFC JS' | 'SFC TS' | 'HTML' | 'JS';
   code: string;
 };
 
@@ -56,14 +57,12 @@ export default function ConfiguratorClient({
 
   const [frameworkObj, setFrameworkObj] = useState<Framework | null>(null)
   const [groupObj, setGroupObj] = useState<Group | null>(null)
-  const [presetObj, setPresetObj] = useState<Preset | null>(null)
   const [currentConfig, setCurrentConfig] = useState<Config | null>(null)
-  const [code, setCode] = useState<any>(null)
-  const [language, setLanguage] = useState<any>(null)
-  const [props, setProps] = useState<Record<string, string>>({})
-  const [data, setData] = useState<Record<string, any>>({})
-  const [template, setTemplate] = useState<Record<string, any>>({})
-  const [hooks, setHooks] = useState<Record<string, any>>({})
+  const [code, setCode] = useState<CodeSnippet[]>(exampleSnippets)
+  const [props, setProps] = useState<Record<string, string | number | boolean | null>>({})
+  const [data, setData] = useState<Record<string, string>>({})
+  const [template, setTemplate] = useState<Record<string, string>>({})
+  const [hooks, setHooks] = useState<Record<string, string>>({})
 
   const selectedPreset = searchParams.get('preset') || null
   const addonConfigTitle = searchParams.get('addonconfigtitle') || null
@@ -109,12 +108,10 @@ export default function ConfiguratorClient({
       const framework = frameworks.find(f => f.slug === selectedFramework)
       setFrameworkObj(framework || null)
       if (framework && framework.templates) {
-        setCode({
-          'App.tsx': framework.templates.find(t => t.label === 'TSX')?.template || '',
-          'App.jsx': framework.templates.find(t => t.label === 'JSX')?.template || '',
-        })
+        const tsxTemplate = framework.templates.find(t => t.label === 'TSX')?.template || '';
+        setCode(tsxTemplate ? [{ label: 'TSX', code: tsxTemplate }] : exampleSnippets);
       } else {
-        setCode(null)
+        setCode(exampleSnippets)
       }
     } else {
       setFrameworkObj(null)
@@ -136,7 +133,6 @@ export default function ConfiguratorClient({
 
   useEffect(() => {
     if (selectedPreset) {
-      const preset = filteredPresets.find(p => p.slug === selectedPreset);
       const nonAddonConfig = configs.find(c => c.preset?.slug === selectedPreset && c.config.type !== 'addon') || null;
       const selectedAddonConfig = addonConfigTitle
         ? configs.find(c => c.preset?.slug === selectedPreset && c.config.type === 'addon' && c.config.title.replace(/\s+/g, '-') === addonConfigTitle)
@@ -160,11 +156,9 @@ export default function ConfiguratorClient({
 
       const allProps = mergedConfig?.config.props || {};
       setProps(filterInvalidProps(allProps));
-      setPresetObj(preset || null);
       setCurrentConfig(mergedConfig);
 
     } else {
-      setPresetObj(null);
       setCurrentConfig(null);
     }
   }, [selectedPreset, addonConfigTitle, filteredPresets, configs]);
@@ -172,9 +166,7 @@ export default function ConfiguratorClient({
   useEffect(() => {
     if (frameworkObj && currentConfig) {
       const {
-        topVars,
         templateInlineProps,
-        liveViewInlineProps,
         extractedValues,
         extractedInlineValues,
         componentName: effectiveComponentName,
@@ -185,7 +177,7 @@ export default function ConfiguratorClient({
         currentConfig.config.data,
       )
 
-      function isFilled(val: any) {
+      function isFilled(val: string | object | null) {
         if (Array.isArray(val)) return val.length > 0
         if (typeof val === 'object' && val !== null) return Object.keys(val).length > 0
         if (typeof val === 'string') return val.length > 0
@@ -260,7 +252,7 @@ export default function ConfiguratorClient({
       }
 
       function toUnquotedObjectString(
-        data: any,
+        data: string | number | boolean | undefined | null | Record<string, string>,
         indentLevel = 2
       ): string {
         if (data === undefined) return 'undefined';
@@ -299,7 +291,7 @@ export default function ConfiguratorClient({
         return Object.values(templates)
           .map((fnName) => {
             console.log('[getTemplateStrBlock] Mapping fnName:', fnName);
-            return templateStrs(lang as any)?.[fnName] || '';
+            return templateStrs(lang as Lang)?.[fnName] || '';
           })
           .filter(Boolean)
           .join('\n\n')
@@ -309,7 +301,7 @@ export default function ConfiguratorClient({
       function getHooksStrBlock(hooks: Record<string, string>, lang = 'tsx') {
         if (!hooks) return ''
         return Object.values(hooks)
-          .map((fnName) => hookStrs(lang as any)?.[fnName] || '')
+          .map((fnName) => hookStrs(lang as Lang)?.[fnName] || '')
           .filter(Boolean)
           .join('\n\n')
       }
@@ -330,99 +322,97 @@ export default function ConfiguratorClient({
       const hasInlineInvalid = hasInvalid && isFilled(inlineInvalid)
       const hasInlineColors = hasColors && isFilled(inlineColors)
 
-      const codeObj = frameworkObj.templates.map((t) => ({
-        label: t.label,
-        code: t.template
-          .replace(/\/\* Component \*\//g, effectiveComponentName || '')
-          .replace(
-            /\/\* imports \*\//g,
-            frameworkObj.slug === 'vue' ? "import { ref } from 'vue';\n" : ''
-          )
-          .replace(
-            /\/\* type \*\//g,
-            typeImports.length
-              ? `${typeImports.join(', ')}`
-              : ''
-          )
+      const allowedLabels = [
+        'TSX', 'JSX', 'jquery', 'vue', 'react', 'Component', 'Template', 'SFC JS', 'SFC TS', 'HTML', 'JS'
+      ] as const;
 
-          .replace(
-            /\/\* react hooks \*\//g,
-            reactHookImports.length
-              ? `${reactHookImports.join(', ')}`
-              : ''
-          )
+      const codeObj = frameworkObj.templates
+        .filter((t) => allowedLabels.includes(t.label as typeof allowedLabels[number]))
+        .map((t) => ({
+          label: t.label as CodeSnippet['label'],
+          code: t.template
+            .replace(/\/\* Component \*\//g, effectiveComponentName || '')
+            .replace(
+              /\/\* imports \*\//g,
+              frameworkObj.slug === 'vue' ? "import { ref } from 'vue';\n" : ''
+            )
+            .replace(
+              /\/\* type \*\//g,
+              typeImports.length
+                ? `${typeImports.join(', ')}`
+                : ''
+            )
 
-          .replace(
-            /\/\* view \*\//g,
-            isFilled(view)
-              ? frameworkObj.slug === 'vue'
-                ? `const myView = ref(${toUnquotedObjectString(view, 2)});`
-                : `const myView = ${JSON.stringify(view, null, 2)};`
-              : ''
-          )
-          .replace(
-            /\/\* data \*\//g,
-            hasData
-              ? frameworkObj.slug === 'vue'
-                ? `const myData = ref(${toUnquotedObjectString(eventData, 2)});`
-                : `const myData = ${JSON.stringify(eventData, null, 2)};`
-              : ''
-          )
-          .replace(
-            /\/\* resources \*\//g,
-            hasResources
-              ? frameworkObj.slug === 'vue'
-                ? `const myResources = ref(${toUnquotedObjectString(resources, 2)});`
-                : `const myResources = ${JSON.stringify(resources, null, 2)};`
-              : ''
-          )
-          .replace(
-            /\/\* invalids \*\//g,
-            hasInvalid
-              ? frameworkObj.slug === 'vue'
-                ? `const myInvalid = ref(${toUnquotedObjectString(invalid, 2)});`
-                : `const myInvalid = ${JSON.stringify(invalid, null, 2)};`
-              : ''
-          )
-          .replace(
-            /\/\* colors \*\//g,
-            hasColors
-              ? frameworkObj.slug === 'vue'
-                ? `const myColors = ref(${toUnquotedObjectString(colors, 2)});`
-                : `const myColors = ${JSON.stringify(colors, null, 2)};`
-              : ''
-          )
-          .replace(/\/\* templates \*\//g, '\n\n' + getTemplateStrBlock(currentConfig.config.templates, t.label))
-          .replace(/\/\* hooks \*\//g, '\n\n' + getHooksStrBlock(currentConfig.config.hooks, t.label))
-          .replace(/\/\* Component data \*\//g, hasInlineData ? formatFrameworkProp('data', 'myData') : '')
-          .replace(
-            /\/\* Component resources \*\//g,
-            hasInlineResources ? formatFrameworkProp('resources', 'myResources') : ''
-          )
-          .replace(/\/\* Component invalids \*\//g, hasInlineInvalid ? formatFrameworkProp('invalid', 'myInvalid') : '')
-          .replace(/\/\* Component colors \*\//g, hasInlineColors ? formatFrameworkProp('colors', 'myColors') : '')
-          .replace(/\/\* Component hooks \*\//g, componentHookProps)
-          .replace(/\/\* Component templates \*\//g, componentTemplateProps)
-          .replace(/\/\* Component options \*\//g, templateInlineProps)
-          .replace(/\/\* \w+ \*\//g, '')
-      }))
+            .replace(
+              /\/\* react hooks \*\//g,
+              reactHookImports.length
+                ? `${reactHookImports.join(', ')}`
+                : ''
+            )
 
-      const finalCode = codeObj.map((obj) => obj.code)
-      const finalLanguage = codeObj.map((obj) => obj.label)
+            .replace(
+              /\/\* view \*\//g,
+              isFilled(view)
+                ? frameworkObj.slug === 'vue'
+                  ? `const myView = ref(${toUnquotedObjectString(view, 2)});`
+                  : `const myView = ${JSON.stringify(view, null, 2)};`
+                : ''
+            )
+            .replace(
+              /\/\* data \*\//g,
+              hasData
+                ? frameworkObj.slug === 'vue'
+                  ? `const myData = ref(${toUnquotedObjectString(eventData, 2)});`
+                  : `const myData = ${JSON.stringify(eventData, null, 2)};`
+                : ''
+            )
+            .replace(
+              /\/\* resources \*\//g,
+              hasResources
+                ? frameworkObj.slug === 'vue'
+                  ? `const myResources = ref(${toUnquotedObjectString(resources, 2)});`
+                  : `const myResources = ${JSON.stringify(resources, null, 2)};`
+                : ''
+            )
+            .replace(
+              /\/\* invalids \*\//g,
+              hasInvalid
+                ? frameworkObj.slug === 'vue'
+                  ? `const myInvalid = ref(${toUnquotedObjectString(invalid, 2)});`
+                  : `const myInvalid = ${JSON.stringify(invalid, null, 2)};`
+                : ''
+            )
+            .replace(
+              /\/\* colors \*\//g,
+              hasColors
+                ? frameworkObj.slug === 'vue'
+                  ? `const myColors = ref(${toUnquotedObjectString(colors, 2)});`
+                  : `const myColors = ${JSON.stringify(colors, null, 2)};`
+                : ''
+            )
+            .replace(/\/\* templates \*\//g, '\n\n' + getTemplateStrBlock(currentConfig.config.templates, t.label))
+            .replace(/\/\* hooks \*\//g, '\n\n' + getHooksStrBlock(currentConfig.config.hooks, t.label))
+            .replace(/\/\* Component data \*\//g, hasInlineData ? formatFrameworkProp('data', 'myData') : '')
+            .replace(
+              /\/\* Component resources \*\//g,
+              hasInlineResources ? formatFrameworkProp('resources', 'myResources') : ''
+            )
+            .replace(/\/\* Component invalids \*\//g, hasInlineInvalid ? formatFrameworkProp('invalid', 'myInvalid') : '')
+            .replace(/\/\* Component colors \*\//g, hasInlineColors ? formatFrameworkProp('colors', 'myColors') : '')
+            .replace(/\/\* Component hooks \*\//g, componentHookProps)
+            .replace(/\/\* Component templates \*\//g, componentTemplateProps)
+            .replace(/\/\* Component options \*\//g, templateInlineProps)
+            .replace(/\/\* \w+ \*\//g, '')
+        }))
+
 
       console.log(codeObj);
 
-      setLanguage(finalLanguage)
+      console.log('Final language:', codeObj.map((obj) => obj.label));
       setCode(codeObj)
     }
   }, [frameworkObj, currentConfig, props])
 
-  const selectComponent = (groupSlug: string, componentId: string) => {
-    const newQuery = new URLSearchParams(searchParams.toString())
-    newQuery.set('group', groupSlug)
-    newQuery.set('component', componentId)
-    router.push(`${pathname}?${newQuery.toString()}`, { scroll: false })
-  }
 
   const isScheduler =
     selectedComponent === 'scheduler' ||
@@ -477,14 +467,14 @@ export default function ConfiguratorClient({
             {isLoading ? (
               isScheduler ? (
                 <div className="mockup-window bg-white border border-base-300 w-full rounded-mg min-h-[700px] max-h-[700px]">
-                  <img alt="wallpaper" src="https://img.daisyui.com/images/stock/453966.webp" />
+                  {/* <Image alt="wallpaper" src="https://img.daisyui.com/images/stock/453966.webp" layout="fill" objectFit="cover" /> */}
 
                 </div>
               ) : (
                 <div className="mockup-phone">
                   <div className="mockup-phone-camera z-50" />
                   <div className="mockup-phone-display">
-                    <img alt="wallpaper" src="https://img.daisyui.com/images/stock/453966.webp" />
+                    {/* <Image alt="wallpaper" src="https://img.daisyui.com/images/stock/453966.webp" layout="fill" objectFit="cover" /> */}
                   </div>
                 </div>
               )

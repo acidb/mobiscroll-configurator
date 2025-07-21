@@ -5,7 +5,7 @@ import { capitalizeFirstLetter } from './capitalizeFirstLetter';
 export function genCodeWithTopVars(
     framework: string,
     componentName: string,
-    props: Record<string, string>,
+    props: Record<string, string | number | boolean | null>,
     data?: Record<string, string>,
     extracted: string[] = ['data', 'view', 'resources', 'invalid', 'colors', 'templates', 'hooks']
 ) {
@@ -128,7 +128,7 @@ export function filterInvalidProps(obj: any): any {
         return obj.map(filterInvalidProps);
     }
     if (obj !== null && typeof obj === 'object') {
-        const result: Record<string, any> = {};
+        const result: Record<string, string> = {};
         for (const [key, value] of Object.entries(obj)) {
             if (typeof value === 'string' && value.trim().startsWith('/*')) continue;
             result[key] = filterInvalidProps(value);

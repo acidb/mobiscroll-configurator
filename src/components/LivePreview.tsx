@@ -18,11 +18,13 @@ const componentMap: Record<string, React.ElementType> = {
     datepicker: Datepicker
 };
 
+import { MbscCalendarEventData, MbscResource } from '@mobiscroll/react';
+
 
 
 export interface LivePreviewProps {
     componentName: string;
-    mergedProps: Record<string, string>;
+    mergedProps: Record<string, string | number | boolean | null>;
     data?: {
         data?: Record<string, string>[];
         resources?: Record<string, string>[];
@@ -61,8 +63,13 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         { key: 'myEventClick', fn: handleEventClick },
     ];
 
-    const templateProps: Record<string, any> = {};
-    const hookProps: Record<string, any> = {};
+    type ResourceTemplateFn = (resource: MbscResource) => React.ReactNode;
+    type EventTemplateFn = (event: MbscCalendarEventData) => React.ReactNode;
+    type MobiscrollTemplateFn = ResourceTemplateFn | EventTemplateFn;
+
+
+    const templateProps: Record<string, MobiscrollTemplateFn> = {};
+    const hookProps: Record<string, () => void> = {};
 
     if (template && typeof template === 'object') {
         for (const [propName, templateKey] of Object.entries(template as Record<string, string>)) {
