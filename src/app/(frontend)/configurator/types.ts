@@ -55,5 +55,10 @@ export interface Config {
   config: ConfigurationOption;
 }
 
+export interface User {
+  id: string;
+  email: string;
+}
+
 
 

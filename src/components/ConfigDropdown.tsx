@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import { updateUrl } from '@/utils/updateUrl'
-import { Config } from '@/app/(frontend)/configurator/types'
+import React, { useState, useEffect } from 'react';
+import { updateUrl } from '@/utils/updateUrl';
+import { Config } from '@/app/(frontend)/configurator/types';
 
 interface ConfigDropdownProps {
     onChange: (selected: Record<string, string>) => void
@@ -9,61 +9,69 @@ interface ConfigDropdownProps {
 }
 
 export function ConfigDropdown({ onChange, configs, selectedPreset }: ConfigDropdownProps) {
-    const [selectedConfig, setSelectedConfig] = useState<string>('')
-    const [error, setError] = useState<string | null>(null)
+    const [selectedConfig, setSelectedConfig] = useState<string>('');
+    const [error, setError] = useState<string | null>(null);
     const hasNonAddonConfig = configs.some(
         (config) => config.preset?.slug === selectedPreset && config.config.type !== 'addon'
-    )
+    );
+
+    const filteredConfigs = configs.filter(
+        (config) => config.config.type === 'addon' && config.preset?.slug === selectedPreset
+    );
 
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search)
-        const addonConfigTitle = urlParams.get('addonconfigtitle')
+        const urlParams = new URLSearchParams(window.location.search);
+        const addonConfigTitle = urlParams.get('addonconfigtitle');
 
         if (!hasNonAddonConfig) {
-            setSelectedConfig('')
-            setError('Please select a main configuration first')
+            setSelectedConfig('');
+            setError('Please select a main configuration first');
             if (addonConfigTitle) {
-                onChange({})
-                updateUrl({})
+                onChange({});
+                updateUrl({});
             }
-            return
+            return;
         }
 
         if (addonConfigTitle) {
-            const titleFromUrl = addonConfigTitle.replace(/-/g, ' ')
+            const titleFromUrl = addonConfigTitle.replace(/-/g, ' ');
             const matchingConfig = configs.find(
                 (config) => config.config.title === titleFromUrl && config.config.type === 'addon'
-            )
+            );
             if (matchingConfig) {
-                setSelectedConfig(matchingConfig.id)
-                onChange({ addonconfigtitle: addonConfigTitle })
-                setError(null)
+                setSelectedConfig(matchingConfig.id);
+                onChange({ addonconfigtitle: addonConfigTitle });
+                setError(null);
             } else {
-                setSelectedConfig('')
-                setError(`Configuration "${titleFromUrl}" not found`)
-                onChange({})
-                updateUrl({})
+                setSelectedConfig('');
+                setError(`Configuration "${titleFromUrl}" not found`);
+                onChange({});
+                updateUrl({});
             }
         } else {
-            setSelectedConfig('')
-            setError(null)
+            setSelectedConfig('');
+            setError(null);
         }
-    }, [configs, onChange, selectedPreset, hasNonAddonConfig])
+    }, [configs, onChange, selectedPreset, hasNonAddonConfig]);
 
     const handleConfigChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedId = event.target.value
-        setSelectedConfig(selectedId)
+        const selectedId = event.target.value;
+        setSelectedConfig(selectedId);
 
-        const selected = configs.find((config) => config.id === selectedId)
+        const selected = configs.find((config) => config.id === selectedId);
         if (selected) {
-            const formattedTitle = selected.config.title.replace(/\s+/g, '-')
-            const newSelected = { addonconfigtitle: formattedTitle }
-            onChange(newSelected)
-            updateUrl(newSelected)
+            const formattedTitle = selected.config.title.replace(/\s+/g, '-');
+            const newSelected = { addonconfigtitle: formattedTitle };
+            onChange(newSelected);
+            updateUrl(newSelected);
         } else {
-            onChange({})
-            updateUrl({})
+            onChange({});
+            updateUrl({});
         }
+    };
+
+    if (filteredConfigs.length === 0) {
+        return null;
     }
 
     return (
@@ -96,5 +104,5 @@ export function ConfigDropdown({ onChange, configs, selectedPreset }: ConfigDrop
 
 
         </div>
-    )
+    );
 }

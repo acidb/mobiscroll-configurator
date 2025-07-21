@@ -6,9 +6,9 @@ import { DataList } from './DataList'
 import { BooleanConfig } from './BooleanConfig'
 import { Settings2 } from 'lucide-react'
 import StepperSection from '../app/(frontend)/configurator/StepperSection'
-import { Component, Preset, Config, Group } from '@/app/(frontend)/configurator/types'
+import { Component, Preset, Config, Group, User } from '@/app/(frontend)/configurator/types'
 import { ConfigDropdown } from './ConfigDropdown'
-import { ChevronUp, ChevronDown, ToggleLeft, Hash, Database, Text } from 'lucide-react'
+import { ChevronUp, ChevronDown, FileCode2, ToggleLeft, Hash, Database, Text } from 'lucide-react'
 
 
 
@@ -62,6 +62,7 @@ interface ConfigurationsSelectorProps {
     updateSelection: (key: string, value: string | null) => void
     updateSelections: (updates: Record<string, string | null>) => void
     configs: Config[]
+    user: User | null
 }
 
 export function ConfigurationsSelector({
@@ -77,6 +78,7 @@ export function ConfigurationsSelector({
     updateSelection,
     updateSelections,
     configs,
+    user,
 }: ConfigurationsSelectorProps) {
     const screenSize = useScreenSize()
     const [isOpen, setIsOpen] = useState(screenSize === 'desktop')
@@ -218,7 +220,6 @@ export function ConfigurationsSelector({
                         </div>
                     );
                 })}
-                <ConfigDropdown onChange={onChange} configs={configs} selectedPreset={selectedPreset} />
             </div>
         );
     }
@@ -293,6 +294,22 @@ export function ConfigurationsSelector({
                 updateSelections={updateSelections}
             />
             <div className="flex-1 overflow-y-auto pr-1">{renderContent()}</div>
+            {user && selectedPreset && (
+                <div className="mt-4">
+                    <Link
+                        href={`/admin/collections/configs/${configs[0].id}`}
+                        className="btn bg-gray-100 hover:bg-gray-300 text-black w-full"
+                    >
+                        Edit the configuration
+                    </Link>
+                </div>
+            )}
+            {selectedPreset && (
+                <div className="mt-6">
+                    <ConfigDropdown onChange={onChange} configs={configs} selectedPreset={selectedPreset} />
+                </div>
+            )}
+
         </div>
     )
 }
