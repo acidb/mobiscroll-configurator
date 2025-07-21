@@ -3,9 +3,9 @@ import { updateUrl } from '@/utils/updateUrl';
 import { Config } from '@/app/(frontend)/configurator/types';
 
 interface ConfigDropdownProps {
-    onChange: (selected: Record<string, string>) => void
-    configs: Config[]
-    selectedPreset: string | null
+    onChange: (selected: Record<string, any>) => void;
+    configs: Config[];
+    selectedPreset: string | null;
 }
 
 export function ConfigDropdown({ onChange, configs, selectedPreset }: ConfigDropdownProps) {
@@ -66,7 +66,7 @@ export function ConfigDropdown({ onChange, configs, selectedPreset }: ConfigDrop
             updateUrl(newSelected);
         } else {
             onChange({});
-            updateUrl({});
+            updateUrl({ addonconfigtitle: '' });
         }
     };
 
@@ -75,34 +75,69 @@ export function ConfigDropdown({ onChange, configs, selectedPreset }: ConfigDrop
     }
 
     return (
-        <div className="w-full mb-6">
-
-            <div className="flex flex-col items-center justify-between cursor-pointer select-none py-3 px-2 gap-2">
-                <div>
-                    <span className="font-semibold text-gray-700 text-sm">Select Addon Configuration</span>
-                    <span className="block text-xs text-gray-400"> Choose an existing configuration with type addon for the selected preset</span>
+        <div className="w-full mb-8">
+            <div className="mb-4">
+                <label className="text-sm font-semibold text-gray-900">Select Addon Configuration</label>
+                <p className="text-xs text-gray-500 mt-1">
+                    Choose an existing addon configuration for the selected preset
+                </p>
+            </div>
+            {error && (
+                <div className="text-red-600 text-xs font-medium bg-red-50 rounded-lg p-3 mb-3 transition-all duration-200">
+                    {error}
                 </div>
-
-                {error && <div className="text-red-500 text-xs mb-2">{error}</div>}
+            )}
+            <div className="relative">
                 <select
                     value={selectedConfig}
                     onChange={handleConfigChange}
-                    className="select rounded-md"
+                    className="
+                        w-full p-3.5 pr-10 
+                        bg-gray-100 
+                        text-gray-900 
+                        text-sm 
+                        rounded-xl 
+                        border-none 
+                        shadow-sm 
+                        focus:outline-none 
+                        focus:ring-2 
+                        focus:ring-blue-400 
+                        hover:bg-gray-50 
+                        transition-all 
+                        duration-300 
+                        disabled:bg-gray-200 
+                        disabled:text-gray-400 
+                        disabled:cursor-not-allowed 
+                        appearance-none
+                    "
                     disabled={!hasNonAddonConfig || configs.length === 0}
                 >
-                    <option value="">Select a configuration</option>
-                    {configs
-                        .filter((config) => config.config.type === 'addon' && config.preset?.slug === selectedPreset)
-                        .map((config) => (
-                            <option key={config.id} value={config.id}>
-                                {config.config.title || 'Untitled'}
-                            </option>
-                        ))}
+                    <option value="" className="text-gray-500">
+                        Select a configuration
+                    </option>
+                    {filteredConfigs.map((config) => (
+                        <option key={config.id} value={config.id} className="text-gray-900">
+                            {config.config.title || 'Untitled'}
+                        </option>
+                    ))}
                 </select>
-
+                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    <svg
+                        className="w-4 h-4 text-gray-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 9l-7 7-7-7"
+                        />
+                    </svg>
+                </div>
             </div>
-
-
         </div>
     );
 }
