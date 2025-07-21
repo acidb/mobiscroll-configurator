@@ -5,8 +5,8 @@ import { capitalizeFirstLetter } from './capitalizeFirstLetter';
 export function genCodeWithTopVars(
     framework: string,
     componentName: string,
-    props: Record<string, any>,
-    data?: Record<string, any>,
+    props: Record<string, string>,
+    data?: Record<string, string>,
     extracted: string[] = ['data', 'view', 'resources', 'invalid', 'colors', 'templates', 'hooks']
 ) {
     const topVars: string[] = [];
@@ -21,7 +21,7 @@ export function genCodeWithTopVars(
 
     console.log(JSON.stringify(mergedProps, null, 2));
 
-    const hooksObj: Record<string, any> = {};
+    const hooksObj: Record<string, string> = {};
 
 
     const effectiveComponentName = (framework === 'js' || framework === 'jquery')

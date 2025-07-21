@@ -1,296 +1,297 @@
 // reactHooks.ts
 export function toVueEventName(hookName: string): string {
-    const name = hookName.startsWith('on') ? hookName.slice(2) : hookName;
-    return name
-        .replace(/([A-Z])/g, '-$1')
-        .replace(/^-/, '')
-        .toLowerCase();
+  const name = hookName.startsWith('on') ? hookName.slice(2) : hookName;
+  return name
+    .replace(/([A-Z])/g, '-$1')
+    .replace(/^-/, '')
+    .toLowerCase();
 }
 
 export const hooks = {
-    myEventClick: {
-        fn: () => { },
-        code: {
-            tsx: `
+  myEventClick: {
+    fn: () => { },
+    code: {
+      tsx: `
  const myEventClick = useCallback((args: MbscEventClickEvent) => {
         setToastText(args.event.title ?? '');
         setToastOpen(true);
     }, []);
 `.trim(),
-            jsx: `
+      jsx: `
  const myEventClick = useCallback((args) => {
     setToastText(args.event.title);
     setToastOpen(true);
   }, []);
 
 `.trim(),
-            sfcjs: `
+      sfcjs: `
 function myEventClick(args) {
   toastMessage.value = args.event.title
   isToastOpen.value = true
 }
 `.trim(),
-            sfcts: `
+      sfcts: `
 function myEventClick(args: MbscEventClickEvent) {
   toastMessage.value = args.event.title || ''
   isToastOpen.value = true
 }
 `.trim()
-        }
-    },
-    myEventCreated: {
-        fn: () => { },
-        code: {
-            tsx: `
+    }
+  },
+  myEventCreated: {
+    fn: () => { },
+    code: {
+      tsx: `
  const handleEventCreated = useCallback((args: MbscEventCreatedEvent) => {
         setToastText(args.event.title ?? '');
         setToastOpen(true);
     }, []);
 `.trim(),
-            jsx: `
+      jsx: `
  const handleEventCreated = useCallback((args) => {
     setToastText(args.event.title);
     setToastOpen(true);
   }, []);
 
 `.trim(),
-            sfcjs: `
+      sfcjs: `
 function handleEventCreated(args) {
   toastMessage.value = args.event.title
   isToastOpen.value = true
 }
 `.trim(),
-            sfcts: `
+      sfcts: `
 function handleEventCreated(args: MbscEventCreatedEvent) {
   toastMessage.value = args.event.title || ''
   isToastOpen.value = true
 }
 `.trim()
-        }
-    },
-    myEventDeleted: {
-        fn: () => { },
-        code: {
-            tsx: `
+    }
+  },
+  myEventDeleted: {
+    fn: () => { },
+    code: {
+      tsx: `
  const handleEventDeleted = useCallback((args: MbscEventDeletedEvent) => {
         setToastText(args.event.title ?? '');
         setToastOpen(true);
     }, []);
 `.trim(),
-            jsx: `
+      jsx: `
  const handleEventDeleted = useCallback((args) => {
     setToastText(args.event.title);
     setToastOpen(true);
   }, []);
 
 `.trim(),
-            sfcjs: `
+      sfcjs: `
 function handleEventDeleted(args) {
   toastMessage.value = args.event.title
   isToastOpen.value = true
 }
 `.trim(),
-            sfcts: `
+      sfcts: `
 function handleEventDeleted(args: MbscEventDeletedEvent) {
   toastMessage.value = args.event.title || ''
   isToastOpen.value = true
 }
 `.trim()
-        }
-    },
-    myEventCreate: {
-        fn: () => { },
-        code: {
-            tsx: `
+    }
+  },
+  myEventCreate: {
+    fn: () => { },
+    code: {
+      tsx: `
  const handleEventCreate = useCallback((args: MbscEventCreateEvent) => {
         setToastText(args.event.title ?? '');
         setToastOpen(true);
     }, []);
 `.trim(),
-            jsx: `
+      jsx: `
  const handleEventCreate = useCallback((args) => {
     setToastText(args.event.title);
     setToastOpen(true);
   }, []);
 
 `.trim(),
-            sfcjs: `
+      sfcjs: `
 function handleEventCreate(args) {
   toastMessage.value = args.event.title
   isToastOpen.value = true
 }
 `.trim(),
-            sfcts: `
+      sfcts: `
 function handleEventCreate(args: MbscEventCreateEvent) {
   toastMessage.value = args.event.title || ''
   isToastOpen.value = true
 }
 `.trim()
-        }
-    },
-    myEventCreateFailed: {
-        fn: () => { },
-        code: {
-            tsx: `
+    }
+  },
+  myEventCreateFailed: {
+    fn: () => { },
+    code: {
+      tsx: `
  const handleEventCreateFailed = useCallback((args: MbscEventCreateFailedEvent) => {
         setToastText(args.event.title ?? '');
         setToastOpen(true);
     }, []);
 `.trim(),
-            jsx: `
+      jsx: `
  const handleEventCreateFailed = useCallback((args) => {
     setToastText(args.event.title);
     setToastOpen(true);
   }, []);
 
 `.trim(),
-            sfcjs: `
+      sfcjs: `
 function handleEventCreateFailed(args) {
   toastMessage.value = args.event.title
   isToastOpen.value = true
 }
 `.trim(),
-            sfcts: `
+      sfcts: `
 function handleEventCreateFailed(args: MbscEventCreateFailedEvent) {
   toastMessage.value = args.event.title || ''
   isToastOpen.value = true
 }
 `.trim()
-        }
-    },
-    myEventDeleteFailed: {
-        fn: () => { },
-        code: {
-            tsx: `
+    }
+  },
+  myEventDeleteFailed: {
+    fn: () => { },
+    code: {
+      tsx: `
  const handleEventDeleteFailed = useCallback((args: MbscEventDeleteFailedEvent) => {
         setToastText(args.event.title ?? '');
         setToastOpen(true);
     }, []);
 `.trim(),
-            jsx: `
+      jsx: `
  const handleEventDeleteFailed = useCallback((args) => {
     setToastText(args.event.title);
     setToastOpen(true);
   }, []);
 
 `.trim(),
-            sfcjs: `
+      sfcjs: `
 function handleEventDeleteFailed(args) {
   toastMessage.value = args.event.title
   isToastOpen.value = true
 }
 `.trim(),
-            sfcts: `
+      sfcts: `
 function handleEventDeleteFailed(args: MbscEventDeleteFailedEvent) {
   toastMessage.value = args.event.title || ''
   isToastOpen.value = true
 }
 `.trim()
-        }
-    },
-    myChange: {
-        fn: () => { },
-        code: {
-            tsx: `
+    }
+  },
+  myChange: {
+    fn: () => { },
+    code: {
+      tsx: `
  const handleEventChange = useCallback((args: MbscSelectedEventsChangeEvent) => {
         setToastText(args.event.title ?? '');
         setToastOpen(true);
     }, []);
 `.trim(),
-            jsx: `
+      jsx: `
  const handleEventChange = useCallback((args) => {
     setToastText(args.event.title);
     setToastOpen(true);
   }, []);
 
 `.trim(),
-            sfcjs: `
+      sfcjs: `
 function handleEventChange(args) {
   toastMessage.value = args.event.title
   isToastOpen.value = true
 }
 `.trim(),
-            sfcts: `
+      sfcts: `
 function handleEventChange(args: MbscSelectedEventsChangeEvent) {
   toastMessage.value = args.event.title || ''
   isToastOpen.value = true
 }
 `.trim()
-        }
-    },
-    myEventUpdate: {
-        fn: () => { },
-        code: {
-            tsx: `
+    }
+  },
+  myEventUpdate: {
+    fn: () => { },
+    code: {
+      tsx: `
  const handleEventUpdate = useCallback((args: MbscEventUpdateEvent) => {
         setToastText(args.event.title ?? '');
         setToastOpen(true);
     }, []);
 `.trim(),
-            jsx: `
+      jsx: `
  const handleEventUpdate = useCallback((args) => {
     setToastText(args.event.title);
     setToastOpen(true);
   }, []);
 
 `.trim(),
-            sfcjs: `
+      sfcjs: `
 function handleEventUpdate(args) {
   toastMessage.value = args.event.title
   isToastOpen.value = true
 }
 `.trim(),
-            sfcts: `
+      sfcts: `
 function handleEventUpdate(args: MbscEventUpdateEvent) {
   toastMessage.value = args.event.title || ''
   isToastOpen.value = true
 }
 `.trim()
-        }
-    },
-    myTaskCreate: {
-        fn: () => { },
-        code: {
-            tsx: `
+    }
+  },
+  myTaskCreate: {
+    fn: () => { },
+    code: {
+      tsx: `
  const handleTaskCreate = useCallback((args: MbscTaskCreateEvent) => {
         setToastText(args.task.title ?? '');
         setToastOpen(true);
     }, []);
 `.trim(),
-            jsx: `
+      jsx: `
  const handleTaskCreate = useCallback((args) => {
     setToastText(args.task.title);
     setToastOpen(true);
   }, []);
 
 `.trim(),
-            sfcjs: `
+      sfcjs: `
 function handleTaskCreate(args) {
   toastMessage.value = args.task.title
   isToastOpen.value = true
 }
 `.trim(),
-            sfcts: `
+      sfcts: `
 function handleTaskCreate(args: MbscTaskCreateEvent) {
   toastMessage.value = args.task.title || ''
   isToastOpen.value = true
 }
 `.trim()
-        }
     }
+  }
 
 };
 
 export const hookCodes = Object.fromEntries(
-    Object.entries(hooks).map(([k, v]) => [k, v.fn])
+  Object.entries(hooks).map(([k, v]) => [k, v.fn])
 );
 
-type Lang = 'TSX' | 'JSX' | 'VUE' | 'SFCJS' | 'SFCTS' | 'SFC TS' | 'SFC JS';
+// type Lang = 'TSX' | 'JSX' | 'VUE' | 'SFCJS' | 'SFCTS' | 'SFC TS' | 'SFC JS';
+import { Lang } from './reactTemplates'
 
 export const hookStrs = (lang: Lang = 'TSX') =>
-    Object.fromEntries(
-        Object.entries(hooks).map(([k, v]) => {
-            const key = lang.replace(/\s+/g, '').toLowerCase();
-            return [k, v.code[key as keyof typeof v.code]];
-        })
-    );
+  Object.fromEntries(
+    Object.entries(hooks).map(([k, v]) => {
+      const key = lang.replace(/\s+/g, '').toLowerCase();
+      return [k, v.code[key as keyof typeof v.code]];
+    })
+  );

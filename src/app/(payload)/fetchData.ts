@@ -18,13 +18,11 @@ export async function fetchConfiguratorData(context: any) {
     const groupsResult = await payload.find({ collection: 'groups' })
     const componentsResult = await payload.find({ collection: 'components' })
 
-    let groupId = null
     if (group) {
       const groupResult = await payload.find({
         collection: 'groups',
         where: { slug: { equals: group } },
       })
-      groupId = groupResult.docs[0]?.id || null
     }
 
     let componentId = null

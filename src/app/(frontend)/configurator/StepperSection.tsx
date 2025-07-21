@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Group, Component, Preset } from "./types";
 import { Calendar1, Wrench, CalendarDays } from "lucide-react";
-import { ChevronDown, ChevronLeft, X } from "lucide-react";
+import { X } from "lucide-react";
 
 
 interface StepperSectionProps {
@@ -15,7 +15,6 @@ interface StepperSectionProps {
     updateSelections: (updates: Record<string, string | null>) => void;
 }
 
-const steps = ["group", "component", "preset"] as const;
 
 const StepperSection: React.FC<StepperSectionProps> = ({
     groups,
@@ -48,9 +47,6 @@ const StepperSection: React.FC<StepperSectionProps> = ({
         if (selectedPreset && open === "preset") setOpen(null);
     }, [selectedPreset]);
 
-    function handleOpen(section: "group" | "component" | "preset") {
-        setOpen(section);
-    }
 
     React.useEffect(() => {
         if (!selectedGroup) {
@@ -101,9 +97,10 @@ const StepperSection: React.FC<StepperSectionProps> = ({
             </div>
             <div className={`collapse rounded-none ${open === "group" ? "collapse-open" : "collapse-close"}`}>
                 <div className="collapse-content">
-                    <p className="text-gray-400 italic">
+
+                    <span className="block text-xs text-gray-400 mt-1 italic">
                         Step 1. Start by choosing a group below.
-                    </p>
+                    </span>
 
                     <div className="flex flex-wrap gap-3">
                         {groups.map((group) => (
@@ -151,9 +148,9 @@ const StepperSection: React.FC<StepperSectionProps> = ({
                 <div className="collapse-content">
                     {selectedGroup ? (
                         <>
-                            <p className="text-gray-400 italic">
+                            <span className="block text-xs text-gray-400 mt-1 italic">
                                 Step 2. Select a component.
-                            </p>
+                            </span>
                             <div className="flex flex-wrap gap-3">
 
                                 {groupComponents.length === 0 && (
@@ -209,9 +206,9 @@ const StepperSection: React.FC<StepperSectionProps> = ({
                             </p>
                         ) : (
                             <div className="flex flex-col gap-2">
-                                <p className="text-gray-400 italic">
+                                <span className="block text-xs text-gray-400 mt-1 italic">
                                     Step 3. Select a component to display presets.
-                                </p>
+                                </span>
                                 {filteredPresets.map((preset) => {
                                     const isSelected = preset.slug === selectedPreset;
                                     return (
@@ -248,7 +245,7 @@ const StepperSection: React.FC<StepperSectionProps> = ({
                 </div>
             </div>
 
-           
+
         </div>
     );
 };

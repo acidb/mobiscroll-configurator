@@ -3,7 +3,7 @@ import { updateUrl } from '@/utils/updateUrl'
 import { Config } from '@/app/(frontend)/configurator/types'
 
 interface ConfigDropdownProps {
-    onChange: (selected: Record<string, any>) => void
+    onChange: (selected: Record<string, string>) => void
     configs: Config[]
     selectedPreset: string | null
 }
@@ -68,28 +68,33 @@ export function ConfigDropdown({ onChange, configs, selectedPreset }: ConfigDrop
 
     return (
         <div className="w-full mb-6">
-            <div className="mb-2">
-                <span className="font-semibold text-gray-700 text-sm">Select Addon Configuration</span>
-                <span className="block text-xs text-gray-400 mt-1">
-                    Choose an existing configuration with type 'addon' for the selected preset
-                </span>
+
+            <div className="flex flex-col items-center justify-between cursor-pointer select-none py-3 px-2 gap-2">
+                <div>
+                    <span className="font-semibold text-gray-700 text-sm">Select Addon Configuration</span>
+                    <span className="block text-xs text-gray-400"> Choose an existing configuration with type addon for the selected preset</span>
+                </div>
+
+                {error && <div className="text-red-500 text-xs mb-2">{error}</div>}
+                <select
+                    value={selectedConfig}
+                    onChange={handleConfigChange}
+                    className="select rounded-md"
+                    disabled={!hasNonAddonConfig || configs.length === 0}
+                >
+                    <option value="">Select a configuration</option>
+                    {configs
+                        .filter((config) => config.config.type === 'addon' && config.preset?.slug === selectedPreset)
+                        .map((config) => (
+                            <option key={config.id} value={config.id}>
+                                {config.config.title || 'Untitled'}
+                            </option>
+                        ))}
+                </select>
+
             </div>
-            {error && <div className="text-red-500 text-xs mb-2">{error}</div>}
-            <select
-                value={selectedConfig}
-                onChange={handleConfigChange}
-                className="w-full p-2 border rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                disabled={!hasNonAddonConfig || configs.length === 0}
-            >
-                <option value="">Select a configuration</option>
-                {configs
-                    .filter((config) => config.config.type === 'addon' && config.preset?.slug === selectedPreset)
-                    .map((config) => (
-                        <option key={config.id} value={config.id}>
-                            {config.config.title || 'Untitled'}
-                        </option>
-                    ))}
-            </select>
+
+
         </div>
     )
 }

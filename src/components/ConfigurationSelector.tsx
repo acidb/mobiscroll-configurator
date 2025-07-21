@@ -8,14 +8,14 @@ import { Settings2 } from 'lucide-react'
 import StepperSection from '../app/(frontend)/configurator/StepperSection'
 import { Component, Preset, Config, Group } from '@/app/(frontend)/configurator/types'
 import { ConfigDropdown } from './ConfigDropdown'
+import { ChevronUp, ChevronDown, FileCode2, ToggleLeft, Hash, Database, Text } from 'lucide-react'
 
-const ENUM_OPTIONS: Record<string, string[]> = {
-    groupBy: ['date', 'resource'],
-}
+
 
 interface pGroup {
     label: string
     description: string
+    icon: React.ComponentType<{ size?: number; className?: string }>;
     match: (key: string, value: unknown) => boolean
 }
 
@@ -23,29 +23,33 @@ const GROUPS: pGroup[] = [
     {
         label: 'Toggle Options',
         description: 'You can adjust the component by turning the options on and off.',
+        icon: ToggleLeft,
         match: (key: string, value: unknown): boolean => typeof value === 'boolean',
     },
     {
         label: 'Numeric Options',
         description: 'Configure detailed options by providing a number value.',
+        icon: Hash,
         match: (key: string, value: unknown): boolean => typeof value === 'number',
     },
     {
-        label: 'Unknown Options',
+        label: 'Component Data',
         description: 'These options will be rendered as text right now but they will be adjusted in the future.',
+        icon: Database,
         match: (key: string, value: unknown): boolean => typeof value === 'object',
     },
     {
         label: 'String Options',
         description: 'These options will be rendered as text right now but they will be adjusted in the future.',
+        icon: Text,
         match: (key: string, value: unknown): boolean => typeof value === 'string',
     },
 ]
 
-type SelectedConfig = Record<string, any>
+type SelectedConfig = Record<string, string>
 
 interface ConfigurationsSelectorProps {
-    configurations: Record<string, any>
+    configurations: Record<string, string>
     onChange: (selected: SelectedConfig) => void
     selected: SelectedConfig
     groups: Group[]
@@ -85,104 +89,127 @@ export function ConfigurationsSelector({
         }
     }, [screenSize])
 
+
     function updateValue(prop: string, value: any) {
         const newSelected = { ...selected, [prop]: value }
         onChange(newSelected)
         updateUrl(newSelected)
     }
 
+    const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+
+    function toggleCollapsed(label: string) {
+        setCollapsed(prev => ({
+            ...prev,
+            [label]: !prev[label]
+        }));
+    }
+
     function renderContent() {
         return (
-            <div className="w-full space-y-8">
+            <div className="w-full space-y-4">
                 {GROUPS.map((group, gi) => {
                     const fields = Object.entries(configurations).filter(([key, value]) =>
                         group.match(key, value)
-                    )
-                    if (!fields.length) return null
+                    );
+                    if (!fields.length) return null;
+
+                    const open = !collapsed[group.label];
+                    const Icon = group.icon;
 
                     return (
-                        <div key={gi} className="mb-6">
-                            <div className="mb-2">
-                                <span className="font-semibold text-gray-700 text-sm">{group.label}</span>
-                                <span className="block text-xs text-gray-400 mt-1">{group.description}</span>
+                        <div
+                            key={gi}
+                            tabIndex={0}
+                            className={`collapse  border-b-1 border-gray-200 rounded-none ${open ? "collapse-open" : "collapse-close"}`}
+                        >
+                            <div
+                                className="collapse-title flex items-center justify-between cursor-pointer select-none py-3 px-2"
+                                onClick={() => toggleCollapsed(group.label)}
+                            >
+                                <div>
+                                    <span className="flex flex-row gap-2 font-semibold text-gray-700 text-sm"> {group.label}</span>
+                                    <span className="block text-xs text-gray-400">{group.description}</span>
+                                </div>
+                                <span className="ml-2">
+                                    {open ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                                </span>
                             </div>
-
-                            <div className="space-y-3">
-                                {fields.map(([prop, value], idx) => {
-                                    if (typeof value === 'boolean') {
-                                        return (
-                                            <BooleanConfig
-                                                key={prop}
-                                                value={!!selected[prop]}
-                                                onChange={val => updateValue(prop, val)}
-                                                label={prop}
-                                                id={prop}
-                                            />
-                                        )
-                                    }
-
-                                    if (typeof value === 'number') {
-                                        return (
-                                            <div key={prop} className="flex flex-row justify-between items-start">
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                    <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{prop}</code>
-                                                </label>
-                                                <input
-                                                    type="number"
+                            <div className="collapse-content">
+                                <div className="space-y-2">
+                                    {fields.map(([prop, value], idx) => {
+                                        if (typeof value === 'boolean') {
+                                            return (
+                                                <BooleanConfig
+                                                    key={prop}
+                                                    value={!!selected[prop]}
+                                                    onChange={val => updateValue(prop, val)}
+                                                    label={prop}
                                                     id={prop}
-                                                    value={selected[prop] ?? value}
-                                                    onChange={e => updateValue(prop, Number(e.target.value))}
-                                                    className="input input-bordered w-24 text-sm ml-3"
                                                 />
-                                            </div>
-                                        )
-                                    }
-
-                                    if (typeof value === 'object') {
-                                        if (prop === 'resources' && Array.isArray(value)) {
-                                            return <ResourceList key={idx} resources={value} />
+                                            )
                                         }
-                                        if (prop === 'data' && Array.isArray(value)) {
-                                            return <DataList key={idx} data={value} />
+                                        if (typeof value === 'number') {
+                                            return (
+                                                <div key={prop} className="flex flex-row justify-between items-start">
+                                                    <kbd className="kbd rounded-sm"> {prop}</kbd>
+                                                    <input
+                                                        type="number"
+                                                        id={prop}
+                                                        value={selected[prop] ?? value}
+                                                        onChange={e => updateValue(prop, Number(e.target.value))}
+                                                        className="input input-sm w-24 text-sm"
+                                                    />
+                                                </div>
+                                            )
                                         }
-                                        return (
-                                            <div key={idx}>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                    <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{prop}</code>
-                                                </label>
-                                                <pre className="bg-gray-100 rounded p-2 text-xs overflow-auto max-h-40">
-                                                    {JSON.stringify(value, null, 2)}
-                                                </pre>
-                                            </div>
-                                        )
-                                    }
+                                        if (typeof value === 'object') {
+                                            if (prop === 'resources' && Array.isArray(value)) {
+                                                return <ResourceList key={idx} resources={value} />
+                                            }
+                                            if (prop === 'data' && Array.isArray(value)) {
+                                                return <DataList key={idx} data={value} />
+                                            }
+                                            return (
+                                                <div
+                                                    key={idx}
+                                                    className="flex flex-col gap-1 mb-2"
+                                                >
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <kbd className="kbd rounded-sm">{prop}</kbd>
 
-                                    if (typeof value === 'string') {
-                                        return (
-                                            <div key={idx}>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                    <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{prop}</code>
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    id={prop}
-                                                    value={selected[prop] ?? value}
-                                                    onChange={e => updateValue(prop, e.target.value)}
-                                                    className="input input-bordered w-full text-sm mt-1"
-                                                />
-                                            </div>
-                                        )
-                                    }
 
-                                    return null
-                                })}
+                                                    </div>
+                                                    <pre className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs font-mono text-gray-800 whitespace-pre-wrap">
+                                                        {JSON.stringify(value, null, 2)}
+                                                    </pre>
+                                                </div>
+                                            )
+                                        }
+                                        if (typeof value === 'string') {
+                                            return (
+                                                <div key={idx}>
+                                                    <kbd className="kbd rounded-sm">{prop}</kbd>
+                                                    <input
+                                                        type="text"
+                                                        id={prop}
+                                                        value={selected[prop] ?? value}
+                                                        onChange={e => updateValue(prop, e.target.value)}
+                                                        className="input input-bordered w-full text-sm mt-1"
+                                                    />
+                                                </div>
+                                            )
+                                        }
+                                        return null;
+                                    })}
+                                </div>
                             </div>
                         </div>
-                    )
+                    );
                 })}
                 <ConfigDropdown onChange={onChange} configs={configs} selectedPreset={selectedPreset} />
             </div>
-        )
+        );
     }
 
     if (screenSize === 'mobile' || screenSize === 'tablet') {

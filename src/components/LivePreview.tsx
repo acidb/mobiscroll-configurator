@@ -1,10 +1,9 @@
 'use client'
 
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
     Eventcalendar,
     Select,
-    getJson,
     Datepicker,
     MbscEventClickEvent,
     Toast
@@ -23,17 +22,22 @@ const componentMap: Record<string, React.ElementType> = {
 
 export interface LivePreviewProps {
     componentName: string;
-    mergedProps: Record<string, any>;
-    data?: any;
-    template?: any;
-    hooks?: any;
+    mergedProps: Record<string, string>;
+    data?: {
+        data?: Record<string, string>[];
+        resources?: Record<string, string>[];
+        invalid?: Record<string, string>[];
+    };
+    template?: Record<string, string>;
+    hooks?: Record<string, string>;
     isScheduler: boolean;
 }
+
 
 export const LivePreview: React.FC<LivePreviewProps> = ({
     componentName,
     mergedProps,
-    data = [],
+    data = {},
     template,
     hooks,
     isScheduler,

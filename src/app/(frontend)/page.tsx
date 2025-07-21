@@ -2,7 +2,6 @@ import { headers as getHeaders } from 'next/headers'
 import { getPayload } from 'payload'
 import React from 'react'
 import Link from 'next/link'
-import { fileURLToPath } from 'url'
 import config from '@/payload.config'
 import './styles.css'
 
@@ -12,7 +11,6 @@ export default async function HomePage() {
   const payload = await getPayload({ config: payloadConfig })
   const { user } = await payload.auth({ headers })
 
-  const fileURL = `vscode://file/${fileURLToPath(import.meta.url)}`
 
   return (
     <div className="flex flex-col items-center justify-center bg-background min-h-[calc(100vh-136px)]">

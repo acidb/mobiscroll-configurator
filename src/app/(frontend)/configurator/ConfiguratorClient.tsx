@@ -60,7 +60,7 @@ export default function ConfiguratorClient({
   const [currentConfig, setCurrentConfig] = useState<Config | null>(null)
   const [code, setCode] = useState<any>(null)
   const [language, setLanguage] = useState<any>(null)
-  const [props, setProps] = useState<Record<string, any>>({})
+  const [props, setProps] = useState<Record<string, string>>({})
   const [data, setData] = useState<Record<string, any>>({})
   const [template, setTemplate] = useState<Record<string, any>>({})
   const [hooks, setHooks] = useState<Record<string, any>>({})
@@ -99,7 +99,7 @@ export default function ConfiguratorClient({
       newQuery.delete('preset')
       newQuery.delete('addonconfigtitle')
     } else if (key === 'preset') {
-      newQuery.delete('addonconfigtitle') // Clear addonconfigtitle when preset changes
+      newQuery.delete('addonconfigtitle')
     }
     router.push(`${pathname}?${newQuery.toString()}`, { scroll: false })
   }
@@ -136,59 +136,38 @@ export default function ConfiguratorClient({
 
   useEffect(() => {
     if (selectedPreset) {
-      const preset = filteredPresets.find(p => p.slug === selectedPreset)
-      // Find the first non-addon config
-      const nonAddonConfig = configs.find(c => c.preset?.slug === selectedPreset && c.config.type !== 'addon') || null
-      // Find the selected addon config based on addonconfigtitle
+      const preset = filteredPresets.find(p => p.slug === selectedPreset);
+      const nonAddonConfig = configs.find(c => c.preset?.slug === selectedPreset && c.config.type !== 'addon') || null;
       const selectedAddonConfig = addonConfigTitle
         ? configs.find(c => c.preset?.slug === selectedPreset && c.config.type === 'addon' && c.config.title.replace(/\s+/g, '-') === addonConfigTitle)
-        : null
+        : null;
 
-      // Merge non-addon and selected addon config
-      let mergedConfig: Config | null = null
+      let mergedConfig: Config | null = null;
       if (nonAddonConfig) {
-        mergedConfig = { ...nonAddonConfig }
+        mergedConfig = { ...nonAddonConfig };
         if (selectedAddonConfig) {
           mergedConfig.config = {
             ...nonAddonConfig.config,
-            props: {
-              ...nonAddonConfig.config.props,
-              ...selectedAddonConfig.config.props,
-            },
-            data: {
-              ...nonAddonConfig.config.data,
-              ...selectedAddonConfig.config.data,
-            },
-            hooks: {
-              ...nonAddonConfig.config.hooks,
-              ...selectedAddonConfig.config.hooks,
-            },
-            templates: {
-              ...nonAddonConfig.config.templates,
-              ...selectedAddonConfig.config.templates,
-            },
-          }
+            props: { ...nonAddonConfig.config.props, ...selectedAddonConfig.config.props },
+            data: { ...nonAddonConfig.config.data, ...selectedAddonConfig.config.data },
+            hooks: { ...nonAddonConfig.config.hooks, ...selectedAddonConfig.config.hooks },
+            templates: { ...nonAddonConfig.config.templates, ...selectedAddonConfig.config.templates },
+          };
         }
       } else if (selectedAddonConfig) {
-        mergedConfig = { ...selectedAddonConfig }
+        mergedConfig = { ...selectedAddonConfig };
       }
 
-      const filteredProps = filterInvalidProps(mergedConfig?.config.props || {})
-      setProps(filteredProps)
-      setPresetObj(preset || null)
-      setCurrentConfig(mergedConfig)
+      const allProps = mergedConfig?.config.props || {};
+      setProps(filterInvalidProps(allProps));
+      setPresetObj(preset || null);
+      setCurrentConfig(mergedConfig);
 
-      // Clear addonconfigtitle if no non-addon config exists
-      if (!nonAddonConfig && addonConfigTitle) {
-        const newQuery = new URLSearchParams(searchParams.toString())
-        newQuery.delete('addonconfigtitle')
-        router.push(`${pathname}?${newQuery.toString()}`, { scroll: false })
-      }
     } else {
-      setPresetObj(null)
-      setCurrentConfig(null)
+      setPresetObj(null);
+      setCurrentConfig(null);
     }
-  }, [selectedPreset, addonConfigTitle, filteredPresets, configs, router, pathname, searchParams])
+  }, [selectedPreset, addonConfigTitle, filteredPresets, configs]);
 
   useEffect(() => {
     if (frameworkObj && currentConfig) {
