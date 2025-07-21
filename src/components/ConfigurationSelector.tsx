@@ -9,7 +9,7 @@ import StepperSection from '../app/(frontend)/configurator/StepperSection'
 import { Component, Preset, Config, Group, User } from '@/app/(frontend)/configurator/types'
 import { ConfigDropdown } from './ConfigDropdown'
 import { ChevronUp, ChevronDown, FileCode2, ToggleLeft, Hash, Database, Text } from 'lucide-react'
-
+import Link from 'next/link'
 
 
 interface pGroup {
