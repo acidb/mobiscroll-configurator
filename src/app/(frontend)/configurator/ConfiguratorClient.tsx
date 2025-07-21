@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import FrameworkSection from './FrameworkSection'
-import { Group, Component, Framework, Preset, Config } from './types'
+import { Group, Component, Framework, Preset, Config, User } from './types'
 import { LivePreview } from '@/components/LivePreview'
 import { CodePreview } from '@/components/CodePreview'
 import { ConfigurationsSelector } from '@/components/ConfigurationSelector'
@@ -40,6 +40,7 @@ export default function ConfiguratorClient({
   selectedComponent,
   selectedFramework,
   configs,
+  user
 }: {
   groups: Group[]
   components: Component[]
@@ -49,6 +50,7 @@ export default function ConfiguratorClient({
   selectedComponent: string | null
   selectedFramework: string | null
   configs: Config[]
+  user: User | null
 }) {
   const router = useRouter()
   const pathname = usePathname()
@@ -448,6 +450,7 @@ export default function ConfiguratorClient({
             updateSelection={updateSelection}
             updateSelections={updateSelections}
             configs={configs}
+            user={user}
           />
         </div>
 
