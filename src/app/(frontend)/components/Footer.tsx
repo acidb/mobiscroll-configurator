@@ -3,65 +3,193 @@
 import React from 'react'
 import Link from 'next/link'
 
-const siteLinks = [
-  { href: '/', label: 'Home', aria: 'Home' },
-  { href: '/about', label: 'About', aria: 'About' },
-  { href: '/contact', label: 'Contact', aria: 'Contact' },
+interface FooterLink {
+  href: string
+  label: string
+  aria: string
+  target?: '_blank' | '_self'
+}
+
+const productLinks: FooterLink[] = [
+  { href: '//demo.mobiscroll.com/javascript', label: 'For Javascript', aria: 'Mobiscroll for Javascript' },
+  { href: '//demo.mobiscroll.com/jquery', label: 'For jQuery', aria: 'Mobiscroll for jQuery' },
+  { href: '//demo.mobiscroll.com/angular', label: 'For Angular', aria: 'Mobiscroll for Angular' },
+  { href: '//demo.mobiscroll.com/react', label: 'For React', aria: 'Mobiscroll for React' },
+  { href: '//demo.mobiscroll.com/vue', label: 'For Vue', aria: 'Mobiscroll for Vue' },
+  { href: '//demo.mobiscroll.com/', label: 'View Controls', aria: 'View Mobiscroll Controls' },
+  { href: '//mobiscroll.com/pricing', label: 'View Pricing', aria: 'View Pricing' },
+  { href: '//download.mobiscroll.com', label: 'Download Products', aria: 'Download Mobiscroll Products' },
 ]
 
-const socialLinks = [
-  { href: 'https://twitter.com', label: 'Twitter', aria: 'Follow on Twitter' },
-  { href: 'https://github.com', label: 'GitHub', aria: 'Follow on GitHub' },
-  { href: 'https://linkedin.com', label: 'LinkedIn', aria: 'Follow on LinkedIn' },
+const featureLinks: FooterLink[] = [
+  { href: '//mobiscroll.com/event-calendar-scheduler', label: 'Event Calendar & Scheduler', aria: 'Event calendar & scheduler' },
+  { href: '//mobiscroll.com/date-time-picker-calendar', label: 'Date Picker & Calendar', aria: 'Date picker & calendar' },
+  { href: '//mobiscroll.com/mobiscroll-vs-fullcalendar', label: 'FullCalendar Alternative', aria: 'FullCalendar alternative' },
+]
+
+const resourceLinks: FooterLink[] = [
+  { href: 'https://blog.mobiscroll.com', label: 'Blog', aria: 'Mobiscroll Blog', target: '_blank' },
+  { href: 'https://forum.mobiscroll.com', label: 'Community Forum', aria: 'Mobiscroll Community Forum', target: '_blank' },
+  { href: 'http://uipatterns.io', label: 'Ui Patterns', aria: 'Ui Patterns', target: '_blank' },
+  { href: '//mobiscroll.com/learning-support', label: 'Support & Learning', aria: 'Support & Learning', target: '_blank' },
+  { href: 'http://help.mobiscroll.com', label: 'Knowledge Base', aria: 'Knowledge Base', target: '_blank' },
+  { href: '//mobiscroll.com/docs', label: 'Docs', aria: 'Mobiscroll Documentation', target: '_blank' },
+  { href: '//mobiscroll.com/releases', label: 'Releases', aria: 'Mobiscroll Releases', target: '_blank' },
+  { href: 'http://status.mobiscroll.com', label: 'Status', aria: 'Mobiscroll Status', target: '_blank' },
+  { href: '//mobiscroll.com/faq', label: 'Faq', aria: 'Mobiscroll Faq', target: '_blank' },
+  { href: 'https://github.com/acidb/mobiscroll/issues?state=open', label: 'Report A Bug', aria: 'Report A Bug', target: '_blank' },
+]
+
+const companyLinks: FooterLink[] = [
+  { href: '//mobiscroll.com/company', label: 'About Us', aria: 'About Mobiscroll' },
+  { href: '//mobiscroll.com/contact', label: 'Contact', aria: 'Contact Mobiscroll' },
+  { href: '//mobiscroll.com/customers', label: 'Customers', aria: 'Mobiscroll Customers' },
+  { href: '//mobiscroll.com/reviews', label: 'Reviews', aria: 'Mobiscroll Reviews' },
+  { href: 'http://twitter.com/mobiscroll', label: 'Twitter', aria: 'Follow on Twitter', target: '_blank' },
+  { href: 'http://www.facebook.com/mobiscroll', label: 'Facebook', aria: 'Follow on Facebook', target: '_blank' },
+]
+
+const legalLinks: FooterLink[] = [
+  { href: '//mobiscroll.com/toc', label: 'Terms & Conditions', aria: 'Terms & Conditions', target: '_blank' },
+  { href: '//mobiscroll.com/privacy', label: 'Privacy', aria: 'Privacy Policy', target: '_blank' },
+  { href: '//mobiscroll.com/cookie-policy', label: 'Cookie Policy', aria: 'Cookie Policy', target: '_blank' },
+  { href: '//mobiscroll.com/eula', label: 'Eula', aria: 'End User License Agreement', target: '_blank' },
 ]
 
 export default function Footer() {
   return (
-    <footer className="w-full py-6 px-8 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 shadow-inner">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 text-sm text-gray-600">
+    <footer id="footer" className="w-full py-6 px-8 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 shadow-inner">
+      <div className="w-full px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 text-sm text-gray-600 footer">
         <div>
-          <h3 className="text-base font-semibold text-gray-900 mb-2">Mobiscroll Configurator</h3>
-          <p>Build and customize your components with ease.</p>
-        </div>
-
-        <div>
-          <h3 className="text-base font-semibold text-gray-900 mb-2">Links</h3>
-          <ul className="flex flex-wrap gap-4">
-            {siteLinks.map(({ href, label, aria }) => (
-              <li key={href}>
+          <h3 className="text-base font-semibold text-gray-900 mb-2">Products</h3>
+          {productLinks.map(({ href, label, aria, target }, index) => (
+            <div key={href}>
+              {index === 5 && <hr className="my-2 border-gray-300" />}
+              <div className="mb-2 text-base">
                 <Link
                   href={href}
                   aria-label={aria}
+                  target={target || '_self'}
+                  rel={target ? 'noopener noreferrer' : undefined}
                   className="hover:text-blue-600 transition-colors duration-200"
                 >
                   {label}
                 </Link>
-              </li>
-            ))}
-          </ul>
+              </div>
+            </div>
+          ))}
         </div>
 
         <div>
-          <h3 className="text-base font-semibold text-gray-900 mb-2">Follow Us</h3>
-          <div className="flex flex-wrap gap-4">
-            {socialLinks.map(({ href, label, aria }) => (
+          <h3 className="text-base font-semibold text-gray-900 mb-2">Features</h3>
+          {featureLinks.map(({ href, label, aria, target }) => (
+            <div key={href} className="mb-2 text-base">
               <Link
-                key={href}
                 href={href}
                 aria-label={aria}
-                target="_blank"
-                rel="noopener noreferrer"
+                target={target || '_self'}
+                rel={target ? 'noopener noreferrer' : undefined}
                 className="hover:text-blue-600 transition-colors duration-200"
               >
                 {label}
               </Link>
-            ))}
-          </div>
+            </div>
+          ))}
+        </div>
+
+        <div>
+          <h3 className="text-base font-semibold text-gray-900 mb-2">Resources</h3>
+          {resourceLinks.map(({ href, label, aria, target }) => (
+            <div key={href} className="mb-2 text-base">
+              <Link
+                href={href}
+                aria-label={aria}
+                target={target || '_self'}
+                rel={target ? 'noopener noreferrer' : undefined}
+                className="hover:text-blue-600 transition-colors duration-200"
+              >
+                {label}
+              </Link>
+            </div>
+          ))}
+        </div>
+
+        <div>
+          <h3 className="text-base font-semibold text-gray-900 mb-2">Company</h3>
+          {companyLinks.map(({ href, label, aria, target }, index) => (
+            <div key={href}>
+              {index === 4 && <hr className="my-2 border-gray-300" />}
+              <div className="mb-2 text-base">
+                <Link
+                  href={href}
+                  aria-label={aria}
+                  target={target || '_self'}
+                  rel={target ? 'noopener noreferrer' : undefined}
+                  className="hover:text-blue-600 transition-colors duration-200"
+                >
+                  {label}
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div>
+          <h3 className="text-base font-semibold text-gray-900 mb-2">Legal</h3>
+          {legalLinks.map(({ href, label, aria, target }) => (
+            <div key={href} className="mb-2 text-base">
+              <Link
+                href={href}
+                aria-label={aria}
+                target={target || '_self'}
+                rel={target ? 'noopener noreferrer' : undefined}
+                className="hover:text-blue-600 transition-colors duration-200"
+              >
+                {label}
+              </Link>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="mt-6 text-center text-xs text-gray-500">
-        © {new Date().getFullYear()} Mobiscroll Configurator. All rights reserved.
+      <div className="mt-6 border-t border-gray-200 pt-4">
+        <div className="w-full px-8 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500">
+          <div className="flex flex-col sm:flex-row gap-2 mb-4 sm:mb-0 footer">
+            <span>© {new Date().getFullYear()} Acid Media LLC - VAT No. RO19333154</span>
+            <span className="hidden sm:inline">{' | '}</span>
+            <span>All trademarks © their respective owners. Site uses cookies, you agree to this by browsing it.</span>
+          </div>
+          <div className="flex-shrink-0">
+            <svg className="w-[230px] h-[36px]" viewBox="0 0 230 36" version="1.1" xmlns="http://www.w3.org/2000/svg">
+              <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+                <g transform="translate(-34.000000, -48.000000)" fill="#11283A">
+                  <g transform="translate(34.000000, 46.000000)">
+                    <g transform="translate(0.000000, 2.000000)">
+                      <g>
+                        <path d="M35.983317,9.96512321 C37.3644096,8.50377583 38.7019954,7.02364865 40,5.51952504 C39.8995747,3.79352146 39.7837749,2.41216216 39.6637226,1.46760731 C39.5420347,0.510532591 39.4105332,0 39.2708538,0 L24.6264311,0 C24.5034347,0 24.3935231,0.510532591 24.2783775,1.46760731 C24.1795878,2.40277226 24.0811253,3.76848172 24,5.46875 C26.515211,8.39283585 29.1841675,11.2449324 32.0186457,14 C33.3788027,12.6788056 34.6983971,11.3311804 35.983317,9.96512321" id="Fill-1"></path>
+                        <path d="M39.9615159,16.026265 C37.7354675,18.2033431 35.3938408,20.3204332 32.9727125,22.3856418 C32.4800022,22.8042608 32.0063322,23.2403898 31.5039347,23.6538206 C28.5199474,21.1920427 25.6936275,18.6265017 23.0199642,16 C23.00226,17.2364014 22.9962473,18.5100926 23.00226,19.8042121 C23.00226,22.2105417 23.026645,24.4625237 23.0760831,26.4794176 C23.1138297,28.4758832 23.1853144,30.2223447 23.263814,31.6568686 C23.3439839,33.0592908 23.42716,34.1549636 23.5320489,34.9010846 C23.622908,35.6180223 23.7271288,36 23.8326857,36 L39.0432375,36 C39.1641603,36 39.2817427,35.6180223 39.3939805,34.9010846 C39.5028778,34.169231 39.6074326,33.0881499 39.6946173,31.7168566 L39.7012981,31.6568686 C39.790153,30.2223447 39.8646441,28.4758832 39.9177566,26.4794176 C39.970201,24.4625237 39.9989285,22.2105417 39.9989285,19.8042121 C40.0019349,18.5305209 39.9989285,17.2827705 39.9859009,16.0632306 L39.9615159,16.026265" id="Fill-2"></path>
+                        <path d="M16.9630438,5.43465948 C17.1323292,3.70415991 17.3358037,2.32602898 17.5508957,1.39231806 C17.6946224,0.773363394 17.8466473,0.370844904 18,0.163646862 L17.8828279,0 L3.7959576,0 C3.31598365,0 2.84696346,0.483022188 2.40781717,1.39231806 C1.9524062,2.32602898 1.54081028,3.70415991 1.18265545,5.43465948 C0.817861966,7.20772044 0.518127195,9.3427181 0.315648558,11.7274752 C0.103543886,14.1412664 -0.00964499138,16.7827115 0.000644906598,19.520827 C0.0102709402,21.9692612 0.125119479,24.2606472 0.300379677,26.3128317 C0.483606247,28.3442303 0.745168815,30.1212504 1.05917667,31.5808749 C1.30148717,32.7046273 1.57964635,33.5710319 1.87539793,34.286327 L2.96413553,35.8304143 C3.08628657,35.8947513 3.20644603,36 3.33423992,36 L17.9956849,36 C17.7928743,36 17.5957066,35.6113387 17.4091607,34.8818564 C17.2212871,34.1226802 17.0516697,33.0078359 16.9013044,31.5808749 C16.7506072,30.1212504 16.624473,28.3442303 16.5438135,26.3128317 C16.4522002,24.2606472 16.3961036,21.9692612 16.3917885,19.520827 C16.3888011,16.7827115 16.4425742,14.1412664 16.5464689,11.7274752 C16.6457167,9.3427181 16.7851282,7.20772044 16.9630438,5.43465948" id="Fill-4"></path>
+                        <path d="M48.0372858,5.43465948 C47.8680007,3.70415991 47.6641948,2.32602898 47.4494352,1.39231806 C47.3053769,0.773363394 47.1536843,0.370844904 47,0.163646862 L47.1175037,0 L61.2040104,0 C61.6843152,0 62.1533343,0.483022188 62.5921477,1.39231806 C63.0475576,2.32602898 63.4594846,3.70415991 63.8176386,5.43465948 C64.1830951,7.20772044 64.4818334,9.3427181 64.6853074,11.7274752 C64.8967477,14.1412664 65.0099363,16.7827115 64.9993145,19.520827 C64.9900204,21.9692612 64.8748402,24.2606472 64.7002443,26.3128317 C64.5163543,28.3442303 64.2551242,30.1212504 63.9407852,31.5808749 C63.6988071,32.7046273 63.4206486,33.5710319 63.1245657,34.286327 L62.0361625,35.8304143 C61.9140117,35.8947513 61.7938526,36 61.665727,36 L47.0043151,36 C47.2077891,36 47.4046244,35.6113387 47.590838,34.8818564 C47.7790431,34.1226802 47.9486601,33.0078359 48.099025,31.5808749 C48.24939,30.1212504 48.3755239,28.3442303 48.4565152,26.3128317 C48.5484602,24.2606472 48.6042247,21.9692612 48.6085398,19.520827 C48.6115272,16.7827115 48.5577543,14.1412664 48.4535278,11.7274752 C48.3546122,9.3427181 48.215201,7.20772044 48.0372858,5.43465948" id="Fill-6"></path>
+                      </g>
+                      <g transform="translate(84.000000, 10.000000)">
+                        <path d="M15,15.5540157 C15,15.8589131 14.8692035,16 14.5266771,16 L12.9761626,16 C12.6371442,16 12.5040926,15.8589131 12.5040926,15.5540157 L12.5040926,4.75400318 C12.4507216,4.86887037 12.1117032,5.95336642 11.8756682,6.49474046 L8.82851129,13.1063458 C8.69545971,13.4099947 8.48548376,13.5768018 8.17227382,13.5768018 L6.80467393,13.5768018 C6.46214753,13.5768018 6.30428972,13.3892687 6.17299212,13.1063458 L2.91435587,6.21406499 C2.65125952,5.69491525 2.44353869,4.86887037 2.41848189,4.80044948 L2.41848189,15.5540157 C2.41848189,15.8589131 2.28768542,16 1.94641187,16 L0.471819457,16 C0.130295336,16 0,15.8589131 0,15.5540157 L0,0.446234042 C0,0.141586291 0.130295336,0 0.471819457,0 L1.94641187,0 C2.18119404,0 2.31249165,0.0928925929 2.39367566,0.258451166 L6.9354704,9.71776384 C7.12289523,10.119799 7.46191367,11.0342417 7.48571763,11.1313793 C7.51177669,11.0342417 7.8831184,10.1420233 8.06478017,9.74198583 L12.5278966,0.210007179 C12.6110851,0.0486936979 12.7391254,0 12.9761626,0 L14.5266771,0 C14.8692035,0 15,0.141586291 15,0.446234042 L15,15.5540157" id="Fill-10"></path>
+                        <path d="M28.4285714,3.82112237 C28.4285714,2.55340657 27.3679569,1.77777778 24.9877583,1.77777778 C22.6302762,1.77777778 21.5714286,2.55340657 21.5714286,3.82112237 L21.5714286,12.1791268 C21.5714286,13.4463443 22.6302762,14.2222222 24.9877583,14.2222222 C27.3679569,14.2222222 28.4285714,13.4463443 28.4285714,12.1791268 L28.4285714,3.82112237 Z M19,3.53923796 C19,1.65545001 20.4769811,0 24.9859119,0 C29.5232704,0 31,1.65545001 31,3.53923796 L31,12.4590544 C31,14.3450379 29.5232704,16 24.9859119,16 C20.4769811,16 19,14.3450379 19,12.4590544 L19,3.53923796 L19,3.53923796 Z" id="Fill-11"></path>
+                        <path d="M37.5810545,8.68171177 L37.5810545,14.0959516 L40.9618045,14.0959516 C43.3586067,14.0959516 44.4197069,13.3670444 44.4197069,12.0702937 L44.4197069,10.6377002 C44.4197069,9.45931267 43.3586067,8.68171177 40.9618045,8.68171177 L37.5810545,8.68171177 Z M37.5810545,1.90629585 L37.5810545,6.8945282 L40.3778314,6.8945282 C42.5863207,6.8945282 43.6491974,6.1411493 43.6491974,4.84889347 L43.6491974,3.7641477 C43.6491974,2.47189188 42.5863207,1.90629585 40.1915488,1.90629585 L37.5810545,1.90629585 Z M35.4806802,16 C35.1373009,16 35,15.8589131 35,15.529544 L35,0.470456035 C35,0.141586291 35.1373009,0 35.4806802,0 L40.1915488,0 C44.7646088,0 46.227714,1.50675781 46.227714,3.41305366 L46.227714,4.89309236 C46.227714,6.1191747 45.5884144,7.06033649 43.9943532,7.6012111 C46.012753,8.09638855 47,9.10597122 47,10.470893 L47,12.4703312 C47,14.400849 45.5368949,16 40.9618045,16 L35.4806802,16 L35.4806802,16 Z" id="Fill-12"></path>
+                        <path d="M54,15.5295072 C54,15.8589021 53.8811677,16 53.4429919,16 L51.5570081,16 C51.1589345,16 51,15.8589021 51,15.5295072 L51,0.47049275 C51,0.14134761 51.1589345,0 51.5570081,0 L53.4429919,0 C53.8811677,0 54,0.14134761 54,0.47049275 L54,15.5295072" id="Fill-13"></path>
+                        <path d="M67.2993306,3.83929742 C67.2993306,2.59831979 66.4192541,1.8840319 64.0661779,1.8840319 C61.7136117,1.8840319 60.8320051,2.59831979 60.8320051,3.83929742 L60.8320051,4.29694909 C60.8320051,5.35642734 61.6350653,5.65429125 62.1917756,5.83774224 L67.0601211,7.42366628 C68.6649665,7.95255157 70,8.8505344 70,10.5508714 L70,12.4590544 C70,14.3450379 68.4788014,16 64.0108384,16 C59.5520561,16 58,14.3450379 58,12.4590544 L58,11.1251315 C58,10.8036044 58.1624482,10.6652843 58.5059611,10.6652843 L60.0868346,10.6652843 C60.4326427,10.6652843 60.5652534,10.8036044 60.5652534,11.1251315 L60.5652534,12.1607026 C60.5652534,13.4019242 61.5802359,14.1118209 63.9830411,14.1118209 C66.393752,14.1118209 67.4347466,13.4019242 67.4347466,12.1607026 L67.4347466,11.0797567 C67.4347466,9.93148032 66.233599,9.53896351 65.1900542,9.19572476 L60.6741473,7.70030646 C59.4959515,7.30974126 58.2945489,6.27587784 58.2945489,4.84925366 L58.2945489,3.54045771 C58.2945489,1.65545001 59.6841568,0 64.0424609,0 C68.39949,0 69.839592,1.65545001 69.839592,3.54045771 L69.839592,4.55260951 C69.839592,4.84925366 69.7077463,4.98757376 69.3588779,4.98757376 L67.7810647,4.98757376 C67.4094995,4.98757376 67.2993306,4.84925366 67.2993306,4.55260951 L67.2993306,3.83929742" id="Fill-14"></path>
+                        <path d="M86,12.4590544 C86,14.3450379 84.6679332,16 80.0012953,16 C75.3323259,16 74,14.3450379 74,12.4590544 L74,3.53923796 C74,1.65545001 75.3323259,0 80.0012953,0 C84.6679332,0 86,1.65545001 86,3.53923796 L86,4.66580267 C86,4.98757376 85.866068,5.1256499 85.5109019,5.1256499 L83.93869,5.1256499 C83.5573594,5.1256499 83.4260179,4.98757376 83.4260179,4.66580267 L83.4260179,3.90857944 C83.4260179,2.66735786 82.4706187,1.90793907 80.0279781,1.90793907 C77.5861146,1.90793907 76.6612841,2.66735786 76.6612841,3.90857944 L76.6612841,12.0919085 C76.6612841,13.3326421 77.5861146,14.0935246 80.0279781,14.0935246 C82.4706187,14.0935246 83.4260179,13.3326421 83.4260179,12.0919085 L83.4260179,11.0107186 C83.4260179,10.7128547 83.5573594,10.5747785 83.93869,10.5747785 L85.5109019,10.5747785 C85.866068,10.5747785 86,10.7128547 86,11.0107186 L86,12.4590544" id="Fill-15"></path>
+                        <path d="M92.5717042,1.95299185 L92.5717042,7.71832569 L95.8635363,7.71832569 C98.2481845,7.71832569 99.3095187,6.9676936 99.3095187,5.67069326 L99.3095187,4.00062428 C99.3095187,2.7293442 98.2481845,1.95299185 95.8635363,1.95299185 L92.5717042,1.95299185 Z M92.5717042,9.67331523 L92.5717042,15.529544 C92.5717042,15.8589131 92.4653936,16 92.0938127,16 L90.4751072,16 C90.134407,16 90,15.8589131 90,15.529544 L90,0.46945719 C90,0.141586291 90.134407,0 90.4751072,0 L95.8635363,0 C100.421983,0 101.883754,1.69329213 101.883754,3.62530824 L101.883754,6.07048101 C101.883754,7.50632082 101.059088,8.79882636 98.7789781,9.36442239 L101.961462,15.529544 C102.097135,15.8124668 101.859708,16 101.482305,16 L99.8959989,16 C99.5218868,16 99.4667065,15.8124668 99.3095187,15.529544 L96.3105471,9.67331523 L92.5717042,9.67331523 L92.5717042,9.67331523 Z" id="Fill-16"></path>
+                        <path d="M111.987293,0 C116.522992,0 118,1.65545001 118,3.53923796 L118,12.4590544 C118,14.3450379 116.522992,16 111.987293,16 C107.470969,16 106,14.3450379 106,12.4590544 L106,3.53923796 C106,1.65545001 107.470969,0 111.987293,0 Z M111.988391,1.77777778 C109.633362,1.77777778 108.571429,2.55340657 108.571429,3.82112237 L108.571429,12.1791268 C108.571429,13.4463443 109.633362,14.2222222 111.988391,14.2222222 C114.365124,14.2222222 115.428571,13.4463443 115.428571,12.1791268 L115.428571,3.82112237 C115.428571,2.55340657 114.365124,1.77777778 111.988391,1.77777778 Z" id="Fill-17"></path>
+                        <path d="M124.630556,14.0475076 L131.494655,14.0475076 C131.840417,14.0475076 132,14.1423979 132,14.471767 L132,15.5540157 C132,15.8833848 131.840417,16 131.494655,16 L122.429901,16 C122.132986,16 122,15.8366888 122,15.529544 L122,0.470456035 C122,0.141586291 122.132986,0 122.50867,0 L124.14209,0 C124.496036,0 124.630556,0.141586291 124.630556,0.470456035 L124.630556,14.0475076" id="Fill-18"></path>
+                        <path d="M138.627756,14.0475076 L145.492557,14.0475076 C145.840401,14.0475076 146,14.1423979 146,14.471767 L146,15.5540157 C146,15.8833848 145.840401,16 145.492557,16 L136.430968,16 C136.137091,16 136,15.8366888 136,15.529544 L136,0.470456035 C136,0.141586291 136.137091,0 136.514093,0 L138.145634,0 C138.495013,0 138.627756,0.141586291 138.627756,0.470456035 L138.627756,14.0475076" id="Fill-19"></path>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </svg>
+          </div>
+        </div>
       </div>
     </footer>
   )

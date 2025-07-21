@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import '@mobiscroll/react/dist/css/mobiscroll.min.css';
+import { Select, setOptions } from '@mobiscroll/react';
+import { FC, useEffect, useState } from 'react';
 import { updateUrl } from '@/utils/updateUrl';
 import { Config } from '@/app/(frontend)/configurator/types';
+
+setOptions({
+    theme: 'ios',
+    themeVariant: 'light'
+});
 
 interface ConfigDropdownProps {
     onChange: (selected: Record<string, any>) => void;
@@ -8,9 +15,10 @@ interface ConfigDropdownProps {
     selectedPreset: string | null;
 }
 
-export function ConfigDropdown({ onChange, configs, selectedPreset }: ConfigDropdownProps) {
+export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, configs, selectedPreset }) => {
     const [selectedConfig, setSelectedConfig] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
+
     const hasNonAddonConfig = configs.some(
         (config) => config.preset?.slug === selectedPreset && config.config.type !== 'addon'
     );
@@ -18,6 +26,14 @@ export function ConfigDropdown({ onChange, configs, selectedPreset }: ConfigDrop
     const filteredConfigs = configs.filter(
         (config) => config.config.type === 'addon' && config.preset?.slug === selectedPreset
     );
+
+    const configData = [
+        { text: 'Select a configuration', value: '' },
+        ...filteredConfigs.map(config => ({
+            text: config.config.title || 'Untitled',
+            value: config.id
+        }))
+    ];
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -54,8 +70,8 @@ export function ConfigDropdown({ onChange, configs, selectedPreset }: ConfigDrop
         }
     }, [configs, onChange, selectedPreset, hasNonAddonConfig]);
 
-    const handleConfigChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedId = event.target.value;
+    const handleConfigChange = (event: any) => {
+        const selectedId = event.value;
         setSelectedConfig(selectedId);
 
         const selected = configs.find((config) => config.id === selectedId);
@@ -76,7 +92,7 @@ export function ConfigDropdown({ onChange, configs, selectedPreset }: ConfigDrop
 
     return (
         <div className="w-full mb-8">
-            <div className="mb-4">
+            <div className="mb-4 px-4">
                 <label className="text-sm font-semibold text-gray-900">Select Addon Configuration</label>
                 <p className="text-xs text-gray-500 mt-1">
                     Choose an existing addon configuration for the selected preset
@@ -87,57 +103,18 @@ export function ConfigDropdown({ onChange, configs, selectedPreset }: ConfigDrop
                     {error}
                 </div>
             )}
-            <div className="relative">
-                <select
-                    value={selectedConfig}
-                    onChange={handleConfigChange}
-                    className="
-                        w-full p-3.5 pr-10 
-                        bg-gray-100 
-                        text-gray-900 
-                        text-sm 
-                        rounded-xl 
-                        border-none 
-                        shadow-sm 
-                        focus:outline-none 
-                        focus:ring-2 
-                        focus:ring-blue-400 
-                        hover:bg-gray-50 
-                        transition-all 
-                        duration-300 
-                        disabled:bg-gray-200 
-                        disabled:text-gray-400 
-                        disabled:cursor-not-allowed 
-                        appearance-none
-                    "
-                    disabled={!hasNonAddonConfig || configs.length === 0}
-                >
-                    <option value="" className="text-gray-500">
-                        Select a configuration
-                    </option>
-                    {filteredConfigs.map((config) => (
-                        <option key={config.id} value={config.id} className="text-gray-900">
-                            {config.config.title || 'Untitled'}
-                        </option>
-                    ))}
-                </select>
-                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                    <svg
-                        className="w-4 h-4 text-gray-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M19 9l-7 7-7-7"
-                        />
-                    </svg>
-                </div>
-            </div>
+            <Select
+                data={configData}
+                display="center"
+                inputStyle="outline"
+                filter = {true}
+                labelStyle="stacked"
+                placeholder="Select a config"
+                value={selectedConfig}
+                onChange={handleConfigChange}
+                disabled={!hasNonAddonConfig || configs.length === 0}
+
+            />
         </div>
     );
-}
+};
