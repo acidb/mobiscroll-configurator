@@ -1,6 +1,6 @@
 import { fetchConfiguratorData } from '@/app/(payload)/fetchData'
 import ConfiguratorClient from './ConfiguratorClient'
-import { Group, Component, Framework, Preset, Config } from './types'
+import { Group, Component, Framework, Preset, Config, Setting, GroupedSettings } from './types'
 import { headers as getHeaders } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
@@ -25,6 +25,7 @@ export default async function ConfiguratorPage({
       selectedGroup={props.selectedGroup}
       selectedComponent={props.selectedComponent}
       selectedFramework={props.selectedFramework}
+      settings={props.componentSettings as unknown as GroupedSettings}
       configs={props.configs as unknown as Config[]}
       user={user}
     />

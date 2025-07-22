@@ -3,7 +3,7 @@ import { updateUrl } from '@/utils/updateUrl'
 import { useScreenSize } from '@/utils/useScreenSize'
 import { Settings2 } from 'lucide-react'
 import StepperSection from '../app/(frontend)/configurator/StepperSection'
-import { Component, Preset, Config, Group, User } from '@/app/(frontend)/configurator/types'
+import { Component, Preset, Config, Group, User, Setting, GroupedSettings } from '@/app/(frontend)/configurator/types'
 import { ConfigDropdown } from './ConfigDropdown'
 import Link from 'next/link'
 import { ViewEditor } from './ViewEditor'
@@ -34,6 +34,7 @@ interface ConfigurationsSelectorProps {
     selectedPreset: string | null
     updateSelection: (key: string, value: string | null) => void
     updateSelections: (updates: Record<string, string | null>) => void
+    settings: GroupedSettings
     configs: Config[]
     user: User | null
 }
@@ -52,6 +53,7 @@ export function ConfigurationsSelector({
     selectedPreset,
     updateSelection,
     updateSelections,
+    settings,
     configs,
     user,
 }: ConfigurationsSelectorProps) {
@@ -320,7 +322,7 @@ export function ConfigurationsSelector({
             )}
             {selectedPreset && (
                 <div className="mt-6">
-                    <ConfigDropdown onChange={onChange} configs={configs[0]} selectedPreset={selectedPreset} />
+                    <ConfigDropdown onChange={onChange} configs={configs[0]} settings={settings} selectedPreset={selectedPreset} />
                 </div>
             )}
 

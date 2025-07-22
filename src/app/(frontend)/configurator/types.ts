@@ -60,6 +60,21 @@ export interface User {
   email: string;
 }
 
+export interface Setting {
+  type: string
+  description: string
+  values?: string[]
+  value?: string
+  default: string
+}
+
+export interface GroupedSettings {
+  [group: string]: {
+    [settingKey: string]: Setting
+  }
+}
+
+
 
 
 export type ViewType = "month" | "week" | "day";

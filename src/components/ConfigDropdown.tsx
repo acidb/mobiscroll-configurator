@@ -5,60 +5,60 @@ import { MbscSelectChangeEvent, Select, setOptions } from '@mobiscroll/react';
 import { FC, useEffect, useState } from 'react';
 import { updateUrl } from '@/utils/updateUrl';
 import { SelectedConfig } from './ConfigurationSelector';
-import { Config } from '@/app/(frontend)/configurator/types';
+import { Config, GroupedSettings } from '@/app/(frontend)/configurator/types';
 
 setOptions({
     theme: 'ios',
     themeVariant: 'light'
 });
 
-const configJson: Record<string, { type: string; description: string; values?: string[]; value?: string; default: string }> = {
-    theme: {
-        type: 'string',
-        description: 'Visual theme of the component.',
-        values: ['ios', 'material', 'windows', 'auto'],
-        default: 'ios'
-    },
-    mode: {
-        type: 'string',
-        description: 'Display mode of the component.',
-        values: ['light', 'dark', 'system'],
-        default: 'light'
-    }
-};
-
 interface ConfigDropdownProps {
     onChange: (selected: SelectedConfig) => void;
     configs: Config;
+    settings: GroupedSettings;
     selectedPreset: string | null;
 }
 
-export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, configs, selectedPreset }) => {
+export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, configs, settings, selectedPreset }) => {
     const [selectedConfigs, setSelectedConfigs] = useState<{ key: string; value: string }[]>([]);
     const [currentSelections, setCurrentSelections] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
 
-    const configKeys = Object.keys(configJson);
-    const hasValidConfig = configKeys.length > 0;
+    const flatKeys = Object.entries(settings).flatMap(([group, settingMap]) =>
+        Object.keys(settingMap)
+    );
+    const hasValidConfig = flatKeys.length > 0;
 
-    // Initialize currentSelections from configs.config.props
+    // Flatten settings into Mobiscroll group format
+    const getConfigData = () => {
+        const result: { text: string; value: string; group: string }[] = [];
+        for (const group in settings) {
+            const settingGroup = settings[group];
+            for (const key in settingGroup) {
+                result.push({
+                    text: key,
+                    value: key,
+                    group: group
+                });
+            }
+        }
+        return result;
+    };
+
+    // Init from existing config
     useEffect(() => {
-        const initialSelections = configKeys.filter(key => configs.config.props[key] !== undefined && configs.config.props[key] !== null);
+        const initialSelections = flatKeys.filter(
+            key => configs.config.props[key] !== undefined && configs.config.props[key] !== null
+        );
+
         setCurrentSelections(initialSelections);
         setSelectedConfigs(
             initialSelections.map(key => ({
                 key,
-                value: configs.config.props[key] || configJson[key].default
+                value: configs.config.props[key]
             }))
         );
-    }, [configs.config.props]);
-
-    const getConfigData = () => {
-        return configKeys.map(key => ({
-            text: key,
-            value: key
-        }));
-    };
+    }, [configs.config.props, settings]);
 
     const handleConfigChange = (event: MbscSelectChangeEvent) => {
         const values = Array.isArray(event.value) ? event.value : event.value ? [event.value] : [];
@@ -66,22 +66,26 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, configs, sel
         const urlUpdateObject: Record<string, string> = {};
         const newSelections: string[] = [];
 
-        // Extend existing configs.config.props
         const selectedObject: SelectedConfig = { ...configs.config.props };
 
-        // Update with selected configurations
         values.forEach(key => {
-            if (typeof key === 'string' && configKeys.includes(key)) {
-                const defaultValue = configJson[key].default;
-                newSelectedConfigs.push({ key, value: defaultValue });
-                newSelections.push(key);
-                selectedObject[key] = defaultValue;
-                urlUpdateObject[key] = defaultValue;
+            for (const group in settings) {
+                if (settings[group][key]) {
+                    const currentValue = configs.config.props[key];
+                    const valueToUse = currentValue !== undefined && currentValue !== null
+                        ? currentValue
+                        : settings[group][key].default;
+
+                    newSelectedConfigs.push({ key, value: valueToUse });
+                    newSelections.push(key);
+                    selectedObject[key] = valueToUse;
+                    urlUpdateObject[key] = valueToUse;
+                }
             }
         });
 
-        // Explicitly set deselected configurations to empty string in urlUpdateObject
-        configKeys.forEach(key => {
+        // Remove deselected keys
+        flatKeys.forEach(key => {
             if (!values.includes(key)) {
                 delete selectedObject[key];
                 urlUpdateObject[key] = '';
@@ -95,6 +99,7 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, configs, sel
         onChange(selectedObject);
         updateUrl(urlUpdateObject);
     };
+
 
     if (!hasValidConfig) return null;
 

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import FrameworkSection from './FrameworkSection'
-import { Group, Component, Framework, Preset, Config, User } from './types'
+import { Group, Component, Framework, Preset, Config, User, Setting, GroupedSettings } from './types'
 import { LivePreview } from '@/components/LivePreview'
 import { CodePreview } from '@/components/CodePreview'
 import { ConfigurationsSelector } from '@/components/ConfigurationSelector'
@@ -45,6 +45,7 @@ export default function ConfiguratorClient({
   selectedGroup,
   selectedComponent,
   selectedFramework,
+  settings,
   configs,
   user
 }: {
@@ -55,6 +56,7 @@ export default function ConfiguratorClient({
   selectedGroup: string | null
   selectedComponent: string | null
   selectedFramework: string | null
+  settings: GroupedSettings
   configs: Config[]
   user: User | null
 }) {
@@ -442,8 +444,8 @@ export default function ConfiguratorClient({
         <div className="w-full lg:w-[20%] mg:w-[5%] xl:sticky xl:top-3 self-start">
           <ConfigurationsSelector
             configurations={{
-              ...props,        
-              ...template     
+              ...props,
+              ...template
             }}
             onChange={setProps}
             templates={template}
@@ -458,6 +460,7 @@ export default function ConfiguratorClient({
             selectedPreset={selectedPreset}
             updateSelection={updateSelection}
             updateSelections={updateSelections}
+            settings={settings}
             configs={configs}
             user={user}
           />
