@@ -19,8 +19,7 @@ interface ConfigDropdownProps {
     selectedPreset: string | null;
 }
 
-export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, settings, selectedPreset }) => {
-    const [selectedConfigs, setSelectedConfigs] = useState<{ key: string; value: string }[]>([]);
+export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, settings }) => {
     const [currentSelections, setCurrentSelections] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
 
@@ -29,7 +28,6 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
     );
     const hasValidConfig = flatKeys.length > 0;
 
-    // Flatten settings into Mobiscroll group format
     const getConfigData = () => {
         const result: { text: string; value: string; group: string }[] = [];
         for (const group in settings) {
@@ -45,24 +43,16 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
         return result;
     };
 
-    // Init from existing config
     useEffect(() => {
         const initialSelections = flatKeys.filter(
             key => config.config.props[key] !== undefined && config.config.props[key] !== null
         );
 
         setCurrentSelections(initialSelections);
-        setSelectedConfigs(
-            initialSelections.map(key => ({
-                key,
-                value: config.config.props[key]
-            }))
-        );
     }, [config.config.props, settings]);
 
     const handleConfigChange = (event: MbscSelectChangeEvent) => {
         const values = Array.isArray(event.value) ? event.value : event.value ? [event.value] : [];
-        const newSelectedConfigs: { key: string; value: string }[] = [];
         const urlUpdateObject: Record<string, string> = {};
         const newSelections: string[] = [];
 
@@ -76,7 +66,6 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
                         ? currentValue
                         : settings[group][key].default;
 
-                    newSelectedConfigs.push({ key, value: valueToUse });
                     newSelections.push(key);
                     selectedObject[key] = valueToUse;
                     urlUpdateObject[key] = valueToUse;
@@ -84,7 +73,6 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
             }
         });
 
-        // Remove deselected keys
         flatKeys.forEach(key => {
             if (!values.includes(key)) {
                 delete selectedObject[key];
@@ -92,7 +80,6 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
             }
         });
 
-        setSelectedConfigs(newSelectedConfigs);
         setCurrentSelections(newSelections);
         setError(null);
 
