@@ -28,7 +28,7 @@ export default function Header() {
               </g>
             </g>
           </svg>
-          <span className="ml-1 text-gray-800 text-2xl" style={{ fontFamily: "'Rubik', sans-serif" }}>MOBISCROLL CONFIGURATOR</span>
+          <span className="ml-1 text-2xl text-gray-800 header">MOBISCROLL CONFIGURATOR</span>
         </Link>
         <div className="flex space-x-4">
           <Link
