@@ -39,13 +39,13 @@ const StepperSection: React.FC<StepperSectionProps> = ({
 
     React.useEffect(() => {
         if (selectedGroup && open === "group") setOpen("component");
-    }, [selectedGroup]);
+    }, [selectedGroup, open]);
     React.useEffect(() => {
         if (selectedComponent && open === "component") setOpen("preset");
-    }, [selectedComponent]);
+    }, [selectedComponent, open]);
     React.useEffect(() => {
         if (selectedPreset && open === "preset") setOpen(null);
-    }, [selectedPreset]);
+    }, [selectedPreset, open]);
 
 
     React.useEffect(() => {

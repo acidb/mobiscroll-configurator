@@ -1,7 +1,8 @@
 import { getPayload } from 'payload'
 import config from '../../payload.config'
+import { GetServerSidePropsContext } from 'next'
 
-export async function fetchConfiguratorData(context: any) {
+export async function fetchConfiguratorData(context: GetServerSidePropsContext) {
   const payload = await getPayload({ config })
   const searchParams = await context.query
   const { group, component, framework } = searchParams
@@ -14,13 +15,6 @@ export async function fetchConfiguratorData(context: any) {
     const componentsResult = await payload.find({
       collection: 'components',
     })
-
-    if (group) {
-      const groupResult = await payload.find({
-        collection: 'groups',
-        where: { slug: { equals: group } },
-      })
-    }
 
     let componentId = null
     if (component) {
