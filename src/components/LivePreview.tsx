@@ -19,12 +19,13 @@ const componentMap: Record<string, React.ElementType> = {
 };
 
 import { MbscCalendarEventData, MbscResource } from '@mobiscroll/react';
+import { ViewConfig } from './ViewEditor';
 
 
 
 export interface LivePreviewProps {
     componentName: string;
-    mergedProps: Record<string, string | number | boolean | null>;
+    mergedProps: Record<string, string | number | boolean | null | ViewConfig>;
     data?: {
         data?: Record<string, string>[];
         resources?: Record<string, string>[];

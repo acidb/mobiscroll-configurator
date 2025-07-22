@@ -62,3 +62,28 @@ export interface User {
 
 
 
+export type ViewType = "month" | "week" | "day";
+
+
+export interface ViewModeConfig {
+  type: ViewType;
+  eventDisplay?: string;
+  startTime?: string;
+  endTime?: string;
+  allDay?: boolean;
+
+
+}
+
+
+export interface ViewConfig {
+  calendar?: ViewModeConfig;
+  timeline?: ViewModeConfig;
+  agenda?: ViewModeConfig;
+  schedule?: ViewModeConfig;
+
+  ///
+}
+
+
+

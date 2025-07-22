@@ -1,91 +1,27 @@
 import React, { useState, useEffect } from 'react'
 import { updateUrl } from '@/utils/updateUrl'
 import { useScreenSize } from '@/utils/useScreenSize'
-import { ResourceList } from './ResourceList'
-import { DataList } from './DataList'
-import { BooleanConfig } from './BooleanConfig'
 import { Settings2 } from 'lucide-react'
 import StepperSection from '../app/(frontend)/configurator/StepperSection'
 import { Component, Preset, Config, Group, User } from '@/app/(frontend)/configurator/types'
 import { ConfigDropdown } from './ConfigDropdown'
-import { ChevronUp, ChevronDown, FileCode2, ToggleLeft, Hash, Database, Text ,Zap } from 'lucide-react'
 import Link from 'next/link'
+import { ViewConfig } from './ViewEditor'
+import { ViewEditor } from './ViewEditor'
 
 
-interface pGroup {
-    label: string
-    description: string
-    icon: React.ComponentType<{ size?: number; className?: string }>;
-    match: (key: string, value: unknown) => boolean
-}
 
-const EVENT_KEYS = [
-    'onEventClick',
-    'onEventDeleted',
-    'onEventDoubleClick',
-    'clickToCreate',
-];
-
-const DRAGGABLE_KEYS = [
-    'dragToCreate',
-    'dragToMove',
-    'dragToResize',
-    'dragToDelete',
-];
-
-
-const GROUPS: pGroup[] = [
-
-    // {
-    //     label: 'Event Options',
-    //     description: 'These options allow you to hook into events like clicks, deletes, and more.',
-    //     icon: Zap, 
-    //     match: (key: string, value: unknown): boolean => EVENT_KEYS.includes(key),
-    // },
-
-    {
-        label: 'Original',
-        description: 'You can adjust the component by turning the options on and off.',
-        icon: ToggleLeft,
-        match: () => true,
-    },
-    {
-        label: 'Numeric Options',
-        description: 'Configure detailed options by providing a number value.',
-        icon: Hash,
-        match: (key: string, value: unknown): boolean => typeof value === 'number',
-    },
-    {
-        label: 'Component Data',
-        description: 'These options will be rendered as text right now but they will be adjusted in the future.',
-        icon: Database,
-        match: (key: string, value: unknown): boolean => typeof value === 'object',
-    },
-    {
-        label: 'Component Data',
-        description: 'These options will be rendered as text right now but they will be adjusted in the future.',
-        icon: Database,
-        match: (key: string, value: unknown): boolean => typeof value === 'object' && value !== null,
-    },
-
-    {
-        label: 'String Options',
-        description: 'These options will be rendered as text right now but they will be adjusted in the future.',
-        icon: Text,
-        match: (key: string, value: unknown): boolean => typeof value === 'string',
-    },
-]
 const templateOptions: Record<string, string[]> = {
     renderResource: ['resourceTemplate', 'resourceAvatarTemplate'],
 };
 
 
 
-type SelectedConfig = Record<string, string | number | boolean | null>;
+type SelectedConfig = Record<string, string | number | boolean | null | ViewConfig>;
 
 
 interface ConfigurationsSelectorProps {
-    configurations: Record<string, string>
+    configurations: Record<string, string | number | boolean | null | ViewConfig>
     onChange: (selected: SelectedConfig) => void
     templates: Record<string, string>
     onTemplateChange: (selected: Record<string, string>) => void
@@ -155,129 +91,111 @@ export function ConfigurationsSelector({
 
     const mergedConfig = {
         ...configurations,
-        
+
+
     };
+
+
 
     function renderContent() {
         return (
             <div className="w-full space-y-4">
+                {Object.entries(configurations).map(([key, value]) => {
+                    if (typeof value === 'boolean') {
+                        return (
+                            <div key={key} className="flex items-center gap-3 justify-between">
+                                <kbd
+                                    className="kbd rounded-sm cursor-pointer select-none border-b-2 transition-all duration-100 active:scale-98 active:shadow-none active:border-b-1 focus:outline-none"
+                                    onClick={() => onChange({ ...configurations, [key]: !value })}
+                                    tabIndex={0}
+                                >
+                                    {key}
+                                </kbd>
+                                <input
+                                    type="checkbox"
+                                    checked={value}
+                                    onChange={() => onChange({ ...configurations, [key]: !value })}
+                                    className="toggle toggle-success"
+                                />
+                            </div>
+                        );
+                    }
 
-                <p>{JSON.stringify(mergedConfig, null, 2)}</p>
+                    if (templateOptions[key]) {
+                        return (
+                            <div key={key} className="flex gap-4 items-center mb-2">
+                                <kbd
+                                    className="kbd rounded-sm "
+                                >
+                                    {key}
+                                </kbd>
+                                <select
+                                    value={templates[key] ?? ''}
+                                    onChange={e => onTemplateChange({ ...templates, [key]: e.target.value })}
+                                    className="input input-sm w-48"
+                                >
+                                    {templateOptions[key].map(opt => (
+                                        <option key={opt} value={opt}>{opt}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        );
+                    }
 
-                {GROUPS.map((group, gi) => {
-                    const fields = Object.entries(mergedConfig).filter(([key, value]) =>
-                        group.match(key, value)
-                    );
-                    if (!fields.length) return null;
+                    if (key === "view" && typeof value === "object" && value !== null) {
+                        return (
+                            <div key={key} className="mb-2">
+                                <kbd className="kbd rounded-sm mb-2">{key}</kbd>
+                                <ViewEditor
+                                    view={value}
+                                    onChange={updatedView =>
+                                        onChange({
+                                            ...configurations,
+                                            [key]: updatedView,
+                                        })
+                                    }
+                                />
+                            </div>
+                        );
+                    }
 
-                    const open = !collapsed[group.label];
 
+
+                    if (typeof value === 'number') {
+                        return (
+                            <div key={key}>
+                                <kbd>{key}</kbd>
+                                <span>{value}</span>
+                                <span className="ml-2 text-xs text-gray-400">[number]</span>
+                            </div>
+                        );
+                    }
+
+                    if (typeof value === 'string') {
+                        return (
+                            <div key={key}>
+                                <kbd>{key}</kbd>
+                                <span>{value}</span>
+                                <span className="ml-2 text-xs text-gray-400">[string]</span>
+                            </div>
+                        );
+                    }
+
+              
                     return (
-                        <div
-                            key={gi}
-                            tabIndex={0}
-                            className={`collapse  border-b-1 border-gray-200 rounded-none ${open ? "collapse-open" : "collapse-close"}`}
-                        >
-                            <div
-                                className="collapse-title flex items-center justify-between cursor-pointer select-none py-3 px-2"
-                                onClick={() => toggleCollapsed(group.label)}
-                            >
-                                <div>
-                                    <span className="flex flex-row gap-2 font-semibold text-gray-700 text-sm"> {group.label}</span>
-                                    <span className="block text-xs text-gray-400">{group.description}</span>
-                                </div>
-                                <span className="ml-2">
-                                    {open ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                                </span>
-                            </div>
-                            <div className="collapse-content">
-                                <div className="space-y-2">
-                                    {fields.map(([prop, value], idx) => {
-                                        if (templateOptions[prop]) {
-                                            return (
-                                                <div key={prop} className="flex gap-4 items-center">
-                                                    <span className="font-semibold">{prop}</span>
-                                                    <select
-                                                        value={templates[prop]}
-                                                        onChange={e => onTemplateChange({ ...templates, [prop]: e.target.value })}
-                                                        className="input input-sm w-48"
-                                                    >
-                                                        {templateOptions[prop].map(opt => (
-                                                            <option key={opt} value={opt}>{opt}</option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-                                            );
-                                        }
-
-                                        if (typeof value === 'boolean') {
-                                            return (
-                                                <BooleanConfig
-                                                    key={prop}
-                                                    value={!!selected[prop]}
-                                                    onChange={val => updateValue(prop, val)}
-                                                    label={prop}
-                                                    id={prop}
-                                                />
-                                            )
-                                        }
-                                        if (typeof value === 'number') {
-                                            return (
-                                                <div key={prop} className="flex flex-row justify-between items-start">
-                                                    <kbd className="kbd rounded-sm"> {prop}</kbd>
-                                                    <input
-                                                        type="number"
-                                                        id={prop}
-                                                        value={
-                                                            typeof selected[prop] === "string"
-                                                                ? selected[prop]
-                                                                : typeof selected[prop] === "number"
-                                                                    ? selected[prop]
-                                                                    : ""
-                                                        }
-                                                        onChange={e => updateValue(prop, Number(e.target.value))}
-                                                        className="input input-sm w-24 text-sm"
-                                                    />
-                                                </div>
-                                            )
-                                        }
-
-
-
-                                        if (typeof value === 'object') {
-                                            if (prop === 'resources' && Array.isArray(value)) {
-                                                return <ResourceList key={idx} resources={value} />
-                                            }
-                                            if (prop === 'data' && Array.isArray(value)) {
-                                                return <DataList key={idx} data={value} />
-                                            }
-                                            return (
-                                                <div
-                                                    key={idx}
-                                                    className="flex flex-col gap-1 mb-2"
-                                                >
-                                                    <div className="flex items-center gap-2 mb-2">
-                                                        <kbd className="kbd rounded-sm">{prop}</kbd>
-
-
-                                                    </div>
-                                                    <pre className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs font-mono text-gray-800 whitespace-pre-wrap">
-                                                        {JSON.stringify(value, null, 2)}
-                                                    </pre>
-                                                </div>
-                                            )
-                                        }
-
-                                        return null;
-                                    })}
-                                </div>
-                            </div>
+                        <div key={key}>
+                            <kbd>{key}</kbd>
+                            <span>{String(value)}</span>
+                            <span className="ml-2 text-xs text-gray-400">[{typeof value}]</span>
                         </div>
                     );
                 })}
+
+             
             </div>
         );
     }
+
 
     if (screenSize === 'mobile' || screenSize === 'tablet') {
         return (

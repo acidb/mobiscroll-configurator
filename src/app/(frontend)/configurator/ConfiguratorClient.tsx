@@ -11,6 +11,7 @@ import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString
 import { templateStrs, Lang } from '@/components/reactTemplates'
 import { toVueEventName, hookStrs } from '@/components/reactHooks'
 
+import { ViewConfig } from '@/components/ViewEditor'
 
 type CategorizedConfig = {
   title: string;
@@ -66,7 +67,7 @@ export default function ConfiguratorClient({
   const [groupObj, setGroupObj] = useState<Group | null>(null)
   const [currentConfig, setCurrentConfig] = useState<Config | null>(null)
   const [code, setCode] = useState<CodeSnippet[]>(exampleSnippets)
-  const [props, setProps] = useState<Record<string, string | number | boolean | null>>({})
+  const [props, setProps] = useState<Record<string, string | number | boolean | null | ViewConfig>>({})
   const [data, setData] = useState<Record<string, string>>({})
   const [template, setTemplate] = useState<Record<string, string>>({})
   const [hooks, setHooks] = useState<Record<string, string>>({})
@@ -152,7 +153,7 @@ export default function ConfiguratorClient({
           mergedConfig.config = {
             ...nonAddonConfig.config,
 
-            
+
             props: { ...nonAddonConfig.config.props, ...selectedAddonConfig.config.props },
             data: { ...nonAddonConfig.config.data, ...selectedAddonConfig.config.data },
             hooks: { ...nonAddonConfig.config.hooks, ...selectedAddonConfig.config.hooks },
@@ -442,8 +443,8 @@ export default function ConfiguratorClient({
         <div className="w-full lg:w-[20%] mg:w-[5%] xl:sticky xl:top-3 self-start">
           <ConfigurationsSelector
             configurations={{
-              ...(currentConfig?.config.props ?? {}),
-              ...(currentConfig?.config.templates ?? {}),
+              ...props,        
+              ...template     
             }}
             onChange={setProps}
             templates={template}
