@@ -2,13 +2,12 @@
 
 import React from 'react'
 import Link from 'next/link'
-import MainNav from './MainNav'
 
 export default function Header() {
   return (
     <header className="w-full py-4 px-8 bg-gradient-to-r from-gray-50 to-gray-100 shadow-md border-b border-gray-200 top-0 z-50">
       <style>
-        @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+        @import url(`https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap`);
       </style>
       <div className="w-full px-8 mx-auto flex items-center justify-between">
         <Link href="/configurator" aria-label="Mobiscroll Configurator Home" className="flex items-center transition-colors duration-300 hover:text-gray-600">

@@ -10,7 +10,6 @@ import { ConfigurationsSelector } from '@/components/ConfigurationSelector'
 import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString'
 import { templateStrs, Lang } from '@/components/reactTemplates'
 import { toVueEventName, hookStrs } from '@/components/reactHooks'
-// import Image from "next/image";
 
 
 type CategorizedConfig = {
@@ -62,9 +61,6 @@ export default function ConfiguratorClient({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-
-
-  const [categorizedConfigs, setCategorizedConfigs] = useState<CategorizedConfig[]>([]);
 
   const [frameworkObj, setFrameworkObj] = useState<Framework | null>(null)
   const [groupObj, setGroupObj] = useState<Group | null>(null)
