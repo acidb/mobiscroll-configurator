@@ -41,7 +41,7 @@ export default function Header() {
             href="/admin"
             className="px-4 py-2 rounded bg-gray-100 text-primary-foreground font-semibold hover:bg-gray-200/90 transition text-center"
           >
-            Admin page
+            Login
           </Link>
         </div>
       </div>
