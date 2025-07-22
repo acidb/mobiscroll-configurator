@@ -12,6 +12,7 @@ import { MbscEventcalendarView } from "@mobiscroll/react";
 
 const templateOptions: Record<string, string[]> = {
     renderResource: ['resourceTemplate', 'resourceAvatarTemplate'],
+    renderLabelContent: ['renderLabelContentTemplate'],
 };
 
 
@@ -149,7 +150,7 @@ export function ConfigurationsSelector({
 
                     if (templateOptions[key]) {
                         return (
-                            <div key={key} className="flex gap-4 items-center mb-2">
+                            <div key={key} className="flex items-center gap-3 justify-between">
                                 <kbd
                                     className="kbd rounded-sm "
                                 >
@@ -162,7 +163,7 @@ export function ConfigurationsSelector({
                                         onTemplateChange(updatedTemplates);
                                         updateUrl({ ...configurations, templates: JSON.stringify(updatedTemplates) });
                                     }}
-                                    className="input input-sm w-48"
+                                    className="select select-xs w-35 rounded-sm "
                                 >
                                     {templateOptions[key].map(opt => (
                                         <option key={opt} value={opt}>{opt}</option>
@@ -211,10 +212,9 @@ export function ConfigurationsSelector({
 
                     if (typeof value === 'string') {
                         return (
-                            <div key={key}>
-                                <kbd>{key}</kbd>
-                                <span>{value}</span>
-                                <span className="ml-2 text-xs text-gray-400">[string]</span>
+                            <div key={key} className="flex items-center gap-3 justify-between">
+                                <kbd className="kbd rounded-sm mb-2">{key}</kbd>
+                                <input type="text" placeholder={value} className="input input-xs  w-35 rounded-sm" />
                             </div>
                         );
                     }
@@ -222,9 +222,9 @@ export function ConfigurationsSelector({
 
                     return (
                         <div key={key}>
-                            <kbd>{key}</kbd>
+                            <kbd className="kbd rounded-sm">{key}</kbd>
                             <span>{String(value)}</span>
-                            <span className="ml-2 text-xs text-gray-400">[{typeof value}]</span>
+                            <span className="ml-2 text-xs w-35 rounded-sm text-gray-400">[{typeof value}]</span>
                         </div>
                     );
                 })}
