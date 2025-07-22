@@ -75,10 +75,10 @@ const resourceTemplate = (resource) => (
     fn: (resource: MbscResource) => (
       <div className="flex items-center gap-3 p-1">
         {resource.img && (
-          <img
+          <Image
             src={resource.img}
             alt={resource.name || ''}
-            width={32}   
+            width={32}
             height={32}
             className="rounded-full w-8 h-8 object-cover border border-blue-200"
           />
