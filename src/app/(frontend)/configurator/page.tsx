@@ -26,7 +26,7 @@ export default async function ConfiguratorPage({
       selectedComponent={props.selectedComponent}
       selectedFramework={props.selectedFramework}
       settings={props.componentSettings as unknown as GroupedSettings}
-      configs={props.configs as unknown as Config[]}
+      config={props.config as unknown as Config}
       user={user}
     />
   )

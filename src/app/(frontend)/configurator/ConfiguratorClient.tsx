@@ -46,7 +46,7 @@ export default function ConfiguratorClient({
   selectedComponent,
   selectedFramework,
   settings,
-  configs,
+  config,
   user
 }: {
   groups: Group[]
@@ -57,7 +57,7 @@ export default function ConfiguratorClient({
   selectedComponent: string | null
   selectedFramework: string | null
   settings: GroupedSettings
-  configs: Config[]
+  config: Config
   user: User | null
 }) {
   const router = useRouter()
@@ -141,41 +141,17 @@ export default function ConfiguratorClient({
   }, [selectedGroup, groups])
 
   useEffect(() => {
-    if (selectedPreset) {
-      const nonAddonConfig = configs.find(c => c.preset?.slug === selectedPreset && c.config.type !== 'addon') || null;
-      const selectedAddonConfig = addonConfigTitle
-        ? configs.find(c => c.preset?.slug === selectedPreset && c.config.type === 'addon' && c.config.title.replace(/\s+/g, '-') === addonConfigTitle)
-        : null;
-
-      let mergedConfig: Config | null = null;
-      if (nonAddonConfig) {
-        mergedConfig = { ...nonAddonConfig };
-        if (selectedAddonConfig) {
-          mergedConfig.config = {
-            ...nonAddonConfig.config,
-
-
-            props: { ...nonAddonConfig.config.props, ...selectedAddonConfig.config.props },
-            data: { ...nonAddonConfig.config.data, ...selectedAddonConfig.config.data },
-            hooks: { ...nonAddonConfig.config.hooks, ...selectedAddonConfig.config.hooks },
-            templates: { ...nonAddonConfig.config.templates, ...selectedAddonConfig.config.templates },
-          };
-        }
-      } else if (selectedAddonConfig) {
-        mergedConfig = { ...selectedAddonConfig };
-      }
-
-      const allProps = mergedConfig?.config.props || {};
+    if (selectedPreset && config?.preset?.slug === selectedPreset) {
+      const allProps = config.config.props || {};
       setProps(filterInvalidProps(allProps));
-      setCurrentConfig(mergedConfig);
-      setTemplate(mergedConfig?.config.templates || {});
-
-
+      setCurrentConfig(config);
+      setTemplate(config.config.templates || {});
     } else {
       setCurrentConfig(null);
+      setProps({});
       setTemplate({});
     }
-  }, [selectedPreset, addonConfigTitle, filteredPresets, configs]);
+  }, [selectedPreset, config]);
 
   useEffect(() => {
     if (frameworkObj && currentConfig) {
@@ -461,7 +437,7 @@ export default function ConfiguratorClient({
             updateSelection={updateSelection}
             updateSelections={updateSelections}
             settings={settings}
-            configs={configs}
+            config={config}
             user={user}
           />
         </div>

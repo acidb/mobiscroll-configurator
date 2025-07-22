@@ -35,7 +35,7 @@ interface ConfigurationsSelectorProps {
     updateSelection: (key: string, value: string | null) => void
     updateSelections: (updates: Record<string, string | null>) => void
     settings: GroupedSettings
-    configs: Config[]
+    config: Config
     user: User | null
 }
 
@@ -54,7 +54,7 @@ export function ConfigurationsSelector({
     updateSelection,
     updateSelections,
     settings,
-    configs,
+    config,
     user,
 }: ConfigurationsSelectorProps) {
     const screenSize = useScreenSize()
@@ -313,7 +313,7 @@ export function ConfigurationsSelector({
             {user && selectedPreset && (
                 <div className="mt-4">
                     <Link
-                        href={`/admin/collections/configs/${configs[0].id}`}
+                        href={`/admin/collections/configs/${config.id}`}
                         className="btn bg-gray-100 hover:bg-gray-300 text-black w-full"
                     >
                         Edit the configuration
@@ -322,7 +322,7 @@ export function ConfigurationsSelector({
             )}
             {selectedPreset && (
                 <div className="mt-6">
-                    <ConfigDropdown onChange={onChange} configs={configs[0]} settings={settings} selectedPreset={selectedPreset} />
+                    <ConfigDropdown onChange={onChange} config={config} settings={settings} selectedPreset={selectedPreset} />
                 </div>
             )}
 

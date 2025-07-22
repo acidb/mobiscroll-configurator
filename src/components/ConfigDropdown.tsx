@@ -14,12 +14,12 @@ setOptions({
 
 interface ConfigDropdownProps {
     onChange: (selected: SelectedConfig) => void;
-    configs: Config;
+    config: Config;
     settings: GroupedSettings;
     selectedPreset: string | null;
 }
 
-export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, configs, settings, selectedPreset }) => {
+export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, settings, selectedPreset }) => {
     const [selectedConfigs, setSelectedConfigs] = useState<{ key: string; value: string }[]>([]);
     const [currentSelections, setCurrentSelections] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -48,17 +48,17 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, configs, set
     // Init from existing config
     useEffect(() => {
         const initialSelections = flatKeys.filter(
-            key => configs.config.props[key] !== undefined && configs.config.props[key] !== null
+            key => config.config.props[key] !== undefined && config.config.props[key] !== null
         );
 
         setCurrentSelections(initialSelections);
         setSelectedConfigs(
             initialSelections.map(key => ({
                 key,
-                value: configs.config.props[key]
+                value: config.config.props[key]
             }))
         );
-    }, [configs.config.props, settings]);
+    }, [config.config.props, settings]);
 
     const handleConfigChange = (event: MbscSelectChangeEvent) => {
         const values = Array.isArray(event.value) ? event.value : event.value ? [event.value] : [];
@@ -66,12 +66,12 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, configs, set
         const urlUpdateObject: Record<string, string> = {};
         const newSelections: string[] = [];
 
-        const selectedObject: SelectedConfig = { ...configs.config.props };
+        const selectedObject: SelectedConfig = { ...config.config.props };
 
         values.forEach(key => {
             for (const group in settings) {
                 if (settings[group][key]) {
-                    const currentValue = configs.config.props[key];
+                    const currentValue = config.config.props[key];
                     const valueToUse = currentValue !== undefined && currentValue !== null
                         ? currentValue
                         : settings[group][key].default;

@@ -50,28 +50,15 @@ export async function fetchConfiguratorData(context: any) {
     const selectedPresetObj = presetsResult.docs.find(p => p.slug === selectedPreset)
     const selectedPresetId = selectedPresetObj?.id
 
-    const nonAddonConfigResult = await payload.find({
+    const configResult = await payload.find({
       collection: 'configs',
-      where: {
-        and: [
-          selectedPresetId ? { preset: { equals: selectedPresetId } } : {},
-          { 'config.type': { not_equals: 'addon' } },
-        ],
-      },
+      where:
+
+        selectedPresetId ? { preset: { equals: selectedPresetId } } : {},
+
+
       limit: 1,
     })
-
-    const addonConfigsResult = await payload.find({
-      collection: 'configs',
-      where: {
-        and: [
-          selectedPresetId ? { preset: { equals: selectedPresetId } } : {},
-          { 'config.type': { equals: 'addon' } },
-        ],
-      },
-    })
-
-    const configs = [...nonAddonConfigResult.docs, ...addonConfigsResult.docs]
 
     return {
       props: {
@@ -83,7 +70,7 @@ export async function fetchConfiguratorData(context: any) {
         selectedComponent: component || null,
         selectedFramework: framework || null,
         componentSettings: componentSettings,
-        configs: configs,
+        config: configResult.docs[0],
       },
     }
   } catch (error) {
@@ -98,7 +85,7 @@ export async function fetchConfiguratorData(context: any) {
         selectedComponent: null,
         selectedFramework: null,
         componentSettings: null,
-        configs: [],
+        config: [],
       },
     }
   }
