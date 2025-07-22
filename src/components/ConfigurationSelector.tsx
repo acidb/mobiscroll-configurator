@@ -8,7 +8,7 @@ import { Settings2 } from 'lucide-react'
 import StepperSection from '../app/(frontend)/configurator/StepperSection'
 import { Component, Preset, Config, Group, User } from '@/app/(frontend)/configurator/types'
 import { ConfigDropdown } from './ConfigDropdown'
-import { ChevronUp, ChevronDown, FileCode2, ToggleLeft, Hash, Database, Text } from 'lucide-react'
+import { ChevronUp, ChevronDown, FileCode2, ToggleLeft, Hash, Database, Text ,Zap } from 'lucide-react'
 import Link from 'next/link'
 
 
@@ -19,12 +19,35 @@ interface pGroup {
     match: (key: string, value: unknown) => boolean
 }
 
+const EVENT_KEYS = [
+    'onEventClick',
+    'onEventDeleted',
+    'onEventDoubleClick',
+    'clickToCreate',
+];
+
+const DRAGGABLE_KEYS = [
+    'dragToCreate',
+    'dragToMove',
+    'dragToResize',
+    'dragToDelete',
+];
+
+
 const GROUPS: pGroup[] = [
+
+    // {
+    //     label: 'Event Options',
+    //     description: 'These options allow you to hook into events like clicks, deletes, and more.',
+    //     icon: Zap, 
+    //     match: (key: string, value: unknown): boolean => EVENT_KEYS.includes(key),
+    // },
+
     {
-        label: 'Toggle Options',
+        label: 'Original',
         description: 'You can adjust the component by turning the options on and off.',
         icon: ToggleLeft,
-        match: (key: string, value: unknown): boolean => typeof value === 'boolean',
+        match: () => true,
     },
     {
         label: 'Numeric Options',
@@ -39,12 +62,24 @@ const GROUPS: pGroup[] = [
         match: (key: string, value: unknown): boolean => typeof value === 'object',
     },
     {
+        label: 'Component Data',
+        description: 'These options will be rendered as text right now but they will be adjusted in the future.',
+        icon: Database,
+        match: (key: string, value: unknown): boolean => typeof value === 'object' && value !== null,
+    },
+
+    {
         label: 'String Options',
         description: 'These options will be rendered as text right now but they will be adjusted in the future.',
         icon: Text,
         match: (key: string, value: unknown): boolean => typeof value === 'string',
     },
 ]
+const templateOptions: Record<string, string[]> = {
+    renderResource: ['resourceTemplate', 'resourceAvatarTemplate'],
+};
+
+
 
 type SelectedConfig = Record<string, string | number | boolean | null>;
 
@@ -52,6 +87,8 @@ type SelectedConfig = Record<string, string | number | boolean | null>;
 interface ConfigurationsSelectorProps {
     configurations: Record<string, string>
     onChange: (selected: SelectedConfig) => void
+    templates: Record<string, string>
+    onTemplateChange: (selected: Record<string, string>) => void
     selected: SelectedConfig
     groups: Group[]
     components: Component[]
@@ -68,6 +105,8 @@ interface ConfigurationsSelectorProps {
 export function ConfigurationsSelector({
     configurations,
     onChange,
+    templates,
+    onTemplateChange,
     selected,
     groups,
     components,
@@ -104,6 +143,7 @@ export function ConfigurationsSelector({
     }
 
 
+
     const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
     function toggleCollapsed(label: string) {
@@ -113,11 +153,19 @@ export function ConfigurationsSelector({
         }));
     }
 
+    const mergedConfig = {
+        ...configurations,
+        
+    };
+
     function renderContent() {
         return (
             <div className="w-full space-y-4">
+
+                <p>{JSON.stringify(mergedConfig, null, 2)}</p>
+
                 {GROUPS.map((group, gi) => {
-                    const fields = Object.entries(configurations).filter(([key, value]) =>
+                    const fields = Object.entries(mergedConfig).filter(([key, value]) =>
                         group.match(key, value)
                     );
                     if (!fields.length) return null;
@@ -145,6 +193,23 @@ export function ConfigurationsSelector({
                             <div className="collapse-content">
                                 <div className="space-y-2">
                                     {fields.map(([prop, value], idx) => {
+                                        if (templateOptions[prop]) {
+                                            return (
+                                                <div key={prop} className="flex gap-4 items-center">
+                                                    <span className="font-semibold">{prop}</span>
+                                                    <select
+                                                        value={templates[prop]}
+                                                        onChange={e => onTemplateChange({ ...templates, [prop]: e.target.value })}
+                                                        className="input input-sm w-48"
+                                                    >
+                                                        {templateOptions[prop].map(opt => (
+                                                            <option key={opt} value={opt}>{opt}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            );
+                                        }
+
                                         if (typeof value === 'boolean') {
                                             return (
                                                 <BooleanConfig
@@ -176,6 +241,9 @@ export function ConfigurationsSelector({
                                                 </div>
                                             )
                                         }
+
+
+
                                         if (typeof value === 'object') {
                                             if (prop === 'resources' && Array.isArray(value)) {
                                                 return <ResourceList key={idx} resources={value} />
@@ -199,20 +267,7 @@ export function ConfigurationsSelector({
                                                 </div>
                                             )
                                         }
-                                        // if (typeof value === 'string') {
-                                        //     return (
-                                        //         <div key={idx}>
-                                        //             <kbd className="kbd rounded-sm">{prop}</kbd>
-                                        //             <input
-                                        //                 type="text"
-                                        //                 id={prop}
-                                        //                 value={selected[prop] ?? value}
-                                        //                 onChange={e => updateValue(prop, e.target.value)}
-                                        //                 className="input input-bordered w-full text-sm mt-1"
-                                        //             />
-                                        //         </div>
-                                        //     )
-                                        // }
+
                                         return null;
                                     })}
                                 </div>

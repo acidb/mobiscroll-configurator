@@ -13,6 +13,7 @@ import { Components } from './collections/Components'
 import { Frameworks } from './collections/Frameworks'
 import { Presets } from './collections/Presets'
 import { Configs } from './collections/Configs'
+import { Settings } from './collections/Settings';
 import seedDatabase from './scripts/seed'
 
 const filename = fileURLToPath(import.meta.url)
@@ -26,7 +27,7 @@ export default buildConfig({
     },
     components: { afterDashboard: ['./app/components/seedButton'] },
   },
-  collections: [Users, Media, Groups, Components, Frameworks, Presets, Configs],
+  collections: [Users, Media, Groups, Components, Frameworks, Presets, Configs, Settings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

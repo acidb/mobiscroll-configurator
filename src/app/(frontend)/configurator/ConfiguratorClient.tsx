@@ -8,9 +8,15 @@ import { LivePreview } from '@/components/LivePreview'
 import { CodePreview } from '@/components/CodePreview'
 import { ConfigurationsSelector } from '@/components/ConfigurationSelector'
 import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString'
-import { templateStrs , Lang} from '@/components/reactTemplates'
+import { templateStrs, Lang } from '@/components/reactTemplates'
 import { toVueEventName, hookStrs } from '@/components/reactHooks'
 // import Image from "next/image";
+
+
+type CategorizedConfig = {
+  title: string;
+  config: Config;
+};
 
 
 export type CodeSnippet = {
@@ -56,6 +62,9 @@ export default function ConfiguratorClient({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+
+  const [categorizedConfigs, setCategorizedConfigs] = useState<CategorizedConfig[]>([]);
 
   const [frameworkObj, setFrameworkObj] = useState<Framework | null>(null)
   const [groupObj, setGroupObj] = useState<Group | null>(null)
@@ -146,6 +155,8 @@ export default function ConfiguratorClient({
         if (selectedAddonConfig) {
           mergedConfig.config = {
             ...nonAddonConfig.config,
+
+            
             props: { ...nonAddonConfig.config.props, ...selectedAddonConfig.config.props },
             data: { ...nonAddonConfig.config.data, ...selectedAddonConfig.config.data },
             hooks: { ...nonAddonConfig.config.hooks, ...selectedAddonConfig.config.hooks },
@@ -159,9 +170,12 @@ export default function ConfiguratorClient({
       const allProps = mergedConfig?.config.props || {};
       setProps(filterInvalidProps(allProps));
       setCurrentConfig(mergedConfig);
+      setTemplate(mergedConfig?.config.templates || {});
+
 
     } else {
       setCurrentConfig(null);
+      setTemplate({});
     }
   }, [selectedPreset, addonConfigTitle, filteredPresets, configs]);
 
@@ -284,8 +298,7 @@ export default function ConfiguratorClient({
         return String(data);
       }
 
-
-      const componentTemplateProps = getComponentTemplateProps(currentConfig.config.templates)
+      const componentTemplateProps = getComponentTemplateProps(template)
       const componentHookProps = getComponentHookProps(currentConfig.config.hooks)
 
       function getTemplateStrBlock(templates: Record<string, string>, lang = 'tsx') {
@@ -311,7 +324,6 @@ export default function ConfiguratorClient({
       const typeImports = currentConfig.config.types || [];
       const reactHookImports = currentConfig.config.reactHooks || [];
       setData(currentConfig.config.data)
-      setTemplate(currentConfig.config.templates)
       setHooks(currentConfig.config.hooks)
 
       const hasData = isFilled(eventData)
@@ -392,7 +404,7 @@ export default function ConfiguratorClient({
                   : `const myColors = ${JSON.stringify(colors, null, 2)};`
                 : ''
             )
-            .replace(/\/\* templates \*\//g, '\n\n' + getTemplateStrBlock(currentConfig.config.templates, t.label))
+            .replace(/\/\* templates \*\//g, '\n\n' + getTemplateStrBlock(template, t.label))
             .replace(/\/\* hooks \*\//g, '\n\n' + getHooksStrBlock(currentConfig.config.hooks, t.label))
             .replace(/\/\* Component data \*\//g, hasInlineData ? formatFrameworkProp('data', 'myData') : '')
             .replace(
@@ -413,7 +425,7 @@ export default function ConfiguratorClient({
       console.log('Final language:', codeObj.map((obj) => obj.label));
       setCode(codeObj)
     }
-  }, [frameworkObj, currentConfig, props])
+  }, [frameworkObj, currentConfig, props, template])
 
 
   const isScheduler =
@@ -423,14 +435,25 @@ export default function ConfiguratorClient({
   const previewAreaClass = `w-full xl:w-[80%] gap-8 flex ${isScheduler ? 'flex-col-reverse ' : 'flex-col lg:flex-row'
     } gap-1 transition-all duration-500 ease-in-out`
 
+
+  const handleTemplateChange = (newTemplates: Record<string, string>) => {
+    setTemplate(newTemplates);
+  };
+
   return (
     <div className="w-full h-full">
       <div className="flex flex-col xl:flex-row gap-6 items-start transition-all duration-500 ease-in-out">
         <div className="w-full lg:w-[20%] mg:w-[5%] xl:sticky xl:top-3 self-start">
           <ConfigurationsSelector
-            configurations={currentConfig?.config.props ?? {}}
+            configurations={{
+              ...(currentConfig?.config.props ?? {}),
+              ...(currentConfig?.config.templates ?? {}),
+            }}
             onChange={setProps}
+            templates={template}
+            onTemplateChange={handleTemplateChange}
             selected={props}
+
             groups={groups}
             components={components}
             filteredPresets={filteredPresets}
