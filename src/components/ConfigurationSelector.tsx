@@ -1,24 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { updateUrl } from '@/utils/updateUrl'
 import { useScreenSize } from '@/utils/useScreenSize'
-import { Info, Settings2 } from 'lucide-react'
+import { Info, Settings2, Trash2 } from 'lucide-react'
+
 import StepperSection from '../app/(frontend)/configurator/StepperSection'
 import { Component, Preset, Config, Group, User, Setting, GroupedSettings } from '@/app/(frontend)/configurator/types'
 import { ConfigDropdown } from './ConfigDropdown'
 import Link from 'next/link'
 import { ViewEditor } from './ViewEditor'
-import { MbscEventcalendarView } from "@mobiscroll/react";
-
+import { MbscEventcalendarView, Datepicker } from "@mobiscroll/react";
 
 const templateOptions: Record<string, string[]> = {
     renderResource: ['resourceTemplate', 'resourceAvatarTemplate'],
     renderLabelContent: ['renderLabelContentTemplate'],
 };
 
-
-
 export type SelectedConfig = Record<string, string | number | boolean | null | MbscEventcalendarView>;
-
 
 interface ConfigurationsSelectorProps {
     configurations: Record<string, string | number | boolean | null | MbscEventcalendarView>
@@ -60,6 +57,8 @@ export function ConfigurationsSelector({
     const screenSize = useScreenSize()
     const [isOpen, setIsOpen] = useState(screenSize === 'desktop')
     const [openDescription, setOpenDescription] = useState<string | null>(null);
+    const [editMode, setEditMode] = useState(false);
+
 
     const toggleOpen = () => setIsOpen(prev => !prev)
 
@@ -71,7 +70,6 @@ export function ConfigurationsSelector({
         }
     }, [screenSize])
 
-
     function updateValue(prop: string, value: string | number | boolean) {
         const newSelected = { ...selected, [prop]: value }
         onChange(newSelected)
@@ -82,23 +80,6 @@ export function ConfigurationsSelector({
         )
     }
 
-
-
-    const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
-
-    function toggleCollapsed(label: string) {
-        setCollapsed(prev => ({
-            ...prev,
-            [label]: !prev[label]
-        }));
-    }
-
-    const mergedConfig = {
-        ...configurations,
-
-
-    };
-
     function findSettingByKey(key: string): Setting | undefined {
         for (const group in settings) {
             if (settings[group][key]) {
@@ -108,11 +89,18 @@ export function ConfigurationsSelector({
         return undefined;
     }
 
-
-
     function renderContent() {
         return (
             <div className="w-full space-y-4">
+                <div className="flex gap-2 items-center mb-2">
+                    <button
+                        className={`btn btn-xs ${editMode ? 'btn-error' : 'btn-outline'}`}
+                        onClick={() => setEditMode(e => !e)}
+                    >
+                        {editMode ? 'Done' : 'Edit'}
+                    </button>
+                    {editMode && <span className="text-xs text-gray-400">Delete mode</span>}
+                </div>
 
 
 
@@ -125,9 +113,7 @@ export function ConfigurationsSelector({
                             ? setting.type
                             : [];
                     if (
-                        typeof value === 'boolean' ||
-                        setting?.type === 'boolean' ||
-                        (Array.isArray(setting?.type) && setting.type.includes('boolean'))
+                        setting?.display === 'toggle'
                     ) {
                         return (
                             <div key={key} className="flex items-center gap-3 justify-between">
@@ -160,13 +146,12 @@ export function ConfigurationsSelector({
                                             }
                                             tabIndex={0}
                                         >
-                                            <Info className="text-info" />
+                                            <Info className="text-success" size={18} />
                                         </span>
                                         {openDescription === key && setting?.description && (
                                             <div
                                                 className="absolute tooltip right-full top-full left-0 mb-2 min-w-[220px] w-max max-w-sm z-50"
                                             >
-                                                {/* TODOO ADD DESIGN */}
                                                 <div
                                                     className="card"
                                                 >
@@ -178,7 +163,6 @@ export function ConfigurationsSelector({
                                                         onClick={() => setOpenDescription(null)}
                                                         tabIndex={0}
                                                         aria-label="Close"
-                                                        style={{ zIndex: 51 }}
                                                     >
                                                         ✕
                                                     </button>
@@ -186,30 +170,53 @@ export function ConfigurationsSelector({
                                             </div>
                                         )}
                                     </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={!!value}
+                                        onChange={() => {
+                                            const updated = { ...configurations, [key]: !value };
+                                            onChange(updated);
+                                            updateUrl(
+                                                Object.fromEntries(
+                                                    Object.entries(updated).map(([k, v]) => [
+                                                        k,
+                                                        typeof v === 'object' && v !== null
+                                                            ? JSON.stringify(v)
+                                                            : String(v)
+                                                    ])
+                                                )
+                                            );
+                                        }}
 
-
+                                        className="toggle toggle-success"
+                                    />
+                                    {editMode && (
+                                        <Trash2
+                                            className="text-error cursor-pointer hover:scale-110 transition-transform"
+                                            size={18}
+                                            onClick={() => {
+                                                // implement deletion logic here!
+                                                if (window.confirm(`Delete "${key}" setting?`)) {
+                                                    // Example: remove key from configurations and update
+                                                    const updated = { ...configurations };
+                                                    delete updated[key];
+                                                    onChange(updated);
+                                                    updateUrl(
+                                                        Object.fromEntries(
+                                                            Object.entries(updated).map(([k, v]) => [k, String(v)])
+                                                        )
+                                                    );
+                                                }
+                                            }}
+                                        />
+                                    )}
 
                                 </div>
-                                <input
-                                    type="checkbox"
-                                    checked={!!value}
-                                    onChange={() => {
-                                        const updated = { ...configurations, [key]: !value };
-                                        onChange(updated);
-                                        updateUrl(
-                                            Object.fromEntries(
-                                                Object.entries(updated).map(([k, v]) => [
-                                                    k,
-                                                    typeof v === 'object' && v !== null
-                                                        ? JSON.stringify(v)
-                                                        : String(v)
-                                                ])
-                                            )
-                                        );
-                                    }}
 
-                                    className="toggle toggle-success"
-                                />
+
+
                             </div>
                         );
                     }
@@ -217,10 +224,12 @@ export function ConfigurationsSelector({
                     if (templateOptions[key]) {
                         return (
                             <div key={key} className="flex items-center gap-3 justify-between">
+
                                 <kbd
                                     className="kbd rounded-sm "
                                 >
                                     {key}
+
                                 </kbd>
                                 <select
                                     value={templates[key] ?? ''}
@@ -264,19 +273,19 @@ export function ConfigurationsSelector({
                         );
                     }
 
-                    if (typeof value === 'string' && options.length > 0) {
+                    if (setting?.display === 'tabs') {
                         return (
                             <div key={key} className="flex justify-end gap-3 justify-between">
                                 <kbd className="kbd rounded-sm mb-2">{key}</kbd>
-                                <div className="flex flex-wrap items-center gap-2">
+                                <div className="flex flex-wrap justify-end  gap-2">
                                     {options.map(opt => (
                                         <label
                                             key={opt}
-                                            className={`cursor-pointer select-none rounded-md px-2 py-1 text-xs border
-                ${value === opt
-                                                    ? 'bg-blue-100 border-blue-400 text-blue-700'
+                                            className={` tab px-2 py-1 text-xs rounded-md border 
+                                                     ${value === opt
+                                                    ? 'tab-active bg-blue-100 border-blue-400 text-blue-700'
                                                     : 'bg-white border-gray-200 text-gray-500'}
-                transition-all`}
+                                                      cursor-pointer transition-all`}
                                         >
                                             <input
                                                 type="radio"
@@ -293,6 +302,24 @@ export function ConfigurationsSelector({
                             </div>
                         );
                     }
+
+                    if (setting?.display === 'date') {
+                        return (
+                            <div key={key} className="flex items-center gap-3 justify-between">
+                                <kbd className="kbd rounded-sm mb-2">{key}</kbd>
+                                <Datepicker
+                                    value={value || ''}
+                                    onChange={ev => {
+                                        updateValue(key, ev.value instanceof Date ? ev.value.toISOString() : (ev.value?.toString() || ''));
+
+                                    }}
+                                    className="input input-xs w-24 rounded-sm"
+                                />
+
+                            </div>
+                        );
+                    }
+
 
                     return (
                         <div key={key} className="mb-2">

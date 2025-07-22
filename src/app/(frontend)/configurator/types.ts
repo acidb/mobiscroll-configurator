@@ -62,6 +62,7 @@ export interface User {
 
 export interface Setting {
   type: string
+  display?: string
   description: string
   values?: string[]
   value?: string
