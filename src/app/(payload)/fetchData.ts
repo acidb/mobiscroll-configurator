@@ -1,11 +1,21 @@
 import { getPayload } from 'payload'
 import config from '../../payload.config'
-import { GetServerSidePropsContext } from 'next'
 
 export async function fetchConfiguratorData(context: any) {
   const payload = await getPayload({ config })
   const searchParams = context.query
   const { group, component, framework } = searchParams
+
+  const excludedKeys = ['group', 'component', 'framework', 'preset']
+  const unusedParams = Object.keys(searchParams)
+    .filter((key) => !excludedKeys.includes(key))
+    .reduce((obj, key) => {
+      obj[key] = searchParams[key]
+      return obj
+    }, {} as Record<string, any>)
+
+  console.log('[fetchConfiguratorData] unusedParams:', unusedParams)
+
 
   try {
     const groupsResult = await payload.find({ collection: 'groups' })
@@ -14,7 +24,6 @@ export async function fetchConfiguratorData(context: any) {
     let componentId = null
     let componentSettings = null
 
-    // 1. Lekérjük a kiválasztott komponenst view alapján
     if (component) {
       const componentResult = await payload.find({
         collection: 'components',
@@ -25,7 +34,6 @@ export async function fetchConfiguratorData(context: any) {
       const matchedComponent = componentResult.docs[0]
       componentId = matchedComponent?.id || null
 
-      // 2. Ha van ilyen komponens, akkor keresünk hozzá tartozó settings-et
       if (componentId) {
         const settingsResult = await payload.find({
           collection: 'settings',
@@ -53,10 +61,7 @@ export async function fetchConfiguratorData(context: any) {
     const configResult = await payload.find({
       collection: 'configs',
       where:
-
         selectedPresetId ? { preset: { equals: selectedPresetId } } : {},
-
-
       limit: 1,
     })
 
@@ -71,6 +76,7 @@ export async function fetchConfiguratorData(context: any) {
         selectedFramework: framework || null,
         componentSettings: componentSettings,
         config: configResult.docs[0],
+        configProps: unusedParams
       },
     }
   } catch (error) {
@@ -86,6 +92,7 @@ export async function fetchConfiguratorData(context: any) {
         selectedFramework: null,
         componentSettings: null,
         config: [],
+        configProps: {}
       },
     }
   }

@@ -35,7 +35,7 @@ interface ConfigurationsSelectorProps {
     updateSelection: (key: string, value: string | null) => void
     updateSelections: (updates: Record<string, string | null>) => void
     settings: GroupedSettings
-    config: Config
+    config: Config | null
     user: User | null
 }
 
@@ -394,7 +394,7 @@ export function ConfigurationsSelector({
             {user && selectedPreset && (
                 <div className="mt-4">
                     <Link
-                        href={`/admin/collections/configs/${config.id}`}
+                        href={`/admin/collections/configs/${config?.id}`}
                         className="btn bg-gray-100 hover:bg-gray-300 text-black w-full"
                     >
                         Edit the configuration

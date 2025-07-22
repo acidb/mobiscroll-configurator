@@ -47,7 +47,8 @@ export default function ConfiguratorClient({
   selectedFramework,
   settings,
   config,
-  user
+  user,
+  configProps
 }: {
   groups: Group[]
   components: Component[]
@@ -59,6 +60,7 @@ export default function ConfiguratorClient({
   settings: GroupedSettings
   config: Config
   user: User | null
+  configProps: Record<string, any>
 }) {
   const router = useRouter()
   const pathname = usePathname()
@@ -75,6 +77,22 @@ export default function ConfiguratorClient({
 
   const selectedPreset = searchParams.get('preset') || null
   const isLoading = !(currentConfig && frameworkObj && groupObj && code)
+
+  const mergeConfigProps = (configProps: Record<string, any>, config: Config, settings: GroupedSettings) => {
+    const mergedProps = { ...config.config.props };
+
+    const settingKeys = Object.values(settings)
+      .flatMap(group => Object.keys(group));
+
+    Object.keys(configProps).forEach(key => {
+      if (key !== 'view' && settingKeys.includes(key)) {
+        mergedProps[key] = configProps[key];
+        console.log('[mergeConfigProps] Merged:', key, ': ', configProps[key]);
+      }
+    });
+
+    return mergedProps;
+  };
 
   function updateSelections(updates: Record<string, string | null>) {
     const newQuery = new URLSearchParams(searchParams.toString())
@@ -138,9 +156,9 @@ export default function ConfiguratorClient({
 
   useEffect(() => {
     if (selectedPreset && config?.preset?.slug === selectedPreset) {
-      const allProps = config.config.props || {};
-      setProps(filterInvalidProps(allProps));
-      setCurrentConfig(config);
+      const mergedProps = mergeConfigProps(configProps, config, settings);
+      setProps(filterInvalidProps(mergedProps));
+      setCurrentConfig({ ...config, config: { ...config.config, props: mergedProps } });
       setTemplate(config.config.templates || {});
     } else {
       setCurrentConfig(null);
@@ -170,8 +188,6 @@ export default function ConfiguratorClient({
         if (val === undefined || val === null) return false
         return true
       }
-
-
 
       const eventData = extractedValues.data ?? []
       const view = extractedValues.view ?? []
@@ -433,7 +449,7 @@ export default function ConfiguratorClient({
             updateSelection={updateSelection}
             updateSelections={updateSelections}
             settings={settings}
-            config={config}
+            config={currentConfig}
             user={user}
           />
         </div>

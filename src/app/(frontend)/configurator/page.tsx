@@ -28,6 +28,7 @@ export default async function ConfiguratorPage({
       settings={props.componentSettings as unknown as GroupedSettings}
       config={props.config as unknown as Config}
       user={user}
+      configProps={props.configProps as Record<string, any>}
     />
   )
 }

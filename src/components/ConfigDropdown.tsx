@@ -14,7 +14,7 @@ setOptions({
 
 interface ConfigDropdownProps {
     onChange: (selected: SelectedConfig) => void;
-    config: Config;
+    config: Config | null;
     settings: GroupedSettings;
     selectedPreset: string | null;
 }
@@ -45,23 +45,23 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
 
     useEffect(() => {
         const initialSelections = flatKeys.filter(
-            key => config.config.props[key] !== undefined && config.config.props[key] !== null
+            key => config?.config.props[key] !== undefined && config.config.props[key] !== null
         );
 
         setCurrentSelections(initialSelections);
-    }, [config.config.props, settings]);
+    }, [config?.config.props, settings]);
 
     const handleConfigChange = (event: MbscSelectChangeEvent) => {
         const values = Array.isArray(event.value) ? event.value : event.value ? [event.value] : [];
         const urlUpdateObject: Record<string, string> = {};
         const newSelections: string[] = [];
 
-        const selectedObject: SelectedConfig = { ...config.config.props };
+        const selectedObject: SelectedConfig = { ...config?.config.props };
 
         values.forEach(key => {
             for (const group in settings) {
                 if (settings[group][key]) {
-                    const currentValue = config.config.props[key];
+                    const currentValue = config?.config.props[key];
                     const valueToUse = currentValue !== undefined && currentValue !== null
                         ? currentValue
                         : settings[group][key].default;
