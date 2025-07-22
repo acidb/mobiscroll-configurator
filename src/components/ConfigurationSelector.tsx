@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { updateUrl } from '@/utils/updateUrl'
 import { useScreenSize } from '@/utils/useScreenSize'
-import { Settings2 } from 'lucide-react'
+import { Info, Settings2 } from 'lucide-react'
 import StepperSection from '../app/(frontend)/configurator/StepperSection'
 import { Component, Preset, Config, Group, User, Setting, GroupedSettings } from '@/app/(frontend)/configurator/types'
 import { ConfigDropdown } from './ConfigDropdown'
@@ -59,6 +59,8 @@ export function ConfigurationsSelector({
 }: ConfigurationsSelectorProps) {
     const screenSize = useScreenSize()
     const [isOpen, setIsOpen] = useState(screenSize === 'desktop')
+    const [openDescription, setOpenDescription] = useState<string | null>(null);
+
     const toggleOpen = () => setIsOpen(prev => !prev)
 
     useEffect(() => {
@@ -97,38 +99,100 @@ export function ConfigurationsSelector({
 
     };
 
+    function findSettingByKey(key: string): Setting | undefined {
+        for (const group in settings) {
+            if (settings[group][key]) {
+                return settings[group][key];
+            }
+        }
+        return undefined;
+    }
+
 
 
     function renderContent() {
         return (
             <div className="w-full space-y-4">
+
+
+
                 {Object.entries(configurations).map(([key, value]) => {
-                    if (typeof value === 'boolean') {
+                    const setting = findSettingByKey(key);
+
+                    const options = Array.isArray(setting?.values) && setting.values.length > 0
+                        ? setting.values
+                        : Array.isArray(setting?.type)
+                            ? setting.type
+                            : [];
+                    if (
+                        typeof value === 'boolean' ||
+                        setting?.type === 'boolean' ||
+                        (Array.isArray(setting?.type) && setting.type.includes('boolean'))
+                    ) {
                         return (
                             <div key={key} className="flex items-center gap-3 justify-between">
-                                <kbd
-                                    className="kbd rounded-sm cursor-pointer select-none border-b-2 transition-all duration-100 active:scale-98 active:shadow-none active:border-b-1 focus:outline-none"
-                                    onClick={() => {
-                                        const updated = { ...configurations, [key]: !value };
-                                        onChange(updated);
-                                        updateUrl(
-                                            Object.fromEntries(
-                                                Object.entries(updated).map(([k, v]) => [
-                                                    k,
-                                                    typeof v === 'object' && v !== null
-                                                        ? JSON.stringify(v)
-                                                        : String(v)
-                                                ])
-                                            )
-                                        );
-                                    }}
-                                    tabIndex={0}
-                                >
-                                    {key}
-                                </kbd>
+                                <div className="flex items-center gap-2">
+                                    <kbd
+                                        className="kbd rounded-sm cursor-pointer select-none border-b-2 transition-all duration-100 active:scale-98 active:shadow-none active:border-b-1 focus:outline-none"
+                                        onClick={() => {
+                                            const updated = { ...configurations, [key]: !value };
+                                            onChange(updated);
+                                            updateUrl(
+                                                Object.fromEntries(
+                                                    Object.entries(updated).map(([k, v]) => [
+                                                        k,
+                                                        typeof v === 'object' && v !== null
+                                                            ? JSON.stringify(v)
+                                                            : String(v)
+                                                    ])
+                                                )
+                                            );
+                                        }}
+                                        tabIndex={0}
+                                    >
+                                        {key}
+                                    </kbd>
+                                    <div className="relative flex items-center">
+                                        <span
+                                            className="cursor-pointer"
+                                            onClick={() =>
+                                                setOpenDescription(openDescription === key ? null : key)
+                                            }
+                                            tabIndex={0}
+                                        >
+                                            <Info className="text-info" />
+                                        </span>
+                                        {openDescription === key && setting?.description && (
+                                            <div
+                                                className="absolute tooltip right-full top-full left-0 mb-2 min-w-[220px] w-max max-w-sm z-50"
+                                            >
+                                                {/* TODOO ADD DESIGN */}
+                                                <div
+                                                    className="card"
+                                                >
+                                                    <span className="flex-1 text-xs text-blue-900 pr-6 overflow-visible">
+                                                        {setting.description}
+                                                    </span>
+                                                    <button
+                                                        className="btn btn-xs btn-circle btn-ghost absolute right-2 top-2"
+                                                        onClick={() => setOpenDescription(null)}
+                                                        tabIndex={0}
+                                                        aria-label="Close"
+                                                        style={{ zIndex: 51 }}
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+
+
+                                </div>
                                 <input
                                     type="checkbox"
-                                    checked={value}
+                                    checked={!!value}
                                     onChange={() => {
                                         const updated = { ...configurations, [key]: !value };
                                         onChange(updated);
@@ -200,33 +264,50 @@ export function ConfigurationsSelector({
                         );
                     }
 
-
-
-                    if (typeof value === 'number') {
+                    if (typeof value === 'string' && options.length > 0) {
                         return (
-                            <div key={key}>
-                                <kbd>{key}</kbd>
-                                <span>{value}</span>
-                                <span className="ml-2 text-xs text-gray-400">[number]</span>
-                            </div>
-                        );
-                    }
-
-                    if (typeof value === 'string') {
-                        return (
-                            <div key={key} className="flex items-center gap-3 justify-between">
+                            <div key={key} className="flex justify-end gap-3 justify-between">
                                 <kbd className="kbd rounded-sm mb-2">{key}</kbd>
-                                <input type="text" placeholder={value} className="input input-xs  w-35 rounded-sm" />
+                                <div className="flex flex-wrap items-center gap-2">
+                                    {options.map(opt => (
+                                        <label
+                                            key={opt}
+                                            className={`cursor-pointer select-none rounded-md px-2 py-1 text-xs border
+                ${value === opt
+                                                    ? 'bg-blue-100 border-blue-400 text-blue-700'
+                                                    : 'bg-white border-gray-200 text-gray-500'}
+                transition-all`}
+                                        >
+                                            <input
+                                                type="radio"
+                                                name={`my_${key}`}
+                                                className="sr-only"
+                                                checked={value === opt}
+                                                onChange={() => updateValue(key, opt)}
+                                            />
+                                            {opt}
+                                        </label>
+                                    ))}
+                                </div>
+
                             </div>
                         );
                     }
-
 
                     return (
-                        <div key={key}>
+                        <div key={key} className="mb-2">
                             <kbd className="kbd rounded-sm">{key}</kbd>
-                            <span>{String(value)}</span>
-                            <span className="ml-2 text-xs w-35 rounded-sm text-gray-400">[{typeof value}]</span>
+                            <span className="ml-2">{String(value)}</span>
+                            <span className="ml-2 text-xs text-gray-400">[{typeof value}]</span>
+                            {setting && (
+                                <div className="text-xs text-gray-500 ml-1">
+                                    <div>Type: {Array.isArray(setting.type) ? setting.type.join(', ') : setting.type}</div>
+                                    <div>Default: {setting.default}</div>
+                                    {setting.values && setting.values.length > 0 && (
+                                        <div>Values: [{setting.values.join(', ')}]</div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     );
                 })}

@@ -97,6 +97,24 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
             }
         }
     }
+    function filterDomNodes(obj: Record<string, any>) {
+        const result: Record<string, any> = {};
+        for (const [k, v] of Object.entries(obj)) {
+            if (!(typeof window !== "undefined" && v instanceof HTMLElement)) {
+                result[k] = v;
+            }
+        }
+        return result;
+    }
+    function stripOuterQuotes(val: any) {
+        if (typeof val === 'string' && /^(['"])(.*)\1$/.test(val)) {
+            return val.slice(1, -1);
+        }
+        return val;
+    }
+    const safeMergedProps = Object.fromEntries(
+        Object.entries(mergedProps).map(([k, v]) => [k, stripOuterQuotes(v)])
+    );
 
 
 
@@ -104,10 +122,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     return (
         <>
             {isScheduler ? (
-                <div className="mockup-window border  bg-white border-base-300 w-full rounded-mg">
+                <div className="mockup-window border my-mockup  bg-white border-base-300 w-full rounded-mg">
                     <Component
                         themeVariant="light"
-                        {...mergedProps}
+                        {...safeMergedProps}
                         data={eventData}
                         resources={resources}
                         invalid={invalid}
@@ -124,10 +142,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
             ) : (
                 <div className="mockup-phone">
                     <div className="mockup-phone-camera z-50" />
-                    <div className="mockup-phone-display">
+                    <div className="mockup-phone-display my-mockup">
                         <Component
                             themeVariant="light"
-                            {...mergedProps}
+                            {...safeMergedProps}
                             data={eventData}
                             resources={resources}
                             invalid={invalid}

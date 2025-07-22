@@ -75,7 +75,7 @@ export function genCodeWithTopVars(
                 default:
                     formatted = `${key}: ${value},`;
             }
-        } else if (typeof value !== 'undefined') {
+        } else if (typeof value !== undefined) {
             switch (framework) {
                 case 'react':
                     formatted = `${key}={${JSON.stringify(value)}}`;
