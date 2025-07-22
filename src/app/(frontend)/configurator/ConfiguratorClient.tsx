@@ -74,7 +74,6 @@ export default function ConfiguratorClient({
   const [hooks, setHooks] = useState<Record<string, string>>({})
 
   const selectedPreset = searchParams.get('preset') || null
-  const addonConfigTitle = searchParams.get('addonconfigtitle') || null
   const isLoading = !(currentConfig && frameworkObj && groupObj && code)
 
   function updateSelections(updates: Record<string, string | null>) {
@@ -101,13 +100,10 @@ export default function ConfiguratorClient({
       newQuery.delete('component')
       newQuery.delete('framework')
       newQuery.delete('preset')
-      newQuery.delete('addonconfigtitle')
     } else if (key === 'component') {
       newQuery.delete('framework')
       newQuery.delete('preset')
-      newQuery.delete('addonconfigtitle')
     } else if (key === 'preset') {
-      newQuery.delete('addonconfigtitle')
     }
     router.push(`${pathname}?${newQuery.toString()}`, { scroll: false })
   }
