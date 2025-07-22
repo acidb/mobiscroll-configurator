@@ -106,7 +106,20 @@ export function ConfigurationsSelector({
                             <div key={key} className="flex items-center gap-3 justify-between">
                                 <kbd
                                     className="kbd rounded-sm cursor-pointer select-none border-b-2 transition-all duration-100 active:scale-98 active:shadow-none active:border-b-1 focus:outline-none"
-                                    onClick={() => onChange({ ...configurations, [key]: !value })}
+                                    onClick={() => {
+                                        const updated = { ...configurations, [key]: !value };
+                                        onChange(updated);
+                                        updateUrl(
+                                            Object.fromEntries(
+                                                Object.entries(updated).map(([k, v]) => [
+                                                    k,
+                                                    typeof v === 'object' && v !== null
+                                                        ? JSON.stringify(v)
+                                                        : String(v)
+                                                ])
+                                            )
+                                        );
+                                    }}
                                     tabIndex={0}
                                 >
                                     {key}
@@ -114,7 +127,21 @@ export function ConfigurationsSelector({
                                 <input
                                     type="checkbox"
                                     checked={value}
-                                    onChange={() => onChange({ ...configurations, [key]: !value })}
+                                    onChange={() => {
+                                        const updated = { ...configurations, [key]: !value };
+                                        onChange(updated);
+                                        updateUrl(
+                                            Object.fromEntries(
+                                                Object.entries(updated).map(([k, v]) => [
+                                                    k,
+                                                    typeof v === 'object' && v !== null
+                                                        ? JSON.stringify(v)
+                                                        : String(v)
+                                                ])
+                                            )
+                                        );
+                                    }}
+
                                     className="toggle toggle-success"
                                 />
                             </div>
@@ -131,7 +158,11 @@ export function ConfigurationsSelector({
                                 </kbd>
                                 <select
                                     value={templates[key] ?? ''}
-                                    onChange={e => onTemplateChange({ ...templates, [key]: e.target.value })}
+                                    onChange={e => {
+                                        const updatedTemplates = { ...templates, [key]: e.target.value };
+                                        onTemplateChange(updatedTemplates);
+                                        updateUrl({ ...configurations, templates: JSON.stringify(updatedTemplates) });
+                                    }}
                                     className="input input-sm w-48"
                                 >
                                     {templateOptions[key].map(opt => (
@@ -148,12 +179,20 @@ export function ConfigurationsSelector({
                                 <kbd className="kbd rounded-sm mb-2">{key}</kbd>
                                 <ViewEditor
                                     view={value}
-                                    onChange={updatedView =>
-                                        onChange({
-                                            ...configurations,
-                                            [key]: updatedView,
-                                        })
-                                    }
+                                    onChange={updatedView => {
+                                        const updated = { ...configurations, [key]: updatedView };
+                                        onChange(updated);
+                                        updateUrl(
+                                            Object.fromEntries(
+                                                Object.entries(updated).map(([k, v]) => [
+                                                    k,
+                                                    typeof v === 'object' && v !== null
+                                                        ? JSON.stringify(v)
+                                                        : String(v)
+                                                ])
+                                            )
+                                        );
+                                    }}
                                 />
                             </div>
                         );
@@ -181,7 +220,7 @@ export function ConfigurationsSelector({
                         );
                     }
 
-              
+
                     return (
                         <div key={key}>
                             <kbd>{key}</kbd>
@@ -191,7 +230,7 @@ export function ConfigurationsSelector({
                     );
                 })}
 
-             
+
             </div>
         );
     }
@@ -266,7 +305,10 @@ export function ConfigurationsSelector({
                 updateSelection={updateSelection}
                 updateSelections={updateSelections}
             />
-            <div className="flex-1 overflow-y-auto pr-1">{renderContent()}</div>
+            {selectedGroup && selectedComponent && selectedPreset && (
+                <div className="flex-1 overflow-y-auto pr-1">{renderContent()}</div>
+
+            )}
             {user && selectedPreset && (
                 <div className="mt-4">
                     <Link
