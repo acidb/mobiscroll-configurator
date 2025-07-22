@@ -14,7 +14,6 @@ import { Frameworks } from './collections/Frameworks'
 import { Presets } from './collections/Presets'
 import { Configs } from './collections/Configs'
 import { Settings } from './collections/Settings';
-import seedDatabase from './scripts/seed'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -25,7 +24,6 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    components: { afterDashboard: ['./app/components/seedButton'] },
   },
   collections: [Users, Media, Groups, Components, Frameworks, Presets, Configs, Settings],
   editor: lexicalEditor(),
@@ -40,20 +38,5 @@ export default buildConfig({
   plugins: [
     payloadCloudPlugin(),
     // storage-adapter-placeholder
-  ],
-  endpoints: [
-    {
-      path: '/seed',
-      method: 'post',
-      handler: async (req) => {
-        try {
-          await seedDatabase(req.payload)
-          return Response.json({ success: true }, { status: 200 })
-        } catch (err) {
-          const message = (err as Error).message ?? 'Unknown error'
-          return Response.json({ success: false, message: `Error: ${message}` }, { status: 500 })
-        }
-      },
-    },
   ],
 })
