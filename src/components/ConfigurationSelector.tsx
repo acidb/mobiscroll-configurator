@@ -6,9 +6,8 @@ import StepperSection from '../app/(frontend)/configurator/StepperSection'
 import { Component, Preset, Config, Group, User } from '@/app/(frontend)/configurator/types'
 import { ConfigDropdown } from './ConfigDropdown'
 import Link from 'next/link'
-import { ViewConfig } from './ViewEditor'
 import { ViewEditor } from './ViewEditor'
-
+import { MbscEventcalendarView } from "@mobiscroll/react";
 
 
 const templateOptions: Record<string, string[]> = {
@@ -17,11 +16,11 @@ const templateOptions: Record<string, string[]> = {
 
 
 
-type SelectedConfig = Record<string, string | number | boolean | null | ViewConfig>;
+type SelectedConfig = Record<string, string | number | boolean | null | MbscEventcalendarView>;
 
 
 interface ConfigurationsSelectorProps {
-    configurations: Record<string, string | number | boolean | null | ViewConfig>
+    configurations: Record<string, string | number | boolean | null | MbscEventcalendarView>
     onChange: (selected: SelectedConfig) => void
     templates: Record<string, string>
     onTemplateChange: (selected: Record<string, string>) => void

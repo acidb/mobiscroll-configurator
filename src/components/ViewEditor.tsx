@@ -1,25 +1,12 @@
 import React from "react";
+import { MbscEventcalendarView } from "@mobiscroll/react";
 export type ViewType = "month" | "week" | "day";
-export type eventDisplayType = "fill" | "exact";
+export type EventDisplayType = "fill" | "exact";
 
-export interface ViewModeConfig {
-    type?: ViewType;
-    eventDisplay?: eventDisplayType;
-    startTime?: string;
-    endTime?: string;
-    allDay?: boolean;
-}
-
-export interface ViewConfig {
-    calendar?: ViewModeConfig;
-    timeline?: ViewModeConfig;
-    agenda?: ViewModeConfig;
-    schedule?: ViewModeConfig;
-}
 
 interface ViewEditorProps {
-    view: ViewConfig;
-    onChange: (view: ViewConfig) => void;
+    view: MbscEventcalendarView;
+    onChange: (view: MbscEventcalendarView) => void;
 }
 
 const TABS: { label: string; value: ViewType }[] = [
@@ -28,6 +15,10 @@ const TABS: { label: string; value: ViewType }[] = [
     { label: "Day", value: "day" },
 ];
 
+const EVENT_DISPLAY_TABS: { label: string; value: EventDisplayType }[] = [
+    { label: "Fill", value: "fill" },
+    { label: "Exact", value: "exact" },
+];
 
 
 export const ViewEditor: React.FC<ViewEditorProps> = ({ view, onChange }) => {
@@ -86,6 +77,48 @@ export const ViewEditor: React.FC<ViewEditorProps> = ({ view, onChange }) => {
                                                 </div>
                                             </div>
                                         )}
+
+                                        {key === "eventDisplay" && (
+                                            <div className="ml-3">
+                                                <div className="flex items-center gap-2">
+                                                    {EVENT_DISPLAY_TABS.map(tab => (
+                                                        <label
+                                                            key={tab.value}
+                                                            className={`
+                                                            tab px-2 py-1 text-xs rounded-md border 
+                                                            ${config.eventDisplay === tab.value
+                                                                    ? 'tab-active bg-green-100 border-green-400 text-green-700'
+                                                                    : 'bg-white border-gray-200 text-gray-500'}
+                                                            cursor-pointer transition-all
+                                                        `}
+                                                            style={{
+                                                                minWidth: 56,
+                                                                minHeight: 24,
+                                                            }}
+                                                        >
+                                                            <input
+                                                                type="radio"
+                                                                name={`my_tabs_${mode}`}
+                                                                className="sr-only"
+                                                                aria-label={tab.label}
+                                                                checked={config.eventDisplay === tab.value}
+                                                                onChange={() =>
+                                                                    onChange({
+                                                                        ...view,
+                                                                        [mode]: {
+                                                                            ...config,
+                                                                            eventDisplay: tab.value,
+                                                                        },
+                                                                    })
+                                                                }
+                                                            />
+                                                            {tab.label}
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
 
                                     </div>
 

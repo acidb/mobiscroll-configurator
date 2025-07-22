@@ -1,12 +1,12 @@
 // In thise file is the function that generates the props to string
 // Here needs to be added more functions for different frameworks 
 import { capitalizeFirstLetter } from './capitalizeFirstLetter';
-import type { ViewConfig, ViewType } from '../components/ViewEditor';
+import type { MbscEventcalendarView } from '@mobiscroll/react';
 
 export function genCodeWithTopVars(
     framework: string,
     componentName: string,
-    props: Record<string, string | number | boolean | null | ViewConfig>,
+    props: Record<string, string | number | boolean | null | MbscEventcalendarView>,
     data?: Record<string, string>,
     extracted: string[] = ['data', 'view', 'resources', 'invalid', 'colors', 'templates', 'hooks']
 ) {

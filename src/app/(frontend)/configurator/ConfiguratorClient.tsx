@@ -10,8 +10,7 @@ import { ConfigurationsSelector } from '@/components/ConfigurationSelector'
 import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString'
 import { templateStrs, Lang } from '@/components/reactTemplates'
 import { toVueEventName, hookStrs } from '@/components/reactHooks'
-
-import { ViewConfig } from '@/components/ViewEditor'
+import { MbscEventcalendarView } from "@mobiscroll/react";
 
 type CategorizedConfig = {
   title: string;
@@ -67,7 +66,7 @@ export default function ConfiguratorClient({
   const [groupObj, setGroupObj] = useState<Group | null>(null)
   const [currentConfig, setCurrentConfig] = useState<Config | null>(null)
   const [code, setCode] = useState<CodeSnippet[]>(exampleSnippets)
-  const [props, setProps] = useState<Record<string, string | number | boolean | null | ViewConfig>>({})
+  const [props, setProps] = useState<Record<string, string | number | boolean | null | MbscEventcalendarView>>({})
   const [data, setData] = useState<Record<string, string>>({})
   const [template, setTemplate] = useState<Record<string, string>>({})
   const [hooks, setHooks] = useState<Record<string, string>>({})

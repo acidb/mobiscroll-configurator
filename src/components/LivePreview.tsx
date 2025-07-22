@@ -6,7 +6,8 @@ import {
     Select,
     Datepicker,
     MbscEventClickEvent,
-    Toast
+    Toast,
+    MbscEventcalendarView
 } from '@mobiscroll/react';
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
 import { templateCodes } from './reactTemplates';
@@ -19,13 +20,12 @@ const componentMap: Record<string, React.ElementType> = {
 };
 
 import { MbscCalendarEventData, MbscResource } from '@mobiscroll/react';
-import { ViewConfig } from './ViewEditor';
 
 
 
 export interface LivePreviewProps {
     componentName: string;
-    mergedProps: Record<string, string | number | boolean | null | ViewConfig>;
+    mergedProps: Record<string, string | number | boolean | null | MbscEventcalendarView>;
     data?: {
         data?: Record<string, string>[];
         resources?: Record<string, string>[];
