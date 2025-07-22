@@ -1,7 +1,10 @@
+'use client';
+
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
-import { Select, setOptions } from '@mobiscroll/react';
+import { MbscSelectChangeEvent, Select, setOptions } from '@mobiscroll/react';
 import { FC, useEffect, useState } from 'react';
 import { updateUrl } from '@/utils/updateUrl';
+import { SelectedConfig } from './ConfigurationSelector';
 import { Config } from '@/app/(frontend)/configurator/types';
 
 setOptions({
@@ -9,93 +12,98 @@ setOptions({
     themeVariant: 'light'
 });
 
+const configJson: Record<string, { type: string; description: string; values?: string[]; value?: string; default: string }> = {
+    theme: {
+        type: 'string',
+        description: 'Visual theme of the component.',
+        values: ['ios', 'material', 'windows', 'auto'],
+        default: 'ios'
+    },
+    mode: {
+        type: 'string',
+        description: 'Display mode of the component.',
+        values: ['light', 'dark', 'system'],
+        default: 'light'
+    }
+};
+
 interface ConfigDropdownProps {
-    onChange: (selected: Record<string, any>) => void;
-    configs: Config[];
+    onChange: (selected: SelectedConfig) => void;
+    configs: Config;
     selectedPreset: string | null;
 }
 
 export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, configs, selectedPreset }) => {
-    const [selectedConfig, setSelectedConfig] = useState<string>('');
+    const [selectedConfigs, setSelectedConfigs] = useState<{ key: string; value: string }[]>([]);
+    const [currentSelections, setCurrentSelections] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
 
-    const hasNonAddonConfig = configs.some(
-        (config) => config.preset?.slug === selectedPreset && config.config.type !== 'addon'
-    );
+    const configKeys = Object.keys(configJson);
+    const hasValidConfig = configKeys.length > 0;
 
-    const filteredConfigs = configs.filter(
-        (config) => config.config.type === 'addon' && config.preset?.slug === selectedPreset
-    );
-
-    const configData = [
-        { text: 'Select a configuration', value: '' },
-        ...filteredConfigs.map(config => ({
-            text: config.config.title || 'Untitled',
-            value: config.id
-        }))
-    ];
-
+    // Initialize currentSelections from configs.config.props
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const addonConfigTitle = urlParams.get('addonconfigtitle');
+        const initialSelections = configKeys.filter(key => configs.config.props[key] !== undefined && configs.config.props[key] !== null);
+        setCurrentSelections(initialSelections);
+        setSelectedConfigs(
+            initialSelections.map(key => ({
+                key,
+                value: configs.config.props[key] || configJson[key].default
+            }))
+        );
+    }, [configs.config.props]);
 
-        if (!hasNonAddonConfig) {
-            setSelectedConfig('');
-            setError('Please select a main configuration first');
-            if (addonConfigTitle) {
-                onChange({});
-                updateUrl({});
-            }
-            return;
-        }
-
-        if (addonConfigTitle) {
-            const titleFromUrl = addonConfigTitle.replace(/-/g, ' ');
-            const matchingConfig = configs.find(
-                (config) => config.config.title === titleFromUrl && config.config.type === 'addon'
-            );
-            if (matchingConfig) {
-                setSelectedConfig(matchingConfig.id);
-                onChange({ addonconfigtitle: addonConfigTitle });
-                setError(null);
-            } else {
-                setSelectedConfig('');
-                setError(`Configuration "${titleFromUrl}" not found`);
-                onChange({});
-                updateUrl({});
-            }
-        } else {
-            setSelectedConfig('');
-            setError(null);
-        }
-    }, [configs, onChange, selectedPreset, hasNonAddonConfig]);
-
-    const handleConfigChange = (event: any) => {
-        const selectedId = event.value;
-        setSelectedConfig(selectedId);
-
-        const selected = configs.find((config) => config.id === selectedId);
-        if (selected) {
-            const formattedTitle = selected.config.title.replace(/\s+/g, '-');
-            const newSelected = { addonconfigtitle: formattedTitle };
-            onChange(newSelected);
-            updateUrl(newSelected);
-        } else {
-            onChange({});
-            updateUrl({ addonconfigtitle: '' });
-        }
+    const getConfigData = () => {
+        return configKeys.map(key => ({
+            text: key,
+            value: key
+        }));
     };
 
-    if (filteredConfigs.length === 0) {
-        return null;
-    }
+    const handleConfigChange = (event: MbscSelectChangeEvent) => {
+        const values = Array.isArray(event.value) ? event.value : event.value ? [event.value] : [];
+        const newSelectedConfigs: { key: string; value: string }[] = [];
+        const urlUpdateObject: Record<string, string> = {};
+        const newSelections: string[] = [];
+
+        // Extend existing configs.config.props
+        const selectedObject: SelectedConfig = { ...configs.config.props };
+
+        // Update with selected configurations
+        values.forEach(key => {
+            if (typeof key === 'string' && configKeys.includes(key)) {
+                const defaultValue = configJson[key].default;
+                newSelectedConfigs.push({ key, value: defaultValue });
+                newSelections.push(key);
+                selectedObject[key] = defaultValue;
+                urlUpdateObject[key] = defaultValue;
+            }
+        });
+
+        // Explicitly set deselected configurations to empty string in urlUpdateObject
+        configKeys.forEach(key => {
+            if (!values.includes(key)) {
+                delete selectedObject[key];
+                urlUpdateObject[key] = '';
+            }
+        });
+
+        setSelectedConfigs(newSelectedConfigs);
+        setCurrentSelections(newSelections);
+        setError(null);
+
+        onChange(selectedObject);
+        updateUrl(urlUpdateObject);
+    };
+
+    if (!hasValidConfig) return null;
 
     return (
         <div className="w-full mb-8">
             <div className="mb-4 px-4">
-                <label className="text-sm font-semibold text-gray-900">Select Addon Configuration</label>
+                <label className="text-sm font-semibold text-gray-900">Select Configuration</label>
                 <p className="text-xs text-gray-500 mt-1">
-                    Choose an existing addon configuration for the selected preset
+                    Choose configuration values for the selected preset
                 </p>
             </div>
             {error && (
@@ -104,16 +112,16 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, configs, sel
                 </div>
             )}
             <Select
-                data={configData}
+                data={getConfigData()}
                 display="center"
                 inputStyle="outline"
-                filter = {true}
+                filter={true}
                 labelStyle="stacked"
-                placeholder="Select a config"
-                value={selectedConfig}
+                placeholder="Select configurations"
+                value={currentSelections}
                 onChange={handleConfigChange}
-                disabled={!hasNonAddonConfig || configs.length === 0}
-
+                disabled={!hasValidConfig}
+                selectMultiple={true}
             />
         </div>
     );

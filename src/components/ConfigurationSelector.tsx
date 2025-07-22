@@ -17,7 +17,7 @@ const templateOptions: Record<string, string[]> = {
 
 
 
-type SelectedConfig = Record<string, string | number | boolean | null | MbscEventcalendarView>;
+export type SelectedConfig = Record<string, string | number | boolean | null | MbscEventcalendarView>;
 
 
 interface ConfigurationsSelectorProps {
@@ -320,7 +320,7 @@ export function ConfigurationsSelector({
             )}
             {selectedPreset && (
                 <div className="mt-6">
-                    <ConfigDropdown onChange={onChange} configs={configs} selectedPreset={selectedPreset} />
+                    <ConfigDropdown onChange={onChange} configs={configs[0]} selectedPreset={selectedPreset} />
                 </div>
             )}
 
