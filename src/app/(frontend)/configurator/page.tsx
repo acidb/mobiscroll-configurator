@@ -4,6 +4,7 @@ import { Group, Component, Framework, Preset, Config, GroupedSettings } from './
 import { headers as getHeaders } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { MbscEventcalendarView } from '@mobiscroll/react'
 
 export default async function ConfiguratorPage({
   searchParams,
@@ -28,7 +29,7 @@ export default async function ConfiguratorPage({
       settings={props.componentSettings as unknown as GroupedSettings}
       config={props.config as unknown as Config}
       user={user}
-      configProps={props.configProps as Record<string, any>}
+      configProps={props.configProps as Record<string, string | number | boolean | null | undefined | MbscEventcalendarView>}
     />
   )
 }

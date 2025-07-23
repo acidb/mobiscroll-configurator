@@ -23,7 +23,7 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
     const [currentSelections, setCurrentSelections] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
 
-    const flatKeys = Object.entries(settings).flatMap(([group, settingMap]) =>
+    const flatKeys = Object.entries(settings).flatMap(([settingMap]) =>
         Object.keys(settingMap)
     );
     const hasValidConfig = flatKeys.length > 0;
@@ -49,7 +49,7 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
         );
 
         setCurrentSelections(initialSelections);
-    }, [config?.config.props, settings, flatKeys]);
+    }, [config?.config.props, settings]);
 
     const handleConfigChange = (event: MbscSelectChangeEvent) => {
         const values = Array.isArray(event.value) ? event.value : event.value ? [event.value] : [];

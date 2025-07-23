@@ -1,7 +1,11 @@
 import { getPayload } from 'payload';
 import config from '../../payload.config';
 
-export async function fetchConfiguratorData(context: any) {
+interface ConfiguratorContext {
+  query: { [key: string]: string };
+}
+
+export async function fetchConfiguratorData(context: ConfiguratorContext) {
   const payload = await getPayload({ config });
   const searchParams = await context.query;
 

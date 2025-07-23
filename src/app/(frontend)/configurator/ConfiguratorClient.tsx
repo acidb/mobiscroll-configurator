@@ -55,7 +55,7 @@ export default function ConfiguratorClient({
   settings: GroupedSettings
   config: Config
   user: User | null
-  configProps: Record<string, any>
+  configProps: Record<string, string | number | boolean | null | undefined | MbscEventcalendarView>
 }) {
   const router = useRouter()
   const pathname = usePathname()
@@ -73,7 +73,7 @@ export default function ConfiguratorClient({
   const selectedPreset = searchParams.get('preset') || null
   const isLoading = !(currentConfig && frameworkObj && groupObj && code)
 
-  const mergeConfigProps = (configProps: Record<string, any>, config: Config, settings: GroupedSettings) => {
+  const mergeConfigProps = (configProps: Record<string, string | number | boolean | null | undefined | MbscEventcalendarView>, config: Config, settings: GroupedSettings) => {
     const mergedProps = { ...config.config.props };
 
     const settingKeys = Object.values(settings)
@@ -81,8 +81,7 @@ export default function ConfiguratorClient({
 
     Object.keys(configProps).forEach(key => {
       if (key !== 'view' && key !== 'renderResource' && settingKeys.includes(key)) {
-        mergedProps[key] = configProps[key];
-        console.log('[mergeConfigProps] Merged:', key, ': ', configProps[key]);
+        mergedProps[key] = configProps[key] !== undefined && configProps[key] !== null ? String(configProps[key]) : '';
       }
     });
 
@@ -160,7 +159,7 @@ export default function ConfiguratorClient({
       setProps({});
       setTemplate({});
     }
-  }, [selectedPreset, config, configProps, settings]);
+  }, [selectedPreset, config ]);
 
   useEffect(() => {
     if (frameworkObj && currentConfig) {
