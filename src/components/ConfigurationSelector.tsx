@@ -198,9 +198,6 @@ export function ConfigurationsSelector({
                                     )}
 
                                 </div>
-
-
-
                             </div>
                         );
                     }
