@@ -124,7 +124,6 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
                 onChange={handleConfigChange}
                 disabled={!hasValidConfig}
                 selectMultiple={true}
-                touchUi={true}
                 showInput={false}
             />
         </div>
