@@ -2,10 +2,11 @@
 
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
 import { MbscEventcalendarView, MbscSelectChangeEvent, Select, setOptions } from '@mobiscroll/react';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { updateUrl } from '@/utils/updateUrl';
 import { SelectedConfig } from './ConfigurationSelector';
 import { Config, GroupedSettings } from '@/app/(frontend)/configurator/types';
+import { Plus } from 'lucide-react';
 
 setOptions({
     theme: 'ios',
@@ -22,9 +23,10 @@ interface ConfigDropdownProps {
 export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, settings }) => {
     const [currentSelections, setCurrentSelections] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const selectRef = useRef<any>(null);
 
     const flatKeys = useMemo(() => {
-        return Object.entries(settings).flatMap(([settingMap]) =>
+        return Object.entries(settings).flatMap(([_, settingMap]) =>
             Object.keys(settingMap)
         );
     }, [settings]);
@@ -56,7 +58,7 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
 
     const handleConfigChange = (event: MbscSelectChangeEvent) => {
         const values = Array.isArray(event.value) ? event.value : event.value ? [event.value] : [];
-        const urlUpdateObject: Record<string, string | number | boolean | null | undefined | MbscEventcalendarView> = {};
+        const urlUpdateObject: Record<string, string | number | boolean | null | MbscEventcalendarView> = {};
         const newSelections: string[] = [];
 
         const selectedObject: SelectedConfig = { ...config?.config.props };
@@ -90,23 +92,28 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
         updateUrl(urlUpdateObject);
     };
 
+    // Function to open the Select center view
+    const openSelect = () => {
+        if (selectRef.current) {
+            selectRef.current.open(); // Mobiscroll Select API to open the dropdown
+        }
+    };
 
     if (!hasValidConfig) return null;
 
     return (
-        <div className="w-full mb-8">
-            <div className="mb-4 px-4">
-                <label className="text-sm font-semibold text-gray-900">Select Configuration</label>
-                <p className="text-xs text-gray-500 mt-1">
-                    Choose configuration values for the selected preset
-                </p>
-            </div>
-            {error && (
-                <div className="text-red-600 text-xs font-medium bg-red-50 rounded-lg p-3 mb-3 transition-all duration-200">
-                    {error}
-                </div>
-            )}
+        <div>
+            <button
+                className="btn btn-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow flex items-center gap-1 px-3 transition-colors duration-200"
+                title="Add new configuration"
+                type="button"
+                onClick={openSelect}
+            >
+                <Plus size={18} />
+                <span className="font-semibold">Add</span>
+            </button>
             <Select
+                ref={selectRef}
                 data={getConfigData()}
                 display="center"
                 inputStyle="outline"
@@ -117,6 +124,8 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
                 onChange={handleConfigChange}
                 disabled={!hasValidConfig}
                 selectMultiple={true}
+                touchUi={true}
+                showInput={false}
             />
         </div>
     );

@@ -485,14 +485,11 @@ export function ConfigurationsSelector({
                     </div>
 
                     <div className="flex gap-2">
-                        <button
-                            className="btn btn-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow flex items-center gap-1 px-3 transition-colors duration-200"
-                            title="Add new configuration"
-                            type="button"
-                        >
-                            <Plus size={18} />
-                            <span className="font-semibold">Add</span>
-                        </button>
+                        {selectedPreset && (
+                            <div>
+                                <ConfigDropdown onChange={onChange} config={config} settings={settings} selectedPreset={selectedPreset} />
+                            </div>
+                        )}
                         <button
                             className={`btn btn-sm shadow flex items-center gap-1 px-3 transition-all duration-300
                 ${editMode
@@ -518,11 +515,6 @@ export function ConfigurationsSelector({
             {selectedGroup && selectedComponent && selectedPreset && (
                 <div className="flex-1 overflow-y-auto pr-1">{renderContent()}</div>
 
-            )}
-            {selectedPreset && (
-                <div className="mt-6">
-                    <ConfigDropdown onChange={onChange} config={config} settings={settings} selectedPreset={selectedPreset} />
-                </div>
             )}
 
         </div>
