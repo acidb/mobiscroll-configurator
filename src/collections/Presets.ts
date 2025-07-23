@@ -4,6 +4,9 @@ export const Presets: CollectionConfig = {
   slug: 'presets',
   admin: {
     useAsTitle: 'name',
+    components: {
+      Description: '@/components/PresetDescription',
+    },
   },
   fields: [
     {

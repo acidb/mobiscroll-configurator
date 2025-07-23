@@ -24,6 +24,9 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      beforeDashboard: ['@/components/GroupDescription'],
+    },
   },
   collections: [Users, Media, Groups, Components, Frameworks, Presets, Configs, Settings],
   editor: lexicalEditor(),
