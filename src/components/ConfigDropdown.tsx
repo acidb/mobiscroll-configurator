@@ -92,10 +92,9 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
         updateUrl(urlUpdateObject);
     };
 
-    // Function to open the Select center view
     const openSelect = () => {
         if (selectRef.current) {
-            selectRef.current.open(); // Mobiscroll Select API to open the dropdown
+            selectRef.current.open();
         }
     };
 

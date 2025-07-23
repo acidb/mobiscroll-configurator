@@ -178,20 +178,23 @@ export function ConfigurationsSelector({
                                     {editMode && (
                                         <Trash2
                                             className="text-error cursor-pointer hover:scale-110 transition-transform"
-                                            size={18}
+                                            size={28}
                                             onClick={() => {
                                                 if (window.confirm(`Delete "${key}" setting?`)) {
                                                     const updated = { ...configurations };
                                                     delete updated[key];
                                                     onChange(updated);
-                                                    updateUrl(
-                                                        Object.fromEntries(
-                                                            Object.entries(updated).map(([k, v]) => [k, String(v)])
-                                                        )
-                                                    );
+
+                                                    const urlUpdate = {
+                                                        ...Object.fromEntries(Object.entries(updated).map(([k, v]) => [k, String(v)])),
+                                                        [key]: '',
+                                                    };
+
+                                                    updateUrl(urlUpdate);
                                                 }
                                             }}
                                         />
+
                                     )}
 
                                 </div>
@@ -245,20 +248,23 @@ export function ConfigurationsSelector({
                                     {editMode && (
                                         <Trash2
                                             className="text-error cursor-pointer hover:scale-110 transition-transform"
-                                            size={18}
+                                            size={28}
                                             onClick={() => {
                                                 if (window.confirm(`Delete "${key}" setting?`)) {
                                                     const updated = { ...configurations };
                                                     delete updated[key];
                                                     onChange(updated);
-                                                    updateUrl(
-                                                        Object.fromEntries(
-                                                            Object.entries(updated).map(([k, v]) => [k, String(v)])
-                                                        )
-                                                    );
+
+                                                    const urlUpdate = {
+                                                        ...Object.fromEntries(Object.entries(updated).map(([k, v]) => [k, String(v)])),
+                                                        [key]: '',
+                                                    };
+
+                                                    updateUrl(urlUpdate);
                                                 }
                                             }}
                                         />
+
                                     )}
                                 </div>
 
@@ -344,14 +350,17 @@ export function ConfigurationsSelector({
                                                 const updated = { ...configurations };
                                                 delete updated[key];
                                                 onChange(updated);
-                                                updateUrl(
-                                                    Object.fromEntries(
-                                                        Object.entries(updated).map(([k, v]) => [k, String(v)])
-                                                    )
-                                                );
+
+                                                const urlUpdate = {
+                                                    ...Object.fromEntries(Object.entries(updated).map(([k, v]) => [k, String(v)])),
+                                                    [key]: '',
+                                                };
+
+                                                updateUrl(urlUpdate);
                                             }
                                         }}
                                     />
+
                                 )}
                             </div>
 
