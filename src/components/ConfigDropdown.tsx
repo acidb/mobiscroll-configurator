@@ -2,7 +2,7 @@
 
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
 import { MbscSelectChangeEvent, Select, setOptions } from '@mobiscroll/react';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { updateUrl } from '@/utils/updateUrl';
 import { SelectedConfig } from './ConfigurationSelector';
 import { Config, GroupedSettings } from '@/app/(frontend)/configurator/types';
@@ -23,9 +23,12 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
     const [currentSelections, setCurrentSelections] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
 
-    const flatKeys = Object.entries(settings).flatMap(([settingMap]) =>
-        Object.keys(settingMap)
-    );
+    const flatKeys = useMemo(() => {
+        return Object.entries(settings).flatMap(([settingMap]) =>
+            Object.keys(settingMap)
+        );
+    }, [settings]);
+
     const hasValidConfig = flatKeys.length > 0;
 
     const getConfigData = () => {
@@ -49,7 +52,7 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
         );
 
         setCurrentSelections(initialSelections);
-    }, [config?.config.props, settings]);
+    }, [config?.config.props, settings, flatKeys]);
 
     const handleConfigChange = (event: MbscSelectChangeEvent) => {
         const values = Array.isArray(event.value) ? event.value : event.value ? [event.value] : [];

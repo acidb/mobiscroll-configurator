@@ -159,7 +159,7 @@ export default function ConfiguratorClient({
       setProps({});
       setTemplate({});
     }
-  }, [selectedPreset, config ]);
+  }, [selectedPreset, config, configProps, settings]);
 
   useEffect(() => {
     if (frameworkObj && currentConfig) {
