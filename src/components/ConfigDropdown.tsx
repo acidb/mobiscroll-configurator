@@ -49,7 +49,7 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
         );
 
         setCurrentSelections(initialSelections);
-    }, [config?.config.props, settings]);
+    }, [config?.config.props, settings, flatKeys]);
 
     const handleConfigChange = (event: MbscSelectChangeEvent) => {
         const values = Array.isArray(event.value) ? event.value : event.value ? [event.value] : [];

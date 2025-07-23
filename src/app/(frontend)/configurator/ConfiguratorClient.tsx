@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import FrameworkSection from './FrameworkSection'
-import { Group, Component, Framework, Preset, Config, User, Setting, GroupedSettings } from './types'
+import { Group, Component, Framework, Preset, Config, User, GroupedSettings } from './types'
 import { LivePreview } from '@/components/LivePreview'
 import { CodePreview } from '@/components/CodePreview'
 import { ConfigurationsSelector } from '@/components/ConfigurationSelector'
@@ -11,11 +11,6 @@ import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString
 import { templateStrs, Lang } from '@/components/reactTemplates'
 import { toVueEventName, hookStrs } from '@/components/reactHooks'
 import { MbscEventcalendarView } from "@mobiscroll/react";
-
-type CategorizedConfig = {
-  title: string;
-  config: Config;
-};
 
 
 export type CodeSnippet = {

@@ -32,7 +32,7 @@ export const ViewEditor: React.FC<ViewEditorProps> = ({ view, onChange }) => {
                             <kbd className="kbd rounded-sm text-xs px-2 py-0.5">{mode}</kbd>
                         </div>
                         <div className="flex flex-col gap-1 mb-2">
-                            {Object.entries(config).map(([key, value]) => (
+                            {Object.entries(config).map(([key]) => (
                                 <div key={key} className="flex items-center gap-3 justify-between ml-6 border-b-1 border-gray-200 py-2">
                                     <kbd className="kbd rounded-sm text-xs px-2 py-0.5">{key}</kbd>
 
