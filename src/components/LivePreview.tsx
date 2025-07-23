@@ -60,7 +60,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         setToastOpen(true);
     }, []);
 
-    const customHandlers: { key: string; fn: (...args: any[]) => void }[] = [
+    const customHandlers: { key: string; fn: (...args: MbscEventClickEvent[]) => void }[] = [
         { key: 'myEventClick', fn: handleEventClick },
     ];
 
@@ -108,9 +108,6 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         Object.entries(mergedProps).map(([k, v]) => [k, stripOuterQuotes(v)])
     );
 
-
-
-    console.log(isScheduler);
     return (
         <>
             {isScheduler ? (
