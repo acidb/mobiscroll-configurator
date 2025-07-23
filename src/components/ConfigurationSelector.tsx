@@ -387,10 +387,12 @@ export function ConfigurationsSelector({
                             {setting && (
                                 <div className="text-xs text-gray-500 ml-1">
                                     <div>Type: {Array.isArray(setting.type) ? setting.type.join(', ') : setting.type}</div>
-                                    <div>Default: {setting.default}</div>
-                                    {setting.values && setting.values.length > 0 && (
-                                        <div>Values: [{setting.values.join(', ')}]</div>
-                                    )}
+                                    <div>
+                                        Default: {setting.default}
+                                        {setting.values && Array.isArray(setting.values) && setting.values.length > 0 && (
+                                            <div>Values: [{setting.values.join(', ')}]</div>
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </div>

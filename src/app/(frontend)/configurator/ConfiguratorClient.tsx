@@ -194,14 +194,44 @@ export default function ConfiguratorClient({
 
   useEffect(() => {
     if (selectedPreset && config?.preset?.slug === selectedPreset) {
-      const mergedProps = mergeConfigProps(configProps, config, settings, template);
-      setProps(filterInvalidProps(mergedProps));
-      setCurrentConfig({ ...config, config: { ...config.config, props: mergedProps } });
-      setTemplate(config.config.templates || {});
+      const mergedProps: Record<string, string | number | boolean | null | MbscEventcalendarView> = {};
+      const templateProps: Record<string, string> = {};
+      const hookProps: Record<string, string> = {};
+
+
+      Object.entries(settings).forEach(([groupName, groupSettings]) => {
+        Object.entries(groupSettings).forEach(([key, setting]) => {
+          if (groupName === 'Renders' && configProps[key] !== undefined) {
+            templateProps[key] = String(configProps[key]);
+          } else if (groupName === 'Events' && configProps[key] !== undefined) {
+            hookProps[key] = String(configProps[key]);
+          } else if (groupName !== 'Renders' && groupName !== 'Events' && configProps[key] !== undefined) {
+
+            const val = configProps[key];
+            if (val === 'true') {
+              mergedProps[key] = true;
+            } else if (val === 'false') {
+              mergedProps[key] = false;
+            } else if (val !== undefined) {
+              mergedProps[key] = val;
+            }
+          }
+        });
+      });
+
+
+      const finalMergedProps = { ...config.config.props, ...mergedProps };
+
+
+      setProps(filterInvalidProps(finalMergedProps));
+      setCurrentConfig({ ...config, config: { ...config.config, props: finalMergedProps } });
+      setTemplate({ ...config.config.templates, ...templateProps });
+      setHooks({ ...config.config.hooks, ...hookProps });
     } else {
       setCurrentConfig(null);
       setProps({});
       setTemplate({});
+      setHooks({});
     }
   }, [selectedPreset, config, configProps, settings]);
 
