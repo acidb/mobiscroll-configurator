@@ -285,7 +285,6 @@ export default function ConfiguratorClient({
         if (!templates) return ''
         return Object.values(templates)
           .map((fnName) => {
-            console.log('[getTemplateStrBlock] Mapping fnName:', fnName);
             return templateStrs(lang as Lang)?.[fnName] || '';
           })
           .filter(Boolean)
@@ -399,10 +398,6 @@ export default function ConfiguratorClient({
             .replace(/\/\* \w+ \*\//g, '')
         }))
 
-
-      console.log(codeObj);
-
-      console.log('Final language:', codeObj.map((obj) => obj.label));
       setCode(codeObj)
     }
   }, [frameworkObj, currentConfig, props, template])
