@@ -1,7 +1,7 @@
 'use client';
 
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
-import { MbscSelectChangeEvent, Select, setOptions } from '@mobiscroll/react';
+import { MbscEventcalendarView, MbscSelectChangeEvent, Select, setOptions } from '@mobiscroll/react';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { updateUrl } from '@/utils/updateUrl';
 import { SelectedConfig } from './ConfigurationSelector';
@@ -56,7 +56,7 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
 
     const handleConfigChange = (event: MbscSelectChangeEvent) => {
         const values = Array.isArray(event.value) ? event.value : event.value ? [event.value] : [];
-        const urlUpdateObject: Record<string, string> = {};
+        const urlUpdateObject: Record<string, string | number | boolean | null | undefined | MbscEventcalendarView> = {};
         const newSelections: string[] = [];
 
         const selectedObject: SelectedConfig = { ...config?.config.props };
