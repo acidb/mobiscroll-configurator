@@ -64,7 +64,7 @@ const StepperSection: React.FC<StepperSectionProps> = ({
 
 
     return (
-        <div className="w-full mb-2 border-b-1 border-gray-200">
+        <div className="w-full border-b-1 border-gray-200">
 
             <div className="flex flex-row flex-wrap gap-2 mb-2 w-full">
                 {selectedGroup && (

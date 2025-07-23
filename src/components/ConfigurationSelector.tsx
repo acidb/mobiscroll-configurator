@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { updateUrl } from '@/utils/updateUrl'
 import { useScreenSize } from '@/utils/useScreenSize'
-import { Info, Settings2, Trash2 } from 'lucide-react'
+import { Info, Settings2, Trash2, PencilOff, Pencil, Plus } from 'lucide-react'
 
+import { DescriptionTooltip } from './DescriptionTooltip'
 import StepperSection from '../app/(frontend)/configurator/StepperSection'
 import { Component, Preset, Config, Group, User, Setting, GroupedSettings } from '@/app/(frontend)/configurator/types'
 import { ConfigDropdown } from './ConfigDropdown'
@@ -89,18 +90,20 @@ export function ConfigurationsSelector({
         return undefined;
     }
 
+
+    const infoRefs = useRef<Record<string, React.RefObject<SVGSVGElement | null>>>({});
+
+    Object.keys(configurations).forEach(key => {
+        if (!infoRefs.current[key]) {
+            infoRefs.current[key] = React.createRef<SVGSVGElement>();
+        }
+    });
+
+
+
     function renderContent() {
         return (
-            <div className="w-full space-y-4">
-                <div className="flex gap-2 items-center mb-2">
-                    <button
-                        className={`btn btn-xs ${editMode ? 'btn-error' : 'btn-outline'}`}
-                        onClick={() => setEditMode(e => !e)}
-                    >
-                        {editMode ? 'Done' : 'Edit'}
-                    </button>
-                    {editMode && <span className="text-xs text-gray-400">Delete mode</span>}
-                </div>
+            <div className="w-full space-y-4 mt-2">
 
 
 
@@ -112,11 +115,10 @@ export function ConfigurationsSelector({
                         : Array.isArray(setting?.type)
                             ? setting.type
                             : [];
-                    if (
-                        setting?.display === 'toggle'
-                    ) {
+
+                    if (setting?.display === 'toggle') {
                         return (
-                            <div key={key} className="flex items-center gap-3 justify-between">
+                            <div key={key} className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <kbd
                                         className="kbd rounded-sm cursor-pointer select-none border-b-2 transition-all duration-100 active:scale-98 active:shadow-none active:border-b-1 focus:outline-none"
@@ -138,38 +140,21 @@ export function ConfigurationsSelector({
                                     >
                                         {key}
                                     </kbd>
-                                    <div className="relative flex items-center">
-                                        <span
-                                            className="cursor-pointer"
-                                            onClick={() =>
-                                                setOpenDescription(openDescription === key ? null : key)
-                                            }
-                                            tabIndex={0}
-                                        >
-                                            <Info className="text-success" size={18} />
-                                        </span>
-                                        {openDescription === key && setting?.description && (
-                                            <div
-                                                className="absolute tooltip right-full top-full left-0 mb-2 min-w-[220px] w-max max-w-sm z-50"
-                                            >
-                                                <div
-                                                    className="card"
-                                                >
-                                                    <span className="flex-1 text-xs text-blue-900 pr-6 overflow-visible">
-                                                        {setting.description}
-                                                    </span>
-                                                    <button
-                                                        className="btn btn-xs btn-circle btn-ghost absolute right-2 top-2"
-                                                        onClick={() => setOpenDescription(null)}
-                                                        tabIndex={0}
-                                                        aria-label="Close"
-                                                    >
-                                                        ✕
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
+                                    <span className="relative flex items-center cursor-pointer" tabIndex={0} style={{ lineHeight: 0 }}>
+                                        <Info
+                                            ref={infoRefs.current[key]}
+                                            className="text-success"
+                                            size={18}
+                                            onClick={() => setOpenDescription(openDescription === key ? null : key)}
+                                        />
+                                        <DescriptionTooltip
+                                            anchorRef={infoRefs.current[key]}
+                                            open={openDescription === key}
+                                            onClose={() => setOpenDescription(null)}
+                                            title={key}
+                                            description={setting.description}
+                                        />
+                                    </span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <input
@@ -197,9 +182,7 @@ export function ConfigurationsSelector({
                                             className="text-error cursor-pointer hover:scale-110 transition-transform"
                                             size={18}
                                             onClick={() => {
-                                                // implement deletion logic here!
                                                 if (window.confirm(`Delete "${key}" setting?`)) {
-                                                    // Example: remove key from configurations and update
                                                     const updated = { ...configurations };
                                                     delete updated[key];
                                                     onChange(updated);
@@ -224,26 +207,64 @@ export function ConfigurationsSelector({
                     if (templateOptions[key]) {
                         return (
                             <div key={key} className="flex items-center gap-3 justify-between">
+                                <div className="flex items-center gap-2">
+                                    <kbd className="kbd rounded-sm ">
+                                        {key}
+                                    </kbd>
 
-                                <kbd
-                                    className="kbd rounded-sm "
-                                >
-                                    {key}
+                                    <span className="relative flex items-center cursor-pointer" tabIndex={0} style={{ lineHeight: 0 }}>
+                                        <Info
+                                            ref={infoRefs.current[key]}
+                                            className="text-success"
+                                            size={18}
+                                            onClick={() => setOpenDescription(openDescription === key ? null : key)}
+                                        />
+                                        <DescriptionTooltip
+                                            anchorRef={infoRefs.current[key]}
+                                            open={openDescription === key}
+                                            onClose={() => setOpenDescription(null)}
+                                            title={key}
+                                            description={'setting.description'}
+                                        />
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <select
+                                        value={templates[key] ?? ''}
+                                        onChange={e => {
+                                            const updatedTemplates = { ...templates, [key]: e.target.value };
+                                            onTemplateChange(updatedTemplates);
+                                            updateUrl({ ...configurations, templates: JSON.stringify(updatedTemplates) });
+                                        }}
+                                        className={`select select-xs rounded-sm 
+                                            ${editMode ? 'w-25' : 'w-35'}
+                                            `}
+                                    >
+                                        {templateOptions[key].map(opt => (
+                                            <option key={opt} value={opt}>{opt}</option>
+                                        ))}
+                                    </select>
 
-                                </kbd>
-                                <select
-                                    value={templates[key] ?? ''}
-                                    onChange={e => {
-                                        const updatedTemplates = { ...templates, [key]: e.target.value };
-                                        onTemplateChange(updatedTemplates);
-                                        updateUrl({ ...configurations, templates: JSON.stringify(updatedTemplates) });
-                                    }}
-                                    className="select select-xs w-35 rounded-sm "
-                                >
-                                    {templateOptions[key].map(opt => (
-                                        <option key={opt} value={opt}>{opt}</option>
-                                    ))}
-                                </select>
+                                    {editMode && (
+                                        <Trash2
+                                            className="text-error cursor-pointer hover:scale-110 transition-transform"
+                                            size={18}
+                                            onClick={() => {
+                                                if (window.confirm(`Delete "${key}" setting?`)) {
+                                                    const updated = { ...configurations };
+                                                    delete updated[key];
+                                                    onChange(updated);
+                                                    updateUrl(
+                                                        Object.fromEntries(
+                                                            Object.entries(updated).map(([k, v]) => [k, String(v)])
+                                                        )
+                                                    );
+                                                }
+                                            }}
+                                        />
+                                    )}
+                                </div>
+
                             </div>
                         );
                     }
@@ -275,8 +296,28 @@ export function ConfigurationsSelector({
 
                     if (setting?.display === 'tabs') {
                         return (
-                            <div key={key} className="flex gap-3 justify-between">
-                                <kbd className="kbd rounded-sm mb-2">{key}</kbd>
+                            <div key={key} className="flex justify-end gap-3 justify-between">
+                                <div className="flex items-center gap-2">
+                                    <kbd className="kbd rounded-sm ">
+                                        {key}
+                                    </kbd>
+
+                                    <span className="relative flex items-center cursor-pointer" tabIndex={0} style={{ lineHeight: 0 }}>
+                                        <Info
+                                            ref={infoRefs.current[key]}
+                                            className="text-success"
+                                            size={18}
+                                            onClick={() => setOpenDescription(openDescription === key ? null : key)}
+                                        />
+                                        <DescriptionTooltip
+                                            anchorRef={infoRefs.current[key]}
+                                            open={openDescription === key}
+                                            onClose={() => setOpenDescription(null)}
+                                            title={key}
+                                            description={setting.description}
+                                        />
+                                    </span>
+                                </div>
                                 <div className="flex flex-wrap justify-end  gap-2">
                                     {options.map(opt => (
                                         <label
@@ -299,10 +340,28 @@ export function ConfigurationsSelector({
                                     ))}
                                 </div>
 
+                                {editMode && (
+                                    <Trash2
+                                        className="text-error cursor-pointer hover:scale-110 transition-transform"
+                                        size={28}
+                                        onClick={() => {
+                                            if (window.confirm(`Delete "${key}" setting?`)) {
+                                                const updated = { ...configurations };
+                                                delete updated[key];
+                                                onChange(updated);
+                                                updateUrl(
+                                                    Object.fromEntries(
+                                                        Object.entries(updated).map(([k, v]) => [k, String(v)])
+                                                    )
+                                                );
+                                            }
+                                        }}
+                                    />
+                                )}
                             </div>
+
                         );
                     }
-
                     if (setting?.display === 'date') {
                         return (
                             <div key={key} className="flex items-center gap-3 justify-between">
@@ -319,8 +378,6 @@ export function ConfigurationsSelector({
                             </div>
                         );
                     }
-
-
                     return (
                         <div key={key} className="mb-2">
                             <kbd className="kbd rounded-sm">{key}</kbd>
@@ -343,7 +400,6 @@ export function ConfigurationsSelector({
             </div>
         );
     }
-
 
     if (screenSize === 'mobile' || screenSize === 'tablet') {
         return (
@@ -392,11 +448,13 @@ export function ConfigurationsSelector({
       "
             style={{ maxHeight: 'calc(100vh - 64px)' }}
         >
-            <div className="flex gap-2 justify-left items-center mb-4 px-1 py-2">
-                <div className="flex items-center bg-blue-500 rounded-xl p-2">
-                    <Settings2 className="text-white" size={20} />
+            <div className="flex gap-2 justify-between items-center mb-4 px-1 py-2">
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center bg-blue-500 rounded-xl p-2">
+                        <Settings2 className="text-white" size={20} />
+                    </div>
+                    <span className="font-semibold text-gray-800 text-l">Configurations</span>
                 </div>
-                <span className="font-semibold text-gray-800 text-l">Configurations</span>
             </div>
             <div className="mb-2">
                 <span className="font-semibold text-gray-700 text-sm">Your configuration</span>
@@ -414,6 +472,36 @@ export function ConfigurationsSelector({
                 updateSelection={updateSelection}
                 updateSelections={updateSelections}
             />
+
+            {selectedGroup && selectedComponent && selectedPreset && (
+                <div className="flex gap-2 justify-end border-b border-gray-200 py-2">
+                    <button
+                        className="btn btn-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow flex items-center gap-1 px-3 transition-colors duration-200"
+                        title="Add new configuration"
+                        type="button"
+                    >
+                        <Plus size={18} />
+                        <span className="font-semibold">Add</span>
+                    </button>
+                    <button
+                        className={`
+                    btn btn-sm shadow flex items-center gap-1 px-3 transition-all duration-300
+                    ${editMode
+                                ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                                : 'bg-gray-200 hover:bg-orange-100 text-gray-600'
+                            }`}
+                        title={editMode ? 'Exit edit mode' : 'Edit configuration'}
+                        onClick={() => setEditMode(e => !e)}
+                        type="button"
+                    >
+                        <span className="transition-opacity duration-200">{editMode ? <PencilOff size={18} /> : <Pencil size={18} />}</span>
+                        <span className="font-semibold transition-opacity duration-200">
+                            {editMode ? 'Exit Edit' : 'Edit'}
+                        </span>
+                    </button>
+                </div>
+
+            )}
             {selectedGroup && selectedComponent && selectedPreset && (
                 <div className="flex-1 overflow-y-auto pr-1">{renderContent()}</div>
 
