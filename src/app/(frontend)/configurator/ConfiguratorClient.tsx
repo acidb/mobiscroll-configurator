@@ -247,8 +247,8 @@ export default function ConfiguratorClient({
         currentConfig.config.component || '',
         props,
         currentConfig.config.data,
-        template
-
+        template,
+        hooks
       )
 
       function isFilled(val: string | object | null) {
@@ -355,7 +355,7 @@ export default function ConfiguratorClient({
       }
 
       const componentTemplateProps = getComponentTemplateProps(template)
-      const componentHookProps = getComponentHookProps(currentConfig.config.hooks)
+      const componentHookProps = getComponentHookProps(hooks)
 
       function getTemplateStrBlock(templates: Record<string, string>, lang = 'tsx') {
         if (!templates) return ''
@@ -379,7 +379,6 @@ export default function ConfiguratorClient({
       const typeImports = currentConfig.config.types || [];
       const reactHookImports = currentConfig.config.reactHooks || [];
       setData(currentConfig.config.data)
-      setHooks(currentConfig.config.hooks)
 
       const hasData = isFilled(eventData)
       const hasResources = isFilled(resources)
@@ -460,7 +459,7 @@ export default function ConfiguratorClient({
                 : ''
             )
             .replace(/\/\* templates \*\//g, '\n\n' + getTemplateStrBlock(template, t.label))
-            .replace(/\/\* hooks \*\//g, '\n\n' + getHooksStrBlock(currentConfig.config.hooks, t.label))
+            .replace(/\/\* hooks \*\//g, '\n\n' + getHooksStrBlock(hooks, t.label))
             .replace(/\/\* Component data \*\//g, hasInlineData ? formatFrameworkProp('data', 'myData') : '')
             .replace(
               /\/\* Component resources \*\//g,
@@ -476,7 +475,7 @@ export default function ConfiguratorClient({
 
       setCode(codeObj)
     }
-  }, [frameworkObj, currentConfig, props, template])
+  }, [frameworkObj, currentConfig, props, template, hooks])
 
 
   const isScheduler =
@@ -490,6 +489,9 @@ export default function ConfiguratorClient({
   const handleTemplateChange = (newTemplates: Record<string, string>) => {
     setTemplate(newTemplates);
   };
+  const handleHooksChange = (newHooks: Record<string, string>) => {
+    setHooks(newHooks);
+  };
 
   return (
     <div className="w-full h-full">
@@ -498,13 +500,15 @@ export default function ConfiguratorClient({
           <ConfigurationsSelector
             configurations={{
               ...props,
-              ...template
+              ...template,
+              ...hooks
             }}
             onChange={setProps}
             templates={template}
             onTemplateChange={handleTemplateChange}
+            hooks={hooks}
+            onHooksChange={handleHooksChange}
             selected={props}
-
             groups={groups}
             components={components}
             filteredPresets={filteredPresets}

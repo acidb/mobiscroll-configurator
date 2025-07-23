@@ -1,6 +1,6 @@
-import React, { useLayoutEffect, useRef, useState, RefObject } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Info } from "lucide-react";
+import { Info, ExternalLink } from "lucide-react";
 
 interface DescriptionTooltipProps {
     anchorRef: React.RefObject<Element | null>;
@@ -8,6 +8,14 @@ interface DescriptionTooltipProps {
     onClose: () => void;
     title: string;
     description: string;
+}
+
+function getMobiscrollDocUrl(title: string) {
+    // Only support eventcalendar for now, but can extend as needed.
+    // The anchor should be opt-<camelCaseName>
+    // Example: clickToCreate -> #opt-clickToCreate
+    const safeTitle = title.replace(/\s+/g, "");
+    return `https://mobiscroll.com/docs/react/eventcalendar/api#opt-${safeTitle}`;
 }
 
 export const DescriptionTooltip: React.FC<DescriptionTooltipProps> = ({
@@ -37,13 +45,20 @@ export const DescriptionTooltip: React.FC<DescriptionTooltipProps> = ({
     return createPortal(
         <div
             ref={tooltipRef}
-            className="bg-white rounded-lg border border-blue-200 shadow-2xl px-4 py-3 min-w-[240px] max-w-xs"
+            className="bg-white rounded-lg border border-blue-200 shadow-2xl px-4 py-3 min-w-[240px] max-w-xs relative"
             style={style}
             onClick={e => e.stopPropagation()}
         >
             <div className="flex items-start gap-2 mb-1">
                 <Info size={16} className="text-blue-500 mt-0.5" />
-                <span className="text-sm font-semibold text-blue-800">{title}</span>
+                <a
+                    href={getMobiscrollDocUrl(title)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ textDecoration: "none" }}
+                    className="flex tems-center gap-1 text-sm font-semibold text-blue-800">{title}  <ExternalLink size={14} />
+                    
+                    </a>
                 <button
                     className="btn btn-xs btn-circle btn-ghost absolute right-2 top-2"
                     onClick={onClose}
@@ -53,7 +68,8 @@ export const DescriptionTooltip: React.FC<DescriptionTooltipProps> = ({
                     ✕
                 </button>
             </div>
-            <div className="text-xs text-gray-700 leading-relaxed">{description}</div>
+            <div className="text-xs text-gray-700 leading-relaxed mb-2">{description}</div>
+          
         </div>,
         document.body
     );

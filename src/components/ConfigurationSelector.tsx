@@ -14,7 +14,19 @@ import { MbscEventcalendarView, Datepicker } from "@mobiscroll/react";
 const templateOptions: Record<string, string[]> = {
     renderResource: ['resourceTemplate', 'resourceAvatarTemplate'],
     renderLabelContent: ['renderLabelContentTemplate'],
+    renderAgenda: ['renderAgendaTemplate'],
 };
+
+const hookOptions: Record<string, string[]> = {
+    onEventClick: ['myEventClick', 'defaultEventHandler'],
+    onCellClick: ['defaultEventHandler'],
+    onEventDelete: ['myEventDelete'],
+    onEventCreate: ['myEventCreate'],
+    onEventUpdate: ['myEventUpdate'],
+    onResourceClick: ['defaultEventHandler'],
+
+};
+
 
 export type SelectedConfig = Record<string, string | number | boolean | null | MbscEventcalendarView>;
 
@@ -23,6 +35,8 @@ interface ConfigurationsSelectorProps {
     onChange: (selected: SelectedConfig) => void
     templates: Record<string, string>
     onTemplateChange: (selected: Record<string, string>) => void
+    hooks: Record<string, string>
+    onHooksChange: (selected: Record<string, string>) => void
     selected: SelectedConfig
     groups: Group[]
     components: Component[]
@@ -42,6 +56,8 @@ export function ConfigurationsSelector({
     onChange,
     templates,
     onTemplateChange,
+    hooks,
+    onHooksChange,
     selected,
     groups,
     components,
@@ -62,6 +78,7 @@ export function ConfigurationsSelector({
 
 
     const toggleOpen = () => setIsOpen(prev => !prev)
+
 
     useEffect(() => {
         if (screenSize === 'desktop') {
@@ -103,10 +120,12 @@ export function ConfigurationsSelector({
 
     function renderContent() {
         return (
-            <div className="w-full space-y-4 mt-2">
+            <div className="w-full space-y-4 mt-2 mb-6">
 
                 {Object.entries(configurations).map(([key, value]) => {
                     const setting = findSettingByKey(key);
+
+
 
                     const options = Array.isArray(setting?.values) && setting.values.length > 0
                         ? setting.values
@@ -141,7 +160,7 @@ export function ConfigurationsSelector({
                                     <span className="relative flex items-center cursor-pointer" tabIndex={0} style={{ lineHeight: 0 }}>
                                         <Info
                                             ref={infoRefs.current[key]}
-                                            className="text-success"
+                                            className="text-success cursor-pointer hover:scale-110 transition-transform"
                                             size={18}
                                             onClick={() => setOpenDescription(openDescription === key ? null : key)}
                                         />
@@ -178,7 +197,7 @@ export function ConfigurationsSelector({
                                     {editMode && (
                                         <Trash2
                                             className="text-error cursor-pointer hover:scale-110 transition-transform"
-                                            size={28}
+                                            size={18}
                                             onClick={() => {
                                                 if (window.confirm(`Delete "${key}" setting?`)) {
                                                     const updated = { ...configurations };
@@ -201,19 +220,26 @@ export function ConfigurationsSelector({
                             </div>
                         );
                     }
-                    if (templateOptions[key]) {
+                    if (setting?.display === 'dropdown') {
+                        const templateGroup =
+                            (typeof setting.values === "string" && templateOptions[setting.values]) || templateOptions[key];
+                        const hookGroup =
+                            (typeof setting.values === "string" && hookOptions[setting.values]) || hookOptions[key];
+
                         return (
                             <div key={key} className="flex items-center gap-3 justify-between">
                                 <div className="flex items-center gap-2">
-                                    <kbd className="kbd rounded-sm ">
+                                    <kbd
+                                        className="kbd rounded-sm mb-2 truncate overflow-hidden whitespace-nowrap text-xs"
+                                        title={key}
+                                    >
                                         {key}
                                     </kbd>
-
                                     <span className="relative flex items-center cursor-pointer" tabIndex={0} style={{ lineHeight: 0 }}>
                                         <Info
                                             ref={infoRefs.current[key]}
-                                            className="text-success"
-                                            size={18}
+                                            className="text-success cursor-pointer hover:scale-110 transition-transform"
+                                            size={14}
                                             onClick={() => setOpenDescription(openDescription === key ? null : key)}
                                         />
                                         <DescriptionTooltip
@@ -221,31 +247,55 @@ export function ConfigurationsSelector({
                                             open={openDescription === key}
                                             onClose={() => setOpenDescription(null)}
                                             title={key}
-                                            description={'setting.description'}
+                                            description={setting.description}
+                                            
                                         />
                                     </span>
                                 </div>
+
                                 <div className="flex items-center gap-2">
-                                    <select
-                                        value={templates[key] ?? ''}
-                                        onChange={e => {
-                                            const updatedTemplates = { ...templates, [key]: e.target.value };
-                                            onTemplateChange(updatedTemplates);
-                                            updateUrl({ ...configurations, templates: JSON.stringify(updatedTemplates) });
-                                        }}
-                                        className={`select select-xs rounded-sm 
-                                            ${editMode ? 'w-25' : 'w-35'}
-                                            `}
-                                    >
-                                        {templateOptions[key].map(opt => (
-                                            <option key={opt} value={opt}>{opt}</option>
-                                        ))}
-                                    </select>
+                                    {templateGroup && (
+                                        <select
+                                            value={templates[key] ?? ''}
+                                            onChange={e => {
+                                                const updatedTemplates = { ...templates, [key]: e.target.value };
+                                                onTemplateChange(updatedTemplates);
+                                                updateUrl({ ...configurations, templates: JSON.stringify(updatedTemplates) });
+                                            }}
+                                            className={`select select-xs rounded-sm ${editMode ? 'w-28' : 'w-36'}`}
+                                            style={{ minWidth: 110 }}
+                                        >
+                                            {templateGroup.map(opt => (
+                                                <option key={opt} value={opt}>{opt}</option>
+                                            ))}
+                                        </select>
+                                    )}
+
+                                    {hookGroup && (
+                                        <select
+                                            value={hooks[key] ?? ''}
+                                            onChange={e => {
+                                                const updatedHooks = { ...hooks, [key]: e.target.value };
+                                                onHooksChange(updatedHooks);
+                                                updateUrl({ ...configurations, hooks: JSON.stringify(updatedHooks) });
+                                            }}
+                                            className={`select select-xs rounded-sm ${editMode ? 'w-28' : 'w-36'}`}
+                                            style={{ minWidth: 110 }}
+                                        >
+                                            {hookGroup.map(opt => (
+                                                <option key={opt} value={opt}>{opt}</option>
+                                            ))}
+                                        </select>
+                                    )}
+
+                                    {!templateGroup && !hookGroup && (
+                                        <span className="text-xs text-gray-400">No options</span>
+                                    )}
 
                                     {editMode && (
                                         <Trash2
                                             className="text-error cursor-pointer hover:scale-110 transition-transform"
-                                            size={28}
+                                            size={18}
                                             onClick={() => {
                                                 if (window.confirm(`Delete "${key}" setting?`)) {
                                                     const updated = { ...configurations };
@@ -256,15 +306,12 @@ export function ConfigurationsSelector({
                                                         ...Object.fromEntries(Object.entries(updated).map(([k, v]) => [k, String(v)])),
                                                         [key]: '',
                                                     };
-
                                                     updateUrl(urlUpdate);
                                                 }
                                             }}
                                         />
-
                                     )}
                                 </div>
-
                             </div>
                         );
                     }
@@ -292,6 +339,7 @@ export function ConfigurationsSelector({
                             </div>
                         );
                     }
+
                     if (setting?.display === 'tabs') {
                         return (
                             <div key={key} className="flex gap-3 justify-between">
@@ -303,7 +351,7 @@ export function ConfigurationsSelector({
                                     <span className="relative flex items-center cursor-pointer" tabIndex={0} style={{ lineHeight: 0 }}>
                                         <Info
                                             ref={infoRefs.current[key]}
-                                            className="text-success"
+                                            className="text-success cursor-pointer hover:scale-110 transition-transform"
                                             size={18}
                                             onClick={() => setOpenDescription(openDescription === key ? null : key)}
                                         />
@@ -341,7 +389,7 @@ export function ConfigurationsSelector({
                                 {editMode && (
                                     <Trash2
                                         className="text-error cursor-pointer hover:scale-110 transition-transform"
-                                        size={28}
+                                        size={18}
                                         onClick={() => {
                                             if (window.confirm(`Delete "${key}" setting?`)) {
                                                 const updated = { ...configurations };
@@ -366,35 +414,84 @@ export function ConfigurationsSelector({
                     if (setting?.display === 'date') {
                         return (
                             <div key={key} className="flex items-center gap-3 justify-between">
-                                <kbd className="kbd rounded-sm mb-2">{key}</kbd>
-                                <Datepicker
-                                    value={value || ''}
-                                    onChange={ev => {
-                                        updateValue(key, ev.value instanceof Date ? ev.value.toISOString() : (ev.value?.toString() || ''));
+                                <div className="flex items-center gap-2">
+                                    <kbd className="kbd rounded-sm ">
+                                        {key}
+                                    </kbd>
 
-                                    }}
-                                    className="input input-xs w-24 rounded-sm"
-                                />
+                                    <span className="relative flex items-center cursor-pointer" tabIndex={0} style={{ lineHeight: 0 }}>
+                                        <Info
+                                            ref={infoRefs.current[key]}
+                                            className="text-success cursor-pointer hover:scale-110 transition-transform"
+                                            size={18}
+                                            onClick={() => setOpenDescription(openDescription === key ? null : key)}
+                                        />
+                                        <DescriptionTooltip
+                                            anchorRef={infoRefs.current[key]}
+                                            open={openDescription === key}
+                                            onClose={() => setOpenDescription(null)}
+                                            title={key}
+                                            description={setting.description}
+                                        />
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="date"
+                                        value={value ? String(value).slice(0, 10) : ''}
+                                        onChange={e => updateValue(key, e.target.value)}
+                                        className="input input-xs w-28 rounded-sm"
+                                    />
+                                    {editMode && (
+                                        <Trash2
+                                            className="text-error cursor-pointer hover:scale-110 transition-transform"
+                                            size={18}
+                                            onClick={() => {
+                                                if (window.confirm(`Delete "${key}" setting?`)) {
+                                                    const updated = { ...configurations };
+                                                    delete updated[key];
+                                                    onChange(updated);
 
+                                                    const urlUpdate = {
+                                                        ...Object.fromEntries(Object.entries(updated).map(([k, v]) => [k, String(v)])),
+                                                        [key]: '',
+                                                    };
+
+                                                    updateUrl(urlUpdate);
+                                                }
+                                            }}
+                                        />
+
+                                    )}
+                                </div>
                             </div>
                         );
                     }
+
                     return (
-                        <div key={key} className="mb-2">
-                            <kbd className="kbd rounded-sm">{key}</kbd>
+                        <div key={key} className="flex items-center gap-3 justify-between">
+                            <div className="flex items-center gap-2">
+                                <kbd className="kbd rounded-sm ">
+                                    {key}
+                                </kbd>
+
+                                <span className="relative flex items-center cursor-pointer" tabIndex={0} style={{ lineHeight: 0 }}>
+                                    <Info
+                                        ref={infoRefs.current[key]}
+                                        className="text-success cursor-pointer hover:scale-110 transition-transform"
+                                        size={18}
+                                        onClick={() => setOpenDescription(openDescription === key ? null : key)}
+                                    />
+                                    <DescriptionTooltip
+                                        anchorRef={infoRefs.current[key]}
+                                        open={openDescription === key}
+                                        onClose={() => setOpenDescription(null)}
+                                        title={key}
+                                        description={'setting.description'}
+                                    />
+                                </span>
+                            </div>
                             <span className="ml-2">{String(value)}</span>
-                            <span className="ml-2 text-xs text-gray-400">[{typeof value}]</span>
-                            {setting && (
-                                <div className="text-xs text-gray-500 ml-1">
-                                    <div>Type: {Array.isArray(setting.type) ? setting.type.join(', ') : setting.type}</div>
-                                    <div>
-                                        Default: {setting.default}
-                                        {setting.values && Array.isArray(setting.values) && setting.values.length > 0 && (
-                                            <div>Values: [{setting.values.join(', ')}]</div>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     );
                 })}
@@ -483,11 +580,13 @@ export function ConfigurationsSelector({
                         {user && selectedPreset && config?.id && (
                             <Link
                                 href={`/admin/collections/configs/${config.id}`}
-                                className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white shadow flex items-center gap-1 px-3 transition-colors duration-200"
+                                className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white shadow flex items-center gap-1 px-3 transition-all duration-300"
+
                                 title="Edit this configuration"
                             >
-                                <ExternalLink size={18} />
                                 <span className="font-semibold">Edit this config</span>
+                                <ExternalLink size={14} />
+
                             </Link>
                         )}
                     </div>

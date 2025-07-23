@@ -59,17 +59,31 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         setToastText(args.event.title ?? '');
         setToastOpen(true);
     }, []);
-
     const extendDefaultEvent = (args: any) => {
         return {
             color: args.resource === 'admin' ? 'green' : 'red',
             title: 'My event',
         };
     }
+    const defaultEventHandler = useCallback((args: any) => {
+        let summary = '';
+        if (args?.event) {
+            summary = JSON.stringify(args.event, null, 2);
+        } else if (args?.target) {
+            summary = `[DOM Event] type: ${args.type}`;
+        } else {
+            summary = 'Unknown event: ' + (args?.type || '');
+        }
+        alert('Event triggered: ' + (args?.type || '') + '\n' + summary);
+        console.log('[Event]', args);
+    }, []);
+
 
     const customHandlers: { key: string; fn: (...args: MbscEventClickEvent[]) => void }[] = [
         { key: 'myEventClick', fn: handleEventClick },
-        { key: 'extendDefaultEvent', fn: extendDefaultEvent }
+        { key: 'extendDefaultEvent', fn: extendDefaultEvent },
+        { key: 'defaultEventHandler', fn: defaultEventHandler }
+
     ];
 
     type ResourceTemplateFn = (resource: MbscResource) => React.ReactNode;

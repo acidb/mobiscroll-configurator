@@ -9,6 +9,7 @@ export function genCodeWithTopVars(
     props: Record<string, string | number | boolean | null | MbscEventcalendarView>,
     data?: Record<string, string>,
     templates?: Record<string, string>,
+    hooks?: Record<string, string>,
     extracted: string[] = ['data', 'view', 'resources', 'invalid', 'colors', 'templates', 'hooks'],
 ) {
     const topVars: string[] = [];
@@ -21,7 +22,6 @@ export function genCodeWithTopVars(
 
     const mergedProps = { ...props, ...data };
 
-    console.log('FINALLI MERGED PROPS' + JSON.stringify(mergedProps, null, 2));
 
     const hooksObj: Record<string, string> = {};
 
@@ -33,6 +33,7 @@ export function genCodeWithTopVars(
     Object.entries(mergedProps).forEach(([key, value]) => {
 
         if (templates && templates[key]) return;
+        if (hooks && hooks[key]) return;
 
         if (extracted.includes(key)) {
             extractedValues[key] = value;
@@ -42,9 +43,9 @@ export function genCodeWithTopVars(
 
         let formatted = '';
 
-        
 
-        if (typeof value === 'string' ) {
+
+        if (typeof value === 'string') {
             const escaped = value.replace(/'/g, "\\'");
             switch (framework) {
                 case 'react':
