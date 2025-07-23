@@ -356,22 +356,32 @@ export default function ConfiguratorClient({
       const componentHookProps = getComponentHookProps(hooks)
 
       function getTemplateStrBlock(templates: Record<string, string>, lang = 'tsx') {
-        if (!templates) return ''
+        if (!templates) return '';
+        const seen = new Set<string>();
         return Object.values(templates)
-          .map((fnName) => {
-            return templateStrs(lang as Lang)?.[fnName] || '';
+          .filter(fnName => {
+            if (!fnName || seen.has(fnName)) return false;
+            seen.add(fnName);
+            return true;
           })
+          .map(fnName => templateStrs(lang as Lang)?.[fnName] || '')
           .filter(Boolean)
-          .join('\n\n')
+          .join('\n\n');
       }
 
 
       function getHooksStrBlock(hooks: Record<string, string>, lang = 'tsx') {
-        if (!hooks) return ''
+        if (!hooks) return '';
+        const seen = new Set<string>();
         return Object.values(hooks)
-          .map((fnName) => hookStrs(lang as Lang)?.[fnName] || '')
+          .filter(fnName => {
+            if (!fnName || seen.has(fnName)) return false;
+            seen.add(fnName);
+            return true;
+          })
+          .map(fnName => hookStrs(lang as Lang)?.[fnName] || '')
           .filter(Boolean)
-          .join('\n\n')
+          .join('\n\n');
       }
 
       const typeImports = currentConfig.config.types || [];
@@ -493,15 +503,7 @@ export default function ConfiguratorClient({
 
   return (
     <div className="w-full h-full">
-      <p>
-        {JSON.stringify(props, null, 2)}
-      </p>
-      <p>
 
-      </p>
-      <p>
-        {JSON.stringify(hooks, null, 2)}
-      </p>
       <div className="flex flex-col xl:flex-row gap-6 items-start transition-all duration-500 ease-in-out">
         <div className="w-full lg:w-[20%] mg:w-[5%] xl:sticky xl:top-3 self-start">
           <ConfigurationsSelector
