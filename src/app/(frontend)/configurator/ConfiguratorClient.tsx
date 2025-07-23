@@ -85,7 +85,7 @@ export default function ConfiguratorClient({
       .flatMap(group => Object.keys(group));
 
     Object.keys(configProps).forEach(key => {
-      if (key !== 'view' && settingKeys.includes(key)) {
+      if (key !== 'view' && key !== 'renderResource' && settingKeys.includes(key)) {
         mergedProps[key] = configProps[key];
         console.log('[mergeConfigProps] Merged:', key, ': ', configProps[key]);
       }
