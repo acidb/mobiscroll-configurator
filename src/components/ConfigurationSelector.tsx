@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { updateUrl } from '@/utils/updateUrl'
 import { useScreenSize } from '@/utils/useScreenSize'
-import { Info, Settings2, Trash2, PencilOff, Pencil, Plus, ExternalLink} from 'lucide-react'
+import { Info, Settings2, Trash2, PencilOff, Pencil, Plus, ExternalLink } from 'lucide-react'
 
 import { DescriptionTooltip } from './DescriptionTooltip'
 import StepperSection from '../app/(frontend)/configurator/StepperSection'
@@ -288,7 +288,7 @@ export function ConfigurationsSelector({
                     }
                     if (setting?.display === 'tabs') {
                         return (
-                            <div key={key} className="flex justify-end gap-3 justify-between">
+                            <div key={key} className="flex gap-3 justify-between">
                                 <div className="flex items-center gap-2">
                                     <kbd className="kbd rounded-sm ">
                                         {key}
@@ -467,60 +467,51 @@ export function ConfigurationsSelector({
             />
 
             {selectedGroup && selectedComponent && selectedPreset && (
-                <div className="flex gap-2 justify-end border-b border-gray-200 py-2">
-                    <button
-                        className="btn btn-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow flex items-center gap-1 px-3 transition-colors duration-200"
-                        title="Add new configuration"
-                        type="button"
-                    >
-                        <ExternalLink size={18} />
-                        <span className="font-semibold">Add</span>
-                    </button>
-                    <button
-                        className="btn btn-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow flex items-center gap-1 px-3 transition-colors duration-200"
-                        title="Add new configuration"
-                        type="button"
-                    >
-                        <Plus size={18} />
-                        <span className="font-semibold">Add</span>
-                    </button>
-                    <button
-                        className={`
-                    btn btn-sm shadow flex items-center gap-1 px-3 transition-all duration-300
-                    ${editMode
-                                ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                                : 'bg-gray-200 hover:bg-orange-100 text-gray-600'
-                            }`}
-                        title={editMode ? 'Exit edit mode' : 'Edit configuration'}
-                        onClick={() => setEditMode(e => !e)}
-                        type="button"
-                    >
-                        <span className="transition-opacity duration-200">{editMode ? <PencilOff size={18} /> : <Pencil size={18} />}</span>
-                        <span className="font-semibold transition-opacity duration-200">
-                            {editMode ? 'Exit Edit' : 'Edit'}
-                        </span>
-                    </button>
+                <div className="flex justify-between items-center border-b border-gray-200 py-2">
+                    <div>
+                        {user && selectedPreset && config?.id && (
+                            <Link
+                                href={`/admin/collections/configs/${config.id}`}
+                                className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white shadow flex items-center gap-1 px-3 transition-colors duration-200"
+                                title="Edit this configuration"
+                            >
+                                <ExternalLink size={18} />
+                                <span className="font-semibold">Edit this config</span>
+                            </Link>
+                        )}
+                    </div>
+
+                    <div className="flex gap-2">
+                        {selectedPreset && (
+                            <div>
+                                <ConfigDropdown onChange={onChange} config={config} settings={settings} selectedPreset={selectedPreset} />
+                            </div>
+                        )}
+                        <button
+                            className={`btn btn-sm shadow flex items-center gap-1 px-3 transition-all duration-300
+                ${editMode
+                                    ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                                    : 'bg-gray-200 hover:bg-orange-100 text-gray-600'
+                                }`}
+                            title={editMode ? 'Exit edit mode' : 'Edit configuration'}
+                            onClick={() => setEditMode(e => !e)}
+                            type="button"
+                        >
+                            <span className="transition-opacity duration-200">
+                                {editMode ? <PencilOff size={18} /> : <Pencil size={18} />}
+                            </span>
+                            <span className="font-semibold transition-opacity duration-200">
+                                {editMode ? 'Exit Edit' : 'Edit'}
+                            </span>
+                        </button>
+                    </div>
                 </div>
+
 
             )}
             {selectedGroup && selectedComponent && selectedPreset && (
                 <div className="flex-1 overflow-y-auto pr-1">{renderContent()}</div>
 
-            )}
-            {user && selectedPreset && (
-                <div className="mt-4">
-                    <Link
-                        href={`/admin/collections/configs/${config?.id}`}
-                        className="btn bg-gray-100 hover:bg-gray-300 text-black w-full"
-                    >
-                        Edit the configuration
-                    </Link>
-                </div>
-            )}
-            {selectedPreset && (
-                <div className="mt-6">
-                    <ConfigDropdown onChange={onChange} config={config} settings={settings} selectedPreset={selectedPreset} />
-                </div>
             )}
 
         </div>
