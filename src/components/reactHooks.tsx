@@ -311,16 +311,42 @@ function handleTaskCreate(args: MbscTaskCreateEvent) {
 }
 `.trim()
     }
+  },
+  defaultEventHandler: {
+    fn: () => { },
+    code: {
+      tsx: `
+const defaultEventHandler = useCallback((args: any) => {
+  alert('Event triggered: ' + (args?.type || '') + '\\n' + JSON.stringify(args, null, 2));
+  // console.log('Event triggered:', args);
+}, []);
+`.trim(),
+      jsx: `
+const defaultEventHandler = useCallback((args) => {
+  alert('Event triggered: ' + (args?.type || '') + '\\n' + JSON.stringify(args, null, 2));
+  // console.log('Event triggered:', args);
+}, []);
+`.trim(),
+      sfcjs: `
+function defaultEventHandler(args) {
+  alert('Event triggered: ' + (args?.type || '') + '\\n' + JSON.stringify(args, null, 2));
+  // console.log('Event triggered:', args);
+}
+`.trim(),
+      sfcts: `
+function defaultEventHandler(args: any) {
+  alert('Event triggered: ' + (args?.type || '') + '\\n' + JSON.stringify(args, null, 2));
+  // console.log('Event triggered:', args);
+}
+`.trim(),
+    }
   }
-
-  // defaultEvent
 };
 
 export const hookCodes = Object.fromEntries(
   Object.entries(hooks).map(([k, v]) => [k, v.fn])
 );
 
-// type Lang = 'TSX' | 'JSX' | 'VUE' | 'SFCJS' | 'SFCTS' | 'SFC TS' | 'SFC JS';
 import { Lang } from './reactTemplates'
 
 export const hookStrs = (lang: Lang = 'TSX') =>
