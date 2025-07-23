@@ -8,7 +8,8 @@ export function genCodeWithTopVars(
     componentName: string,
     props: Record<string, string | number | boolean | null | MbscEventcalendarView>,
     data?: Record<string, string>,
-    extracted: string[] = ['data', 'view', 'resources', 'invalid', 'colors', 'templates', 'hooks']
+    templates?: Record<string, string>,
+    extracted: string[] = ['data', 'view', 'resources', 'invalid', 'colors', 'templates', 'hooks'],
 ) {
     const topVars: string[] = [];
     const templateInlineProps: string[] = [];
@@ -20,7 +21,7 @@ export function genCodeWithTopVars(
 
     const mergedProps = { ...props, ...data };
 
-    console.log(JSON.stringify(mergedProps, null, 2));
+    console.log('FINALLI MERGED PROPS' + JSON.stringify(mergedProps, null, 2));
 
     const hooksObj: Record<string, string> = {};
 
@@ -30,6 +31,8 @@ export function genCodeWithTopVars(
         : componentName;
 
     Object.entries(mergedProps).forEach(([key, value]) => {
+
+        if (templates && templates[key]) return;
 
         if (extracted.includes(key)) {
             extractedValues[key] = value;

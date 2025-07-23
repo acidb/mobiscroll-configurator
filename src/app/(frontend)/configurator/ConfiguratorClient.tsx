@@ -73,20 +73,49 @@ export default function ConfiguratorClient({
   const selectedPreset = searchParams.get('preset') || null
   const isLoading = !(currentConfig && frameworkObj && groupObj && code)
 
-  const mergeConfigProps = (configProps: Record<string, string | number | boolean | null | undefined | MbscEventcalendarView>, config: Config, settings: GroupedSettings) => {
-    const mergedProps = { ...config.config.props };
+  const mergeConfigProps = (
+    configProps: Record<string, string | number | boolean | null | undefined | MbscEventcalendarView>,
+    config: Config,
+    settings: GroupedSettings,
+    templates: Record<string, string>
+  ) => {
+    const mergedProps: Record<string, string | number | boolean | null | MbscEventcalendarView> = {
+      ...config.config.props,
+    };
 
     const settingKeys = Object.values(settings)
       .flatMap(group => Object.keys(group));
 
     Object.keys(configProps).forEach(key => {
-      if (key !== 'view' && key !== 'renderResource' && settingKeys.includes(key)) {
-        mergedProps[key] = configProps[key] !== undefined && configProps[key] !== null ? String(configProps[key]) : '';
+      if (
+        key !== 'view' &&
+        key !== 'template' &&
+        settingKeys.includes(key)
+      ) {
+        if (templates && Object.prototype.hasOwnProperty.call(templates, key)) {
+          console.log(`[mergeConfigProps] Skipping key "${key}" because it exists in templates. Value:`, configProps[key]);
+          delete mergedProps[key];
+          return;
+        }
+
+        const val = configProps[key];
+        if (val === 'true') {
+          mergedProps[key] = true;
+        } else if (val === 'false') {
+          mergedProps[key] = false;
+        } else if (val !== undefined) {
+          mergedProps[key] = val;
+        }
       }
     });
 
+    console.log('[mergeConfigProps] Final mergedProps:', mergedProps);
+
     return mergedProps;
   };
+
+
+
 
   function updateSelections(updates: Record<string, string | null>) {
     const newQuery = new URLSearchParams(searchParams.toString())
@@ -150,7 +179,7 @@ export default function ConfiguratorClient({
 
   useEffect(() => {
     if (selectedPreset && config?.preset?.slug === selectedPreset) {
-      const mergedProps = mergeConfigProps(configProps, config, settings);
+      const mergedProps = mergeConfigProps(configProps, config, settings, template);
       setProps(filterInvalidProps(mergedProps));
       setCurrentConfig({ ...config, config: { ...config.config, props: mergedProps } });
       setTemplate(config.config.templates || {});
@@ -173,6 +202,8 @@ export default function ConfiguratorClient({
         currentConfig.config.component || '',
         props,
         currentConfig.config.data,
+        template
+
       )
 
       function isFilled(val: string | object | null) {

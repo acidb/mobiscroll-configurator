@@ -1,3 +1,5 @@
+import { MbscEventcalendarView } from "@mobiscroll/react/dist/src/core/components/eventcalendar/eventcalendar.public.js"
+
 export interface Group {
   id: string
   name: string
@@ -41,7 +43,7 @@ export interface ConfigurationOption {
   type: string;
   title: string;
   component: string;
-  props: Record<string, string>;
+  props: Record<string, string | number | boolean | null | MbscEventcalendarView>;
   data: Record<string, string>;
   hooks: Record<string, string>;
   templates: Record<string, string>;
