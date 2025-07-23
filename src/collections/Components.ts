@@ -4,6 +4,9 @@ export const Components: CollectionConfig = {
   slug: 'components',
   admin: {
     useAsTitle: 'label',
+    components: {
+      Description:'@/components/ComponentDescription',
+    },
   },
   fields: [
     {
