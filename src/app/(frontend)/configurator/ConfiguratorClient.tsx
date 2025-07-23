@@ -130,24 +130,39 @@ export default function ConfiguratorClient({
   }
 
   const updateSelection = (key: string, value: string | null) => {
-    const newQuery = new URLSearchParams(searchParams.toString())
-    if (value) {
-      newQuery.set(key, value)
-    } else {
-      newQuery.delete(key)
-    }
+    const newQuery = new URLSearchParams(searchParams.toString());
 
-    if (key === 'group') {
-      newQuery.delete('component')
-      newQuery.delete('framework')
-      newQuery.delete('preset')
-    } else if (key === 'component') {
-      newQuery.delete('framework')
-      newQuery.delete('preset')
-    } else if (key === 'preset') {
+    if (value) {
+      newQuery.set(key, value);
+      router.push(`${pathname}?${newQuery.toString()}`, { scroll: false });
+    } else {
+      if (key === 'group') {
+        router.push('/configurator', { scroll: false });
+        return;
+      }
+
+      newQuery.delete(key);
+
+      let keepKeys: Set<string> | null = null;
+
+      if (key === 'component') {
+        keepKeys = new Set(['group']);
+      } else if (key === 'preset') {
+        keepKeys = new Set(['group', 'component']);
+      }
+
+      if (keepKeys) {
+        Array.from(newQuery.keys()).forEach(paramKey => {
+          if (!keepKeys!.has(paramKey)) {
+            newQuery.delete(paramKey);
+          }
+        });
+      }
+
+      router.push(`${pathname}?${newQuery.toString()}`, { scroll: false });
     }
-    router.push(`${pathname}?${newQuery.toString()}`, { scroll: false })
-  }
+  };
+
 
   useEffect(() => {
     if (selectedFramework) {
