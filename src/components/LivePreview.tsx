@@ -60,8 +60,16 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         setToastOpen(true);
     }, []);
 
+    const extendDefaultEvent = (args: any) => {
+        return {
+            color: args.resource === 'admin' ? 'green' : 'red',
+            title: 'My event',
+        };
+    }
+
     const customHandlers: { key: string; fn: (...args: MbscEventClickEvent[]) => void }[] = [
         { key: 'myEventClick', fn: handleEventClick },
+        { key: 'extendDefaultEvent', fn: extendDefaultEvent }
     ];
 
     type ResourceTemplateFn = (resource: MbscResource) => React.ReactNode;
@@ -107,6 +115,13 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     const safeMergedProps = Object.fromEntries(
         Object.entries(mergedProps).map(([k, v]) => [k, stripOuterQuotes(v)])
     );
+
+    extendDefaultEvent: (args: any) => {
+        return {
+            color: args.resource === 'admin' ? 'green' : 'red',
+            title: 'My event',
+        };
+    }
 
     return (
         <>

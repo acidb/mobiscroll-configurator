@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { updateUrl } from '@/utils/updateUrl'
 import { useScreenSize } from '@/utils/useScreenSize'
-import { Info, Settings2, Trash2, PencilOff, Pencil, Plus } from 'lucide-react'
+import { Info, Settings2, Trash2, PencilOff, Pencil, Plus, ExternalLink} from 'lucide-react'
 
 import { DescriptionTooltip } from './DescriptionTooltip'
 import StepperSection from '../app/(frontend)/configurator/StepperSection'
@@ -105,8 +105,6 @@ export function ConfigurationsSelector({
         return (
             <div className="w-full space-y-4 mt-2">
 
-
-
                 {Object.entries(configurations).map(([key, value]) => {
                     const setting = findSettingByKey(key);
 
@@ -203,7 +201,6 @@ export function ConfigurationsSelector({
                             </div>
                         );
                     }
-
                     if (templateOptions[key]) {
                         return (
                             <div key={key} className="flex items-center gap-3 justify-between">
@@ -268,7 +265,6 @@ export function ConfigurationsSelector({
                             </div>
                         );
                     }
-
                     if (key === "view" && typeof value === "object" && value !== null) {
                         return (
                             <div key={key} className="mb-2">
@@ -293,7 +289,6 @@ export function ConfigurationsSelector({
                             </div>
                         );
                     }
-
                     if (setting?.display === 'tabs') {
                         return (
                             <div key={key} className="flex justify-end gap-3 justify-between">
@@ -445,6 +440,7 @@ export function ConfigurationsSelector({
         xl:border xl:border-gray-200 xl:rounded-2xl xl:p-2 
         bg-white
         flex flex-col
+        z-50
       "
             style={{ maxHeight: 'calc(100vh - 64px)' }}
         >
@@ -475,6 +471,14 @@ export function ConfigurationsSelector({
 
             {selectedGroup && selectedComponent && selectedPreset && (
                 <div className="flex gap-2 justify-end border-b border-gray-200 py-2">
+                    <button
+                        className="btn btn-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow flex items-center gap-1 px-3 transition-colors duration-200"
+                        title="Add new configuration"
+                        type="button"
+                    >
+                        <ExternalLink size={18} />
+                        <span className="font-semibold">Add</span>
+                    </button>
                     <button
                         className="btn btn-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow flex items-center gap-1 px-3 transition-colors duration-200"
                         title="Add new configuration"

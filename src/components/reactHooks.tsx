@@ -8,6 +8,40 @@ export function toVueEventName(hookName: string): string {
 }
 
 export const hooks = {
+  extendDefaultEvent: {
+    fn: () => { },
+    code: {
+      tsx: `
+ const extendDefaultEvent = (args: any) => {
+        return {  
+            color: args.resource === 'admin' ? 'green' : 'red',
+            title: 'My event',
+        };
+    }`.trim(),
+      jsx: `
+ const extendDefaultEvent = (args) => {
+        return {
+            color: args.resource === 'admin' ? 'green' : 'red',
+            title: 'My event',
+        };
+    }`.trim(),
+      sfcjs: `
+function extendDefaultEvent(args) {
+  return {
+    color: args.resource === 'admin' ? 'green' : 'red',
+    title: 'My event',
+  };
+  }`.trim(),
+
+      sfcts: `
+function extendDefaultEvent(args: any) {
+  return {
+    color: args.resource === 'admin' ? 'green' : 'red',
+    title: 'My event',
+  };
+}`.trim()
+    }
+  },
   myEventClick: {
     fn: () => { },
     code: {
@@ -279,6 +313,7 @@ function handleTaskCreate(args: MbscTaskCreateEvent) {
     }
   }
 
+  // defaultEvent
 };
 
 export const hookCodes = Object.fromEntries(
