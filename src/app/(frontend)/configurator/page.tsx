@@ -1,6 +1,6 @@
 import { fetchConfiguratorData } from '@/app/(payload)/fetchData'
 import ConfiguratorClient from './ConfiguratorClient'
-import { Group, Component, Framework, Preset, Config, Setting, GroupedSettings } from './types'
+import { Group, Component, Framework, Preset, Config, GroupedSettings } from './types'
 import { headers as getHeaders } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@/payload.config'

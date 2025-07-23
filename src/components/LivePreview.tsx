@@ -97,15 +97,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
             }
         }
     }
-    function filterDomNodes(obj: Record<string, any>) {
-        const result: Record<string, any> = {};
-        for (const [k, v] of Object.entries(obj)) {
-            if (!(typeof window !== "undefined" && v instanceof HTMLElement)) {
-                result[k] = v;
-            }
-        }
-        return result;
-    }
+
     function stripOuterQuotes(val: any) {
         if (typeof val === 'string' && /^(['"])(.*)\1$/.test(val)) {
             return val.slice(1, -1);
