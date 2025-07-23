@@ -177,9 +177,6 @@ const StepperSection: React.FC<StepperSectionProps> = ({
                                     >
 
                                         <h3 className="flex flex-row items-center justify-left gap-2 text-mg font-semibold text-gray-900 mb-2">
-                                            <svg width="24" height="24">
-                                                <use xlinkHref="/media/demo-home-icon-sprite.svg#calendar-icon" />
-                                            </svg>
 
                                             {component.label}
                                         </h3>
