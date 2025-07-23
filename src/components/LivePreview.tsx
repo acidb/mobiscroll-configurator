@@ -66,16 +66,8 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         };
     }
     const defaultEventHandler = useCallback((args: any) => {
-        let summary = '';
-        if (args?.event) {
-            summary = JSON.stringify(args.event, null, 2);
-        } else if (args?.target) {
-            summary = `[DOM Event] type: ${args.type}`;
-        } else {
-            summary = 'Unknown event: ' + (args?.type || '');
-        }
-        alert('Event triggered: ' + (args?.type || '') + '\n' + summary);
-        console.log('[Event]', args);
+        setToastText((args?.type || '') + ' triggered');
+        setToastOpen(true);
     }, []);
 
 
@@ -130,12 +122,6 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         Object.entries(mergedProps).map(([k, v]) => [k, stripOuterQuotes(v)])
     );
 
-    extendDefaultEvent: (args: any) => {
-        return {
-            color: args.resource === 'admin' ? 'green' : 'red',
-            title: 'My event',
-        };
-    }
 
     return (
         <>

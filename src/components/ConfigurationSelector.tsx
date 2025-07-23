@@ -18,12 +18,49 @@ const templateOptions: Record<string, string[]> = {
 };
 
 const hookOptions: Record<string, string[]> = {
-    onEventClick: ['myEventClick', 'defaultEventHandler'],
     onCellClick: ['defaultEventHandler'],
-    onEventDelete: ['myEventDelete'],
-    onEventCreate: ['myEventCreate'],
-    onEventUpdate: ['myEventUpdate'],
+    onCellDoubleClick: ['defaultEventHandler'],
+    onCellHoverIn: ['defaultEventHandler'],
+    onCellHoverOut: ['defaultEventHandler'],
+    onCellRightClick: ['defaultEventHandler'],
+    onDestroy: ['defaultEventHandler'],
+    onEventClick: ['myEventClick', 'defaultEventHandler'],
+    onEventCreate: ['defaultEventHandler'],
+    onEventCreateFailed: ['defaultEventHandler'],
+    onEventCreated: ['defaultEventHandler'],
+    onEventDelete: ['defaultEventHandler'],
+    onEventDeleted: ['defaultEventHandler'],
+    onEventDoubleClick: ['defaultEventHandler'],
+    onEventDragEnd: ['defaultEventHandler'],
+    onEventDragEnter: ['defaultEventHandler'],
+    onEventDragLeave: ['defaultEventHandler'],
+    onEventDragStart: ['defaultEventHandler'],
+    onEventHoverIn: ['defaultEventHandler'],
+    onEventHoverOut: ['defaultEventHandler'],
+    onEventRightClick: ['defaultEventHandler'],
+    onEventUpdate: ['defaultEventHandler'],
+    onEventUpdateFailed: ['defaultEventHandler'],
+    onEventUpdated: ['defaultEventHandler'],
+    onInit: ['defaultEventHandler'],
+    onLabelClick: ['defaultEventHandler'],
+    onPageChange: ['defaultEventHandler'],
+    onPageLoaded: ['defaultEventHandler'],
+    onPageLoading: ['defaultEventHandler'],
     onResourceClick: ['defaultEventHandler'],
+    onResourceCollapse: ['defaultEventHandler'],
+    onResourceCreate: ['defaultEventHandler'],
+    onResourceCreated: ['defaultEventHandler'],
+    onResourceDelete: ['defaultEventHandler'],
+    onResourceDeleted: ['defaultEventHandler'],
+    onResourceDoubleClick: ['defaultEventHandler'],
+    onResourceDragEnter: ['defaultEventHandler'],
+    onResourceDragLeave: ['defaultEventHandler'],
+    onResourceExpand: ['defaultEventHandler'],
+    onResourceOrderUpdate: ['defaultEventHandler'],
+    onResourceRightClick: ['defaultEventHandler'],
+    onSelectedDateChange: ['defaultEventHandler'],
+    onSelectedEventsChange: ['defaultEventHandler'],
+    onVirtualLoading: ['defaultEventHandler'],
 
 };
 
@@ -121,6 +158,7 @@ export function ConfigurationsSelector({
     function renderContent() {
         return (
             <div className="w-full space-y-4 mt-2 mb-6">
+
 
                 {Object.entries(configurations).map(([key, value]) => {
                     const setting = findSettingByKey(key);
@@ -248,7 +286,7 @@ export function ConfigurationsSelector({
                                             onClose={() => setOpenDescription(null)}
                                             title={key}
                                             description={setting.description}
-                                            
+
                                         />
                                     </span>
                                 </div>
@@ -339,7 +377,6 @@ export function ConfigurationsSelector({
                             </div>
                         );
                     }
-
                     if (setting?.display === 'tabs') {
                         return (
                             <div key={key} className="flex gap-3 justify-between">
@@ -591,10 +628,11 @@ export function ConfigurationsSelector({
                         )}
                     </div>
 
+
                     <div className="flex gap-2">
                         {selectedPreset && (
                             <div>
-                                <ConfigDropdown onChange={onChange} config={config} settings={settings} selectedPreset={selectedPreset} />
+                                <ConfigDropdown onChange={onChange} onTemplateChange={onTemplateChange} onHooksChange={onHooksChange} config={config} settings={settings} selectedPreset={selectedPreset} hooks={hooks} templates={templates} />
                             </div>
                         )}
                         <button
@@ -623,6 +661,9 @@ export function ConfigurationsSelector({
                 <div className="flex-1 overflow-y-auto pr-1">{renderContent()}</div>
 
             )}
+
+
+
 
         </div>
     )

@@ -206,7 +206,6 @@ export default function ConfiguratorClient({
           } else if (groupName === 'Events' && configProps[key] !== undefined) {
             hookProps[key] = String(configProps[key]);
           } else if (groupName !== 'Renders' && groupName !== 'Events' && configProps[key] !== undefined) {
-
             const val = configProps[key];
             if (val === 'true') {
               mergedProps[key] = true;
@@ -221,7 +220,6 @@ export default function ConfiguratorClient({
 
 
       const finalMergedProps = { ...config.config.props, ...mergedProps };
-
 
       setProps(filterInvalidProps(finalMergedProps));
       setCurrentConfig({ ...config, config: { ...config.config, props: finalMergedProps } });
@@ -495,6 +493,15 @@ export default function ConfiguratorClient({
 
   return (
     <div className="w-full h-full">
+      <p>
+        {JSON.stringify(props, null, 2)}
+      </p>
+      <p>
+
+      </p>
+      <p>
+        {JSON.stringify(hooks, null, 2)}
+      </p>
       <div className="flex flex-col xl:flex-row gap-6 items-start transition-all duration-500 ease-in-out">
         <div className="w-full lg:w-[20%] mg:w-[5%] xl:sticky xl:top-3 self-start">
           <ConfigurationsSelector

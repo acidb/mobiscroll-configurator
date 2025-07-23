@@ -15,12 +15,16 @@ setOptions({
 
 interface ConfigDropdownProps {
     onChange: (selected: SelectedConfig) => void;
+    onTemplateChange?: (template: Record<string, string>) => void;
+    onHooksChange?: (hooks: Record<string, string>) => void;
     config: Config | null;
     settings: GroupedSettings;
     selectedPreset: string | null;
+    hooks: Record<string, string>;
+    templates: Record<string, string>;
 }
 
-export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, settings }) => {
+export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, settings, onTemplateChange, onHooksChange, hooks, templates }) => {
     const [currentSelections, setCurrentSelections] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
     const selectRef = useRef<any>(null);
@@ -32,6 +36,8 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
     }, [settings]);
 
     const hasValidConfig = flatKeys.length > 0;
+
+
 
     const getConfigData = () => {
         const result: { text: string; value: string; group: string }[] = [];
@@ -49,19 +55,29 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
     };
 
     useEffect(() => {
-        const initialSelections = flatKeys.filter(
-            key => config?.config.props[key] !== undefined && config.config.props[key] !== null
-        );
+        const selectedPropKeys = Object.keys(config?.config.props || {});
+        const selectedHookKeys = Object.keys(hooks || {});
+        const selectedTemplateKeys = Object.keys(templates || {});
 
-        setCurrentSelections(initialSelections);
-    }, [config?.config.props, settings, flatKeys]);
+        const allSelected = Array.from(new Set([
+            ...selectedPropKeys,
+            ...selectedHookKeys,
+            ...selectedTemplateKeys
+        ])).filter(key => flatKeys.includes(key));
+
+        setCurrentSelections(allSelected);
+    }, [config?.config.props, hooks, templates, settings, flatKeys]);
+
 
     const handleConfigChange = (event: MbscSelectChangeEvent) => {
         const values = Array.isArray(event.value) ? event.value : event.value ? [event.value] : [];
         const urlUpdateObject: Record<string, string | number | boolean | null | MbscEventcalendarView> = {};
         const newSelections: string[] = [];
 
-        const selectedObject: SelectedConfig = { ...config?.config.props };
+        const selectedProps: SelectedConfig = { ...config?.config.props };
+        const selectedHooks: Record<string, string> = { ...(hooks || {}) };      
+        const selectedTemplates: Record<string, string> = { ...(templates || {}) };  
+
 
         values.forEach(key => {
             for (const group in settings) {
@@ -72,7 +88,14 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
                         : settings[group][key].default;
 
                     newSelections.push(key);
-                    selectedObject[key] = valueToUse;
+
+                    if (group === 'Events') {
+                        selectedHooks[key] = valueToUse as string;
+                    } else if (group === 'Renders') {
+                        selectedTemplates[key] = valueToUse as string;
+                    } else {
+                        selectedProps[key] = valueToUse;
+                    }
                     urlUpdateObject[key] = valueToUse;
                 }
             }
@@ -80,7 +103,9 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
 
         flatKeys.forEach(key => {
             if (!values.includes(key)) {
-                delete selectedObject[key];
+                delete selectedProps[key];
+                delete selectedHooks[key];
+                delete selectedTemplates[key];
                 urlUpdateObject[key] = '';
             }
         });
@@ -88,9 +113,13 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
         setCurrentSelections(newSelections);
         setError(null);
 
-        onChange(selectedObject);
+        onChange(selectedProps);
+        onHooksChange?.(selectedHooks);
+        onTemplateChange?.(selectedTemplates);
         updateUrl(urlUpdateObject);
     };
+
+
 
     const openSelect = () => {
         if (selectRef.current) {

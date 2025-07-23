@@ -317,26 +317,26 @@ function handleTaskCreate(args: MbscTaskCreateEvent) {
     code: {
       tsx: `
 const defaultEventHandler = useCallback((args: any) => {
-  alert('Event triggered: ' + (args?.type || '') + '\\n' + JSON.stringify(args, null, 2));
-  // console.log('Event triggered:', args);
+   setToastText((args?.type || '') + ' triggered');
+        setToastOpen(true);
 }, []);
 `.trim(),
       jsx: `
 const defaultEventHandler = useCallback((args) => {
-  alert('Event triggered: ' + (args?.type || '') + '\\n' + JSON.stringify(args, null, 2));
-  // console.log('Event triggered:', args);
+  setToastText((args?.type || '') + ' triggered');
+  setToastOpen(true);
 }, []);
 `.trim(),
       sfcjs: `
 function defaultEventHandler(args) {
-  alert('Event triggered: ' + (args?.type || '') + '\\n' + JSON.stringify(args, null, 2));
-  // console.log('Event triggered:', args);
+  setToastText((args?.type || '') + ' triggered');
+        setToastOpen(true);
 }
 `.trim(),
       sfcts: `
 function defaultEventHandler(args: any) {
-  alert('Event triggered: ' + (args?.type || '') + '\\n' + JSON.stringify(args, null, 2));
-  // console.log('Event triggered:', args);
+  setToastText((args?.type || '') + ' triggered');
+        setToastOpen(true);
 }
 `.trim(),
     }
