@@ -275,7 +275,7 @@ export function ConfigurationsSelector({
 
                     if (setting?.display === 'tabs') {
                         return (
-                            <div key={key} className="flex justify-end gap-3 justify-between">
+                            <div key={key} className="flex gap-3 justify-between">
                                 <kbd className="kbd rounded-sm mb-2">{key}</kbd>
                                 <div className="flex flex-wrap justify-end  gap-2">
                                     {options.map(opt => (
