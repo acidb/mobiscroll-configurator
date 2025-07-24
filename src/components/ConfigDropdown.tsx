@@ -37,6 +37,13 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
 
     const hasValidConfig = flatKeys.length > 0;
 
+    useEffect(() => {
+        if (settings.Renderers) {
+            const eventKeys = Object.keys(settings.Renderers);
+            const result = eventKeys.map(key => `${key}: ['${key}'],`).join('\n');
+            console.log(result);
+        }
+    }, [settings]);
 
 
     const getConfigData = () => {
@@ -75,8 +82,8 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
         const newSelections: string[] = [];
 
         const selectedProps: SelectedConfig = { ...config?.config.props };
-        const selectedHooks: Record<string, string> = { ...(hooks || {}) };      
-        const selectedTemplates: Record<string, string> = { ...(templates || {}) };  
+        const selectedHooks: Record<string, string> = { ...(hooks || {}) };
+        const selectedTemplates: Record<string, string> = { ...(templates || {}) };
 
 
         values.forEach(key => {
@@ -91,7 +98,7 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
 
                     if (group === 'Events') {
                         selectedHooks[key] = valueToUse as string;
-                    } else if (group === 'Renders') {
+                    } else if (group === 'Renderers') {
                         selectedTemplates[key] = valueToUse as string;
                     } else {
                         selectedProps[key] = valueToUse;
@@ -119,6 +126,8 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
         updateUrl(urlUpdateObject);
     };
 
+
+    
 
 
     const openSelect = () => {

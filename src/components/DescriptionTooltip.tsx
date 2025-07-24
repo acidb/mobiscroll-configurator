@@ -11,9 +11,6 @@ interface DescriptionTooltipProps {
 }
 
 function getMobiscrollDocUrl(title: string) {
-    // Only support eventcalendar for now, but can extend as needed.
-    // The anchor should be opt-<camelCaseName>
-    // Example: clickToCreate -> #opt-clickToCreate
     const safeTitle = title.replace(/\s+/g, "");
     return `https://mobiscroll.com/docs/react/eventcalendar/api#opt-${safeTitle}`;
 }

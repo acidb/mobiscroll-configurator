@@ -12,9 +12,38 @@ import { ViewEditor } from './ViewEditor'
 import { MbscEventcalendarView, Datepicker } from "@mobiscroll/react";
 
 const templateOptions: Record<string, string[]> = {
-    renderResource: ['resourceTemplate', 'resourceAvatarTemplate'],
-    renderLabelContent: ['renderLabelContentTemplate'],
-    renderAgenda: ['renderAgendaTemplate'],
+    renderAgenda: ['renderAgenda'],
+    renderAgendaEmpty: ['renderAgendaEmpty'],
+    renderBufferAfter: ['renderBufferAfter'],
+    renderBufferBefore: ['renderBufferBefore'],
+    renderDay: ['renderDay'],
+    renderDayContent: ['renderDayContent'],
+    renderDayFooter: ['renderDayFooter'],
+    renderEvent: ['renderEvent'],
+    renderEventContent: ['renderEventContent'],
+    renderHeader: ['renderHeader'],
+    renderHour: ['renderHour'],
+    renderHourFooter: ['renderHourFooter'],
+    renderLabel: ['renderLabel'],
+    renderLabelContent: ['renderLabelContent'],
+    renderMonth: ['renderMonth'],
+    renderMonthFooter: ['renderMonthFooter'],
+    renderQuarter: ['renderQuarter'],
+    renderQuarterFooter: ['renderQuarterFooter'],
+    renderResource: ['renderResource'],
+    renderResourceEmpty: ['renderResourceEmpty'],
+    renderResourceFooter: ['renderResourceFooter'],
+    renderResourceHeader: ['renderResourceHeader'],
+    renderScheduleEvent: ['renderScheduleEvent'],
+    renderScheduleEventContent: ['renderScheduleEventContent'],
+    renderSidebar: ['renderSidebar'],
+    renderSidebarFooter: ['renderSidebarFooter'],
+    renderSidebarHeader: ['renderSidebarHeader'],
+    renderSlot: ['renderSlot'],
+    renderWeek: ['renderWeek'],
+    renderWeekFooter: ['renderWeekFooter'],
+    renderYear: ['renderYear'],
+    renderYearFooter: ['renderYearFooter'],
 };
 
 const hookOptions: Record<string, string[]> = {
@@ -637,7 +666,7 @@ export function ConfigurationsSelector({
                         )}
                         <button
                             className={`btn btn-sm shadow flex items-center gap-1 px-3 transition-all duration-300
-                ${editMode
+                                ${editMode
                                     ? 'bg-orange-500 hover:bg-orange-600 text-white'
                                     : 'bg-gray-200 hover:bg-orange-100 text-gray-600'
                                 }`}

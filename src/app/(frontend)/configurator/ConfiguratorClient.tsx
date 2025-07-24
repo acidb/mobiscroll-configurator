@@ -201,11 +201,11 @@ export default function ConfiguratorClient({
 
       Object.entries(settings).forEach(([groupName, groupSettings]) => {
         Object.entries(groupSettings).forEach(([key, setting]) => {
-          if (groupName === 'Renders' && configProps[key] !== undefined) {
+          if (groupName === 'Renderers' && configProps[key] !== undefined) {
             templateProps[key] = String(configProps[key]);
           } else if (groupName === 'Events' && configProps[key] !== undefined) {
             hookProps[key] = String(configProps[key]);
-          } else if (groupName !== 'Renders' && groupName !== 'Events' && configProps[key] !== undefined) {
+          } else if (groupName !== 'Renderers' && groupName !== 'Events' && configProps[key] !== undefined) {
             const val = configProps[key];
             if (val === 'true') {
               mergedProps[key] = true;
