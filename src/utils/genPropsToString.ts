@@ -193,7 +193,7 @@ export function getStateHooks(
     fields: Record<string, any>,
     lang: string
 ): string {
-    let states: string[] = [];
+    const states: string[] = [];
     for (const [name, val] of Object.entries(fields)) {
         if (val && typeof val === 'object' && 'url' in val) {
             const setter = 'set' + name.charAt(0).toUpperCase() + name.slice(1);
