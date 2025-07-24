@@ -1,13 +1,16 @@
 'use client'
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
     Eventcalendar,
     Select,
     Datepicker,
     MbscEventClickEvent,
     Toast,
-    MbscEventcalendarView
+    MbscEventcalendarView,
+    MbscCalendarEvent,
+    getJson
+
 } from '@mobiscroll/react';
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
 import { templateCodes } from './reactTemplates';
@@ -54,6 +57,36 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
     const [toastOpen, setToastOpen] = useState(false);
     const [toastText, setToastText] = useState('');
+    const [myData, setMyData] = useState<MbscCalendarEvent[]>([]);
+
+    useEffect(() => {
+        let ignore = false;
+
+        if (eventData && typeof eventData === 'object' && 'url' in eventData) {
+            fetch('/api/timeline-events')
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                    return res.json();
+                })
+                .then((events: MbscCalendarEvent[]) => {
+                    if (!ignore) setMyData(events);
+                })
+                .catch(err => {
+                    if (!ignore) setMyData([]); 
+                });
+        } else {
+            console.log('[LivePreview] Using direct eventData:', eventData);
+            setMyData(Array.isArray(eventData) ? eventData : []);
+        }
+
+        return () => { ignore = true; };
+    }, [eventData]);
+
+
+
+    useEffect(() => {
+        console.log('[LivePreview] eventData:', eventData);
+    }, [eventData]);
 
     const handleEventClick = useCallback((args: MbscEventClickEvent) => {
         setToastText(args.event.title ?? '');
@@ -130,7 +163,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                     <Component
                         themeVariant="light"
                         {...safeMergedProps}
-                        data={eventData}
+                        data={myData}
                         resources={resources}
                         invalid={invalid}
                         {...templateProps}
@@ -150,7 +183,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                         <Component
                             themeVariant="light"
                             {...safeMergedProps}
-                            data={eventData}
+                            data={myData}
                             resources={resources}
                             invalid={invalid}
                             {...templateProps}

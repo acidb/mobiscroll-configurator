@@ -1,4 +1,7 @@
 // reactHooks.ts
+// 
+
+
 export function toVueEventName(hookName: string): string {
   const name = hookName.startsWith('on') ? hookName.slice(2) : hookName;
   return name
@@ -47,14 +50,14 @@ function extendDefaultEvent(args: any) {
     code: {
       tsx: `
  const myEventClick = useCallback((args: MbscEventClickEvent) => {
-        setToastText(args.event.title ?? '');
-        setToastOpen(true);
+        // setToastText(args.event.title ?? '');
+        // setToastOpen(true);
     }, []);
 `.trim(),
       jsx: `
  const myEventClick = useCallback((args) => {
-    setToastText(args.event.title);
-    setToastOpen(true);
+    // setToastText(args.event.title);
+    // setToastOpen(true);
   }, []);
 
 `.trim(),

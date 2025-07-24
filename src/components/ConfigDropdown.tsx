@@ -37,13 +37,7 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
 
     const hasValidConfig = flatKeys.length > 0;
 
-    useEffect(() => {
-        if (settings.Renderers) {
-            const eventKeys = Object.keys(settings.Renderers);
-            const result = eventKeys.map(key => `${key}: ['${key}'],`).join('\n');
-            console.log(result);
-        }
-    }, [settings]);
+  
 
 
     const getConfigData = () => {

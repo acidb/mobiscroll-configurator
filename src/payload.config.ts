@@ -42,4 +42,31 @@ export default buildConfig({
     payloadCloudPlugin(),
     // storage-adapter-placeholder
   ],
+  endpoints: [
+    {
+      path: '/timeline-events',
+      method: 'get',
+      handler: async (req) => {
+        try {
+          const response = await fetch('https://trial.mobiscroll.com/timeline-events/');
+          const text = await response.text();
+
+          const match = text.match(/\([\s\n]*(\[.*\])[\s\n]*\)/s);
+          if (match && match[1]) {
+            const data = JSON.parse(match[1]);
+            return Response.json(data);
+          } else {
+            return Response.json({ error: 'Failed to parse Mobiscroll JSONP.', raw: text }, { status: 500 });
+          }
+        } catch (e) {
+          return Response.json({ error: e || 'Something went wrong.' }, { status: 500 });
+        }
+      },
+    },
+   
+  ],
+
+
+
+
 })

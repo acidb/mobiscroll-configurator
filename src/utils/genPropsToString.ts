@@ -1,7 +1,7 @@
 // In thise file is the function that generates the props to string
 // Here needs to be added more functions for different frameworks 
 import { capitalizeFirstLetter } from './capitalizeFirstLetter';
-import type { MbscEventcalendarView } from '@mobiscroll/react';
+import type { MbscEventcalendarView, MbscCalendarEvent } from '@mobiscroll/react';
 
 export function genCodeWithTopVars(
     framework: string,
@@ -126,9 +126,6 @@ export function genCodeWithTopVars(
     };
 }
 
-
-
-
 export function filterInvalidProps(obj: any): any {
     if (Array.isArray(obj)) {
         return obj.map(filterInvalidProps);
@@ -142,4 +139,77 @@ export function filterInvalidProps(obj: any): any {
         return result;
     }
     return obj;
+}
+
+export function getSmartData(
+    data: any,
+    lang: string
+): string {
+    if (data && typeof data === 'object' && data.url) {
+        switch (lang) {
+            case 'JSX':
+                return `
+useEffect(() => {
+  fetch('${data.url}')
+    .then(res => {
+      if (!res.ok) throw new Error('HTTP error!');
+      return res.json();
+    })
+    .then(events => {
+      setMyData(events);
+    })
+    .catch(() => {
+      setMyData([]);
+    });
+}, []);
+`.trim();
+
+            case 'TSX':
+                return `
+useEffect(() => {
+  fetch('${data.url}')
+    .then(res => {
+      if (!res.ok) throw new Error('HTTP error!');
+      return res.json();
+    })
+    .then(events => {
+      setMyData(events);
+    })
+    .catch(() => {
+      setMyData([]);
+    });
+}, []);
+`.trim();
+
+            default:
+                return `// No code template for this language.`;
+        }
+    }
+
+    return `const myData = ${JSON.stringify(data, null, 2)};`;
+}
+
+export function getStateHooks(
+    fields: Record<string, any>,
+    lang: string
+): string {
+    let states: string[] = [];
+    for (const [name, val] of Object.entries(fields)) {
+        if (val && typeof val === 'object' && 'url' in val) {
+            const setter = 'set' + name.charAt(0).toUpperCase() + name.slice(1);
+            // Use proper generic type only for TS languages
+            let stateString = '';
+            if (
+                lang === 'TSX' ||
+                lang === 'SFC TS' ||
+                lang === 'SFCTS'
+            ) {
+                stateString = `const [${name}, ${setter}] = useState<MbscCalendarEvent[]>([]);`;
+            } else {
+                stateString = `const [${name}, ${setter}] = useState([]);`;
+            }
+            states.push(stateString);
+        }
+    }
+    return states.join('\n');
 }

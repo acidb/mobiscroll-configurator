@@ -7,10 +7,11 @@ import { Group, Component, Framework, Preset, Config, User, GroupedSettings } fr
 import { LivePreview } from '@/components/LivePreview'
 import { CodePreview } from '@/components/CodePreview'
 import { ConfigurationsSelector } from '@/components/ConfigurationSelector'
-import { filterInvalidProps, genCodeWithTopVars } from '@/utils/genPropsToString'
+import { filterInvalidProps, genCodeWithTopVars, getSmartData, getStateHooks } from '@/utils/genPropsToString'
 import { templateStrs, Lang } from '@/components/reactTemplates'
 import { toVueEventName, hookStrs } from '@/components/reactHooks'
 import { MbscEventcalendarView } from "@mobiscroll/react";
+import { da } from 'payload/i18n/da'
 
 
 export type CodeSnippet = {
@@ -420,6 +421,13 @@ export default function ConfiguratorClient({
             )
 
             .replace(
+              /\/\* state \*\//g,
+              getStateHooks({ myData: eventData, myResources: resources, myInvalid: invalid, myColors: colors }, t.label)
+            )
+
+
+
+            .replace(
               /\/\* react hooks \*\//g,
               reactHookImports.length
                 ? `${reactHookImports.join(', ')}`
@@ -436,12 +444,11 @@ export default function ConfiguratorClient({
             )
             .replace(
               /\/\* data \*\//g,
-              hasData
-                ? frameworkObj.slug === 'vue'
-                  ? `const myData = ref(${toUnquotedObjectString(eventData, 2)});`
-                  : `const myData = ${JSON.stringify(eventData, null, 2)};`
-                : ''
+              hasData ? getSmartData(eventData, t.label) : ''
             )
+
+
+
             .replace(
               /\/\* resources \*\//g,
               hasResources
@@ -511,6 +518,7 @@ export default function ConfiguratorClient({
               ...props,
               ...template,
               ...hooks
+              // ...data
             }}
             onChange={setProps}
             templates={template}
