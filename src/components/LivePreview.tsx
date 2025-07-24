@@ -9,8 +9,6 @@ import {
     Toast,
     MbscEventcalendarView,
     MbscCalendarEvent,
-    getJson
-
 } from '@mobiscroll/react';
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
 import { templateCodes } from './reactTemplates';

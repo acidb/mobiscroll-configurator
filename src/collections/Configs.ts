@@ -5,11 +5,11 @@ export const Configs: CollectionConfig = {
   admin: {
     useAsTitle: 'preset',
     components: {
-      beforeListTable: ['@/components/ConfigDescription'],
+      beforeList: ['@/components/ConfigDescription'],
     },
   },
   fields: [
-    { 
+    {
       name: 'preset',
       type: 'relationship',
       relationTo: 'presets',
