@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { updateUrl } from '@/utils/updateUrl'
 import { useScreenSize } from '@/utils/useScreenSize'
-import { Info, Settings2, Trash2, PencilOff, Pencil, Plus, ExternalLink } from 'lucide-react'
+import { Info, Settings2, Trash2, PencilOff, Pencil, ExternalLink } from 'lucide-react'
 
 import { DescriptionTooltip } from './DescriptionTooltip'
 import StepperSection from '../app/(frontend)/configurator/StepperSection'
@@ -9,7 +9,7 @@ import { Component, Preset, Config, Group, User, Setting, GroupedSettings } from
 import { ConfigDropdown } from './ConfigDropdown'
 import Link from 'next/link'
 import { ViewEditor } from './ViewEditor'
-import { MbscEventcalendarView, Datepicker } from "@mobiscroll/react";
+import { MbscEventcalendarView } from "@mobiscroll/react";
 
 /* Finalizing New Template Add
 

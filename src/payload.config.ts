@@ -46,7 +46,7 @@ export default buildConfig({
     {
       path: '/timeline-events',
       method: 'get',
-      handler: async (req) => {
+      handler: async () => {
         try {
           const response = await fetch('https://trial.mobiscroll.com/timeline-events/');
           const text = await response.text();

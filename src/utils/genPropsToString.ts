@@ -1,7 +1,7 @@
 // In thise file is the function that generates the props to string
 // Here needs to be added more functions for different frameworks 
 import { capitalizeFirstLetter } from './capitalizeFirstLetter';
-import type { MbscEventcalendarView, MbscCalendarEvent } from '@mobiscroll/react';
+import type { MbscEventcalendarView } from '@mobiscroll/react';
 
 export function genCodeWithTopVars(
     framework: string,

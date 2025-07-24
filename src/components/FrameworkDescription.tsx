@@ -1,8 +1,7 @@
 'use client'
 import React from 'react'
-import type { ViewDescriptionClientProps } from 'payload'
 
-export default function FrameworkDescription(props: ViewDescriptionClientProps) {
+export default function FrameworkDescription() {
     return <div style={{ maxWidth: '65rem', padding: '0.5rem'}}>
         <p style={{ marginBottom: '1.5rem' }}>
             The Frameworks collection defines the available frontend frameworks or languages supported, such as JavaScript, React, Angular, etc. Each framework entry includes a name, a unique slug, optional templates, and icons. The templates provide predefined code snippets or configurations that help users start quickly with a specific framework.

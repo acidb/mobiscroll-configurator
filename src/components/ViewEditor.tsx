@@ -1,6 +1,5 @@
 import React from "react";
 import { MbscEventcalendarView } from "@mobiscroll/react";
-import { Datepicker } from "@mobiscroll/react";
 
 const ENUM_OPTIONS: Record<string, string[]> = {
     type: ["month", "week", "day", "year"],

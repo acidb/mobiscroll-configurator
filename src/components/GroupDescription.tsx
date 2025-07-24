@@ -1,8 +1,7 @@
 'use client'
 import React from 'react'
-import type { ViewDescriptionClientProps } from 'payload'
 
-export default function GroupDescription(props: ViewDescriptionClientProps) {
+export default function GroupDescription() {
     return <div style={{ maxWidth: '65rem', padding: '0.5rem' }}>
         <p style={{ marginBottom: '1.5rem' }}>
             The Groups collection stores and organizes the various Mobiscroll component groups. These groups serve as logical categories that help structure and sort individual components, making it easier for users to navigate and manage large sets of UI elements. Each group has a name, a unique slug (used as an identifier), and an optional sortOrder field to control the display order in lists.

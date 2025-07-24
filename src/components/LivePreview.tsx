@@ -64,11 +64,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     const [toastText, setToastText] = useState('');
     const [myData, setMyData] = useState<MbscCalendarEvent[]>([]);
 
-    if (Component === Eventcalendar || Component === Select) {
+    useEffect(() => {
+        let ignore = false;
 
-        useEffect(() => {
-            let ignore = false;
-
+        if (Component === Eventcalendar || Component === Select) {
             if (eventData && typeof eventData === 'object' && 'url' in eventData) {
                 fetch(`${eventData.url}`)
                     .then(res => {
@@ -78,17 +77,18 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                     .then((events: MbscCalendarEvent[]) => {
                         if (!ignore) setMyData(events);
                     })
-                    .catch(err => {
+                    .catch(() => {
                         if (!ignore) setMyData([]);
                     });
             } else {
                 setMyData(eventData);
             }
+        }
 
-            return () => { ignore = true; };
-        }, [eventData]);
-
-    }
+        return () => {
+            ignore = true;
+        };
+    }, [eventData, Component]);
 
     /* Adding New Event Function (Start)
  

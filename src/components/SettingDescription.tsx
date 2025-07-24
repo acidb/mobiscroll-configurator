@@ -1,8 +1,7 @@
 'use client'
 import React from 'react'
-import type { ViewDescriptionClientProps } from 'payload'
 
-export default function SettingDescription(props: ViewDescriptionClientProps) {
+export default function SettingDescription() {
     return <div style={{ maxWidth: '65rem', padding: '0.5rem' }}>
         <p style={{ marginBottom: '1.5rem' }}>
             The Settings collection stores configuration settings for specific components. Each entry defines a set of settings in JSON format that can be linked to one or more Mobiscroll components. These settings can later be used or referenced when creating actual configurations (e.g. via presets or direct configuration flows). This allows for reusable and organized configuration snippets.

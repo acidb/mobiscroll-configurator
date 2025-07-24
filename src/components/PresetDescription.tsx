@@ -1,8 +1,7 @@
 'use client'
 import React from 'react'
-import type { ViewDescriptionClientProps } from 'payload'
 
-export default function PresetDescription(props: ViewDescriptionClientProps) {
+export default function PresetDescription() {
     return <div style={{ maxWidth: '65rem', padding: '0.5rem' }}>
         <p style={{ marginBottom: '1.5rem' }}>
             The Presets collection defines reusable component–framework combinations that serve as templates for configuration. It specifies which components a preset is related to and which frameworks support it.
