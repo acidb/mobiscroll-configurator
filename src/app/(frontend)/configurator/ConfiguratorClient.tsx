@@ -580,15 +580,20 @@ export default function ConfiguratorClient({
                     ? 'w-full h-full'
                     : 'transform origin-top scale-100 md:scale-[1] lg:scale-[1] transition-transform duration-300'
                 }
+
               >
-                <LivePreview
-                  componentName={groupObj?.slug}
-                  mergedProps={props}
-                  data={data}
-                  template={template}
-                  hooks={hooks}
-                  isScheduler={isScheduler}
-                />
+                {selectedComponent && (
+                  <LivePreview
+                    componentName={groupObj?.slug}
+                    selectedComponent={selectedComponent}
+                    mergedProps={props}
+                    data={data}
+                    template={template}
+                    hooks={hooks}
+                    isScheduler={isScheduler}
+                  />
+                )}
+
               </div>
             )}
           </div>

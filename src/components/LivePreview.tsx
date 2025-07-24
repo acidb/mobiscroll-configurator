@@ -16,16 +16,22 @@ import { hookCodes } from './reactHooks';
 
 const componentMap: Record<string, React.ElementType> = {
     eventcalendar: Eventcalendar,
+    timeline: Eventcalendar,
+    scheduler: Eventcalendar,
+    calendar: Eventcalendar,
+    agenda:Eventcalendar,
     select: Select,
-    datepicker: Datepicker
+    datepicker: Datepicker,
+    timepicker: Datepicker,
+    rangepicker: Datepicker,
 };
 
 import { MbscCalendarEventData, MbscResource } from '@mobiscroll/react';
-
-
+import { scheduler } from 'timers/promises';
 
 export interface LivePreviewProps {
     componentName: string;
+    selectedComponent: string;
     mergedProps: Record<string, string | number | boolean | null | MbscEventcalendarView>;
     data?: {
         data?: Record<string, string>[];
@@ -40,13 +46,14 @@ export interface LivePreviewProps {
 
 export const LivePreview: React.FC<LivePreviewProps> = ({
     componentName,
+    selectedComponent,
     mergedProps,
     data = {},
     template,
     hooks,
     isScheduler,
 }) => {
-    const Component = componentMap[componentName];
+    const Component = componentMap[selectedComponent ];
     const {
         data: eventData = [],
         resources = [],
@@ -57,29 +64,31 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     const [toastText, setToastText] = useState('');
     const [myData, setMyData] = useState<MbscCalendarEvent[]>([]);
 
-    useEffect(() => {
-        let ignore = false;
+    if (Component === Eventcalendar) {
 
-        if (eventData && typeof eventData === 'object' && 'url' in eventData) {
-            fetch(`${eventData.url}`)
-                .then(res => {
-                    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-                    return res.json();
-                })
-                .then((events: MbscCalendarEvent[]) => {
-                    if (!ignore) setMyData(events);
-                })
-                .catch(err => {
-                    if (!ignore) setMyData([]);
-                });
-        } else {
-            console.log('[LivePreview] Using direct eventData:', eventData);
-            setMyData(Array.isArray(eventData) ? eventData : []);
-        }
+        useEffect(() => {
+            let ignore = false;
 
-        return () => { ignore = true; };
-    }, [eventData]);
+            if (eventData && typeof eventData === 'object' && 'url' in eventData) {
+                fetch(`${eventData.url}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                        return res.json();
+                    })
+                    .then((events: MbscCalendarEvent[]) => {
+                        if (!ignore) setMyData(events);
+                    })
+                    .catch(err => {
+                        if (!ignore) setMyData([]);
+                    });
+            } else {
+                setMyData(eventData);
+            }
 
+            return () => { ignore = true; };
+        }, [eventData]);
+
+    }
 
     /* Adding New Event Function (Start)
  
