@@ -26,8 +26,8 @@ interface ConfigDropdownProps {
 
 export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, settings, onTemplateChange, onHooksChange, hooks, templates }) => {
     const [currentSelections, setCurrentSelections] = useState<string[]>([]);
-    const [error, setError] = useState<string | null>(null);
-    const selectRef = useRef<any>(null);
+    // const [error, setError] = useState<string | null>(null);
+    const selectRef = useRef<Select>(null);
 
     const flatKeys = useMemo(() => {
         return Object.entries(settings).flatMap(([_, settingMap]) =>
@@ -37,7 +37,7 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
 
     const hasValidConfig = flatKeys.length > 0;
 
-  
+
 
 
     const getConfigData = () => {
@@ -112,17 +112,12 @@ export const ConfigDropdown: FC<ConfigDropdownProps> = ({ onChange, config, sett
         });
 
         setCurrentSelections(newSelections);
-        setError(null);
-
+        // setError(null);
         onChange(selectedProps);
         onHooksChange?.(selectedHooks);
         onTemplateChange?.(selectedTemplates);
         updateUrl(urlUpdateObject);
     };
-
-
-    
-
 
     const openSelect = () => {
         if (selectRef.current) {

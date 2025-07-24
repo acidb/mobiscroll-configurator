@@ -16,7 +16,9 @@ export function genCodeWithTopVars(
     const templateInlineProps: string[] = [];
     const liveViewInlineProps = props;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const extractedValues: Record<string, any> = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const extractedInlineValues: Record<string, any> = {};
 
 
@@ -126,6 +128,7 @@ export function genCodeWithTopVars(
     };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function filterInvalidProps(obj: any): any {
     if (Array.isArray(obj)) {
         return obj.map(filterInvalidProps);
@@ -141,7 +144,9 @@ export function filterInvalidProps(obj: any): any {
     return obj;
 }
 
+
 export function getSmartData(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any,
     lang: string
 ): string {
@@ -190,6 +195,7 @@ useEffect(() => {
 }
 
 export function getStateHooks(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fields: Record<string, any>,
     lang: string
 ): string {

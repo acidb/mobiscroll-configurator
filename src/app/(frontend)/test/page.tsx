@@ -1,7 +1,6 @@
 import { Eventcalendar, getJson } from '@mobiscroll/react';
 import type {
     MbscResource,
-    MbscEventClickEvent,
     MbscCalendarEvent,
 } from '@mobiscroll/react';
 import { FC, useCallback, useEffect, useState } from 'react';
@@ -9,11 +8,11 @@ import { FC, useCallback, useEffect, useState } from 'react';
 const App: FC = () => {
     const [myData, setMyData] = useState<MbscCalendarEvent[]>([]);
 
-    const myView = {
-        timeline: {
-            type: 'month',
-        },
-    };
+    // const myView = {
+    //     timeline: {
+    //         type: 'month',
+    //     },
+    // };
     useEffect(() => {
         getJson(
             'https://trial.mobiscroll.com/timeline-events/',
@@ -51,7 +50,7 @@ const App: FC = () => {
         []
     );
 
-    const myEventClick = useCallback((args: MbscEventClickEvent) => {
+    const myEventClick = useCallback(() => {
         // setToastText(args.event.title ?? '');
         // setToastOpen(true);
     }, []);
