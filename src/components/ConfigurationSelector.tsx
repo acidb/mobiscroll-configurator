@@ -137,6 +137,15 @@ const hookOptions: Record<string, string[]> = {
 
 };
 
+/* 
+  This file is ConfiguratorSelector.tsx — the element you see on the left side of the screen in the Mobiscroll Configurator.
+
+  In this element, you first choose the desired group, then the component, and then the preset.
+  
+  After making your selections, the selected config’s settings will appear, which you can adjust.
+  These settings can be modified via toggles, dropdowns, tab bars, and other controls.
+*/
+
 export type SelectedConfig = Record<string, string | number | boolean | null | MbscEventcalendarView>;
 
 interface ConfigurationsSelectorProps {
@@ -216,7 +225,6 @@ export function ConfigurationsSelector({
         return undefined;
     }
 
-
     const infoRefs = useRef<Record<string, React.RefObject<SVGSVGElement | null>>>({});
 
     Object.keys(configurations).forEach(key => {
@@ -224,8 +232,6 @@ export function ConfigurationsSelector({
             infoRefs.current[key] = React.createRef<SVGSVGElement>();
         }
     });
-
-
 
     function renderContent() {
         return (
@@ -720,6 +726,8 @@ export function ConfigurationsSelector({
                     You can adjust your configurations by choosing other template or components
                 </span>
             </div>
+
+
             <StepperSection
                 groups={groups}
                 components={components}
@@ -732,49 +740,48 @@ export function ConfigurationsSelector({
             />
 
             {selectedGroup && selectedComponent && selectedPreset && (
-                <div className="flex justify-between items-center border-b border-gray-200 py-2">
-                    <div>
-                        {user && selectedPreset && config?.id && (
-                            <Link
-                                href={`/admin/collections/configs/${config.id}`}
-                                className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white shadow flex items-center gap-1 px-3 transition-all duration-300"
+                    <div className="flex justify-between items-center border-b border-gray-200 py-2">
+                        <div>
+                            {user && selectedPreset && config?.id && (
+                                <Link
+                                    href={`/admin/collections/configs/${config.id}`}
+                                    className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white shadow flex items-center gap-1 px-3 transition-all duration-300"
 
-                                title="Edit this configuration"
-                            >
-                                <span className="font-semibold">Edit this config</span>
-                                <ExternalLink size={14} />
+                                    title="Edit this configuration"
+                                >
+                                    <span className="font-semibold">Edit this config</span>
+                                    <ExternalLink size={14} />
 
-                            </Link>
-                        )}
-                    </div>
+                                </Link>
+                            )}
+                        </div>
 
 
-                    <div className="flex gap-2">
-                        {selectedPreset && (
-                            <div>
-                                <ConfigDropdown onChange={onChange} onTemplateChange={onTemplateChange} onHooksChange={onHooksChange} config={config} settings={settings} selectedPreset={selectedPreset} hooks={hooks} templates={templates} />
-                            </div>
-                        )}
-                        <button
-                            className={`btn btn-sm shadow flex items-center gap-1 px-3 transition-all duration-300
+                        <div className="flex gap-2">
+                            {selectedPreset && (
+                                <div>
+                                    <ConfigDropdown onChange={onChange} onTemplateChange={onTemplateChange} onHooksChange={onHooksChange} config={config} settings={settings} selectedPreset={selectedPreset} hooks={hooks} templates={templates} />
+                                </div>
+                            )}
+                            <button
+                                className={`btn btn-sm shadow flex items-center gap-1 px-3 transition-all duration-300
                                 ${editMode
-                                    ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                                    : 'bg-gray-200 hover:bg-orange-100 text-gray-600'
-                                }`}
-                            title={editMode ? 'Exit edit mode' : 'Edit configuration'}
-                            onClick={() => setEditMode(e => !e)}
-                            type="button"
-                        >
-                            <span className="transition-opacity duration-200">
-                                {editMode ? <PencilOff size={18} /> : <Pencil size={18} />}
-                            </span>
-                            <span className="font-semibold transition-opacity duration-200">
-                                {editMode ? 'Exit Edit' : 'Edit'}
-                            </span>
-                        </button>
+                                        ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                                        : 'bg-gray-200 hover:bg-orange-100 text-gray-600'
+                                    }`}
+                                title={editMode ? 'Exit edit mode' : 'Edit configuration'}
+                                onClick={() => setEditMode(e => !e)}
+                                type="button"
+                            >
+                                <span className="transition-opacity duration-200">
+                                    {editMode ? <PencilOff size={18} /> : <Pencil size={18} />}
+                                </span>
+                                <span className="font-semibold transition-opacity duration-200">
+                                    {editMode ? 'Exit Edit' : 'Edit'}
+                                </span>
+                            </button>
+                        </div>
                     </div>
-                </div>
-
 
             )}
             {selectedGroup && selectedComponent && selectedPreset && (
