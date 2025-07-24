@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 export default function Header() {
   return (
-    <header className="w-full py-4 px-8 bg-gradient-to-r from-gray-50 to-gray-100 shadow-md border-b border-gray-200 top-0 z-50">
+    <header className="w-full py-4 px-8 bg-gradient-to-r from-gray-50 to-gray-100 shadow-md border-b border-gray-200 top-0 z-1">
       <style>
         @import url("https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
       </style>
