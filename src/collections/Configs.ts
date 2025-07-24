@@ -5,7 +5,7 @@ export const Configs: CollectionConfig = {
   admin: {
     useAsTitle: 'preset',
     components: {
-      Description:'@/components/ConfigDescription',
+      beforeListTable: ['@/components/ConfigDescription'],
     },
   },
   fields: [

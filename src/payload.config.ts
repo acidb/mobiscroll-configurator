@@ -25,7 +25,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     components: {
-      beforeDashboard: ['@/components/GroupDescription'],
+      beforeDashboard: ['@/components/DashBoardDescription'],
     },
   },
   collections: [Users, Media, Groups, Components, Frameworks, Presets, Configs, Settings],

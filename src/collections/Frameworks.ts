@@ -5,7 +5,7 @@ export const Frameworks: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     components: {
-      Description: '@/components/FrameworkDescription',
+      beforeListTable: ['@/components/FrameworkDescription'],
     },
   },
   fields: [

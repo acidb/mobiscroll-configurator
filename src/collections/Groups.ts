@@ -5,7 +5,7 @@ export const Groups: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     components: {
-      Description:'@/components/GroupDescription',
+      beforeListTable: ['@/components/GroupDescription'],
     },
   },
   fields: [
