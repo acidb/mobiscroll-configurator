@@ -27,7 +27,6 @@ const componentMap: Record<string, React.ElementType> = {
 };
 
 import { MbscCalendarEventData, MbscResource } from '@mobiscroll/react';
-import { scheduler } from 'timers/promises';
 
 export interface LivePreviewProps {
     componentName: string;
@@ -45,7 +44,6 @@ export interface LivePreviewProps {
 
 
 export const LivePreview: React.FC<LivePreviewProps> = ({
-    componentName,
     selectedComponent,
     mergedProps,
     data = {},
@@ -195,7 +193,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         }
     }
 
-    function stripOuterQuotes(val: any) {
+    function stripOuterQuotes(val: string | number | boolean | null | MbscEventcalendarView) {
         if (typeof val === 'string' && /^(['"])(.*)\1$/.test(val)) {
             return val.slice(1, -1);
         }
