@@ -11,8 +11,6 @@ import { filterInvalidProps, genCodeWithTopVars, getSmartData, getStateHooks } f
 import { templateStrs, Lang } from '@/components/reactTemplates'
 import { toVueEventName, hookStrs } from '@/components/reactHooks'
 import { MbscEventcalendarView } from "@mobiscroll/react";
-import { da } from 'payload/i18n/da'
-
 
 export type CodeSnippet = {
   label: 'TSX' | 'JSX' | 'jquery' | 'vue' | 'react' | 'Component' | 'Template' | 'SFC JS' | 'SFC TS' | 'HTML' | 'JS';

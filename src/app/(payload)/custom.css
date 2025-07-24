@@ -4,3 +4,8 @@
 .config-p {
   margin: 1em 0;
 }
+
+.dashboard__card-list a {
+  border: 0;
+  background-color: transparent;
+}
