@@ -8,7 +8,6 @@ const DashboardDescription = () => {
         <div
             style={{
                 padding: '3rem',
-                margin: '0 auto',
             }}
         >
             <h1 style={{ fontSize: '28px', marginBottom: '12px' }}>
@@ -36,7 +35,6 @@ const DashboardDescription = () => {
                 style={{
                     maxWidth: '100%',
                     height: 'auto',
-                    margin: '0 auto',
 
                 }}
             />
