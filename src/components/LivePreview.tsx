@@ -19,7 +19,7 @@ const componentMap: Record<string, React.ElementType> = {
     timeline: Eventcalendar,
     scheduler: Eventcalendar,
     calendar: Eventcalendar,
-    agenda:Eventcalendar,
+    agenda: Eventcalendar,
     select: Select,
     datepicker: Datepicker,
     timepicker: Datepicker,
@@ -53,7 +53,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     hooks,
     isScheduler,
 }) => {
-    const Component = componentMap[selectedComponent ];
+    const Component = componentMap[selectedComponent];
     const {
         data: eventData = [],
         resources = [],
@@ -64,7 +64,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     const [toastText, setToastText] = useState('');
     const [myData, setMyData] = useState<MbscCalendarEvent[]>([]);
 
-    if (Component === Eventcalendar) {
+    if (Component === Eventcalendar || Component === Select) {
 
         useEffect(() => {
             let ignore = false;
@@ -210,7 +210,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                     <Component
                         themeVariant="light"
                         {...safeMergedProps}
-                        data={myData}
+                        data={myData ? myData : eventData}
                         resources={resources}
                         invalid={invalid}
                         {...templateProps}
@@ -230,7 +230,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                         <Component
                             themeVariant="light"
                             {...safeMergedProps}
-                            data={myData}
+                            data={myData ? myData : eventData}
                             resources={resources}
                             invalid={invalid}
                             {...templateProps}
