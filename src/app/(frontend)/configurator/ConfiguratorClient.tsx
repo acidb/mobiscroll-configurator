@@ -72,48 +72,46 @@ export default function ConfiguratorClient({
   const selectedPreset = searchParams.get('preset') || null
   const isLoading = !(currentConfig && frameworkObj && groupObj && code)
 
-  const mergeConfigProps = (
-    configProps: Record<string, string | number | boolean | null | undefined | MbscEventcalendarView>,
-    config: Config,
-    settings: GroupedSettings,
-    templates: Record<string, string>
-  ) => {
-    const mergedProps: Record<string, string | number | boolean | null | MbscEventcalendarView> = {
-      ...config.config.props,
-    };
+  // const mergeConfigProps = (
+  //   configProps: Record<string, string | number | boolean | null | undefined | MbscEventcalendarView>,
+  //   config: Config,
+  //   settings: GroupedSettings,
+  //   templates: Record<string, string>
+  // ) => {
+  //   const mergedProps: Record<string, string | number | boolean | null | MbscEventcalendarView> = {
+  //     ...config.config.props,
+  //   };
 
-    const settingKeys = Object.values(settings)
-      .flatMap(group => Object.keys(group));
+  //   const settingKeys = Object.values(settings)
+  //     .flatMap(group => Object.keys(group));
 
-    Object.keys(configProps).forEach(key => {
-      if (
-        key !== 'view' &&
-        key !== 'template' &&
-        settingKeys.includes(key)
-      ) {
-        if (templates && Object.prototype.hasOwnProperty.call(templates, key)) {
-          console.log(`[mergeConfigProps] Skipping key "${key}" because it exists in templates. Value:`, configProps[key]);
-          delete mergedProps[key];
-          return;
-        }
+  //   Object.keys(configProps).forEach(key => {
+  //     if (
+  //       key !== 'view' &&
+  //       key !== 'template' &&
+  //       settingKeys.includes(key)
+  //     ) {
+  //       if (templates && Object.prototype.hasOwnProperty.call(templates, key)) {
+  //         console.log(`[mergeConfigProps] Skipping key "${key}" because it exists in templates. Value:`, configProps[key]);
+  //         delete mergedProps[key];
+  //         return;
+  //       }
 
-        const val = configProps[key];
-        if (val === 'true') {
-          mergedProps[key] = true;
-        } else if (val === 'false') {
-          mergedProps[key] = false;
-        } else if (val !== undefined) {
-          mergedProps[key] = val;
-        }
-      }
-    });
+  //       const val = configProps[key];
+  //       if (val === 'true') {
+  //         mergedProps[key] = true;
+  //       } else if (val === 'false') {
+  //         mergedProps[key] = false;
+  //       } else if (val !== undefined) {
+  //         mergedProps[key] = val;
+  //       }
+  //     }
+  //   });
 
-    console.log('[mergeConfigProps] Final mergedProps:', mergedProps);
+  //   console.log('[mergeConfigProps] Final mergedProps:', mergedProps);
 
-    return mergedProps;
-  };
-
-
+  //   return mergedProps;
+  // };
 
 
   function updateSelections(updates: Record<string, string | null>) {
@@ -199,7 +197,7 @@ export default function ConfiguratorClient({
 
 
       Object.entries(settings).forEach(([groupName, groupSettings]) => {
-        Object.entries(groupSettings).forEach(([key, setting]) => {
+        Object.entries(groupSettings).forEach(([key]) => {
           if (groupName === 'Renderers' && configProps[key] !== undefined) {
             templateProps[key] = String(configProps[key]);
           } else if (groupName === 'Events' && configProps[key] !== undefined) {

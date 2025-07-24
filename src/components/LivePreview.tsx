@@ -134,12 +134,15 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         setToastText(args.event.title ?? '');
         setToastOpen(true);
     }, []);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const extendDefaultEvent = (args: any) => {
         return {
             color: args.resource === 'admin' ? 'green' : 'red',
             title: 'My event',
         };
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const defaultEventHandler = useCallback((args: any) => {
         setToastText((args?.type || '') + ' triggered');
         setToastOpen(true);
@@ -201,7 +204,6 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     const safeMergedProps = Object.fromEntries(
         Object.entries(mergedProps).map(([k, v]) => [k, stripOuterQuotes(v)])
     );
-
 
     return (
         <>

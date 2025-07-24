@@ -1,8 +1,7 @@
 'use client'
 import React from 'react'
-import type { ViewDescriptionClientProps } from 'payload'
 
-export default function ComponentDescription(props: ViewDescriptionClientProps) {
+export default function ComponentDescription() {
     return <div style={{ maxWidth: '65rem', padding: '0.5rem' }}>
         <p style={{ marginBottom: '1.5rem' }}>
             The Components collection stores individual Mobiscroll UI components, such as buttons, pickers, calendars, or form elements. Each component is assigned to a group (e.g., Date & Time, Form Controls) via a relationship, which helps with categorization and filtering. Components also include a unique label, a view identifier, and an optional sortOrder to control display order.
