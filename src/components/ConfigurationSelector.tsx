@@ -11,6 +11,28 @@ import Link from 'next/link'
 import { ViewEditor } from './ViewEditor'
 import { MbscEventcalendarView, Datepicker } from "@mobiscroll/react";
 
+/* Finalizing New Template Add
+
+    !!! IMPORTANT: Only follow these steps AFTER you have completed the previous steps in './reactTemplates.tsx'
+
+    Now that you have created your template, you need to connect it to an existing renderer. Here’s how:
+
+    Let's say your new template is named 'yourTemplateName' and you want to connect it to the 'renderAgenda' renderer.
+
+    * STEP 1: Find the renderer in 'templateOptions'
+        - Locate the renderer you want (e.g., 'renderAgenda') in the 'templateOptions' object.
+
+    * STEP 2: The entry should look like this:
+          renderAgenda: ['renderAgenda', ...],
+
+    * STEP 3: Add your new template name to the array:
+          renderAgenda: ['renderAgenda', 'yourTemplateName'],
+
+    * STEP 4: Test your new template to ensure it works as expected.
+
+    !!! IMPORTANT: PLEASE DO NOT DELETE OR MODIFY templates that were not created by you.
+
+*/
 const templateOptions: Record<string, string[]> = {
     renderAgenda: ['renderAgenda'],
     renderAgendaEmpty: ['renderAgendaEmpty'],
@@ -68,7 +90,6 @@ const templateOptions: Record<string, string[]> = {
     !!! IMPORTANT: PLEASE DO NOT DELETE OR MODIFY functions you did not create.
 
 */
-
 const hookOptions: Record<string, string[]> = {
     onCellClick: ['defaultEventHandler'],
     onCellDoubleClick: ['defaultEventHandler'],
@@ -115,7 +136,6 @@ const hookOptions: Record<string, string[]> = {
     onVirtualLoading: ['defaultEventHandler'],
 
 };
-
 
 export type SelectedConfig = Record<string, string | number | boolean | null | MbscEventcalendarView>;
 

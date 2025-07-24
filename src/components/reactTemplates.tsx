@@ -2,6 +2,43 @@ import React from 'react';
 import { MbscCalendarEventData, MbscResource } from '@mobiscroll/react';
 import Image from 'next/image';
 
+/*
+This file is for adding new Mobiscroll renderer functions ("templates").
+Templates allow you to customize the rendering of elements like 'renderResource', 'renderHeader', etc.
+See the full list of supported renderers in the docs: https://mobiscroll.com/docs/react/datepicker/api#renderers
+
+If you want to add a new template for a renderer, follow these steps:
+
+* STEP 1: Define the template here
+   Below 'export const templates', add your template using this structure:
+
+      yourTemplateName: {
+        fn: (args: MbscResource | MbscCalendarEventData - or your own specific type ) => (
+          <div>Your custom template</div>
+        ),
+        code: {
+          tsx: // TSX code that will show in the code preview`.trim(),
+          jsx: // JSX code, if applicable`.trim(),
+          // You can add more keys: 'js', 'sfcjs', 'sfcts', 'template', 'html', etc.
+        }
+      }
+
+  !!! IMPORTANT: The code in 'fn', 'tsx', 'jsx', etc. MUST be valid for that language.
+  Supported languages: 'TSX', 'JSX', 'JS', 'SFCJS', 'SFCTS', 'SFC TS', 'SFC JS', 'TEMPLATE', 'HTML'.
+  See all available language keys in './reactTemplates'.
+
+  !!! IMPORTANT: For types, use Mobiscroll types like 'MbscResource', 'MbscCalendarEventData', etc., or your own.
+  **Avoid using 'any' as the type.**
+
+* STEP 2: Finalize in ConfigurationsSelector.tsx
+  Once you've created the new template in 'export const templates',
+  go to './ConfigurationsSelector.tsx' and follow the instructions at the top of the file
+  (look for the comment "Finalizing new template add").
+
+*/
+
+
+
 export const templates = {
   renderAgenda: {
     fn: (agenda: any) => (
