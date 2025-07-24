@@ -177,7 +177,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                     />
                 </div>
             ) : (
-                <div className="mockup-phone">
+                <div className="mockup-phone bg-gray-100">
                     <div className="mockup-phone-camera z-50" />
                     <div className="mockup-phone-display my-mockup">
                         <Component
