@@ -1,5 +1,42 @@
 // reactHooks.ts
-// 
+// reactHooks.ts
+/*
+This file is for adding new Mobiscroll event handler functions ("hooks").
+You can trigger events like 'onCellClick' or 'onEventClick' using these hooks.
+See the full list of supported events in the docs: https://mobiscroll.com/docs/react/datepicker/api#events
+
+If you want to add a new function for an event, follow these steps:
+
+* STEP 1: Define the event handler here
+  Below the 'export const hooks', add your event handler with this template:
+
+    yourEventName: {
+      fn: () => { },
+      code: {
+        tsx: `// TSX code that will show in the code preview`.trim(),
+        jsx: `// JSX code, if applicable`.trim(),
+        // You can add more keys for 'js', 'sfcjs', 'sfcts', 'template', 'html', etc.
+      }
+    }
+
+  !!! IMPORTANT: The 'fn' function (for the live preview) **must always be:**  '() => { },'
+  This function will be copied directly into 'LivePreview.tsx'.
+
+  !!! IMPORTANT: The code you put under 'tsx', 'jsx', etc. **must be valid code** for that language.
+  Supported languages: 'TSX', 'JSX', 'JS', 'SFCJS', 'SFCTS', 'SFC TS', 'SFC JS', 'TEMPLATE', 'HTML'.
+  See all available language keys in './reactTemplates'.
+
+* STEP 2: Register the handler in LivePreview.tsx
+  After you add your function above, **open './LivePreview.tsx'**.
+  Follow the instructions in the comment labeled 'Adding New Event Function'.
+
+* STEP 3: Finalize it in ConfigurationsSelector.tsx
+  Once you've wired up your event in 'LivePreview.tsx',
+  go to './ConfigurationsSelector.tsx' and follow the instructions at the top of the file
+  (look for the comment "Finalizing new event add").
+
+*/
+
 
 
 export function toVueEventName(hookName: string): string {

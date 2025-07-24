@@ -46,6 +46,29 @@ const templateOptions: Record<string, string[]> = {
     renderYearFooter: ['renderYearFooter'],
 };
 
+/* Finalizing New Event Add
+
+    !!! IMPORTANT: Only follow these steps AFTER you have completed the previous steps in './reactHooks.tsx' and './LivePreview.tsx'.
+
+    Now that you have created your new function, you need to connect it to an existing event. Here’s how to do it:
+
+    Let's say your new function is named 'yourEventName' and you want to connect it to the 'onCellClick' event.
+
+    * STEP 1: Find the event in 'hookOptions'
+        - Locate the event you want (e.g., 'onCellClick') in the 'hookOptions' object.
+
+    * STEP 2: The entry should look like this:
+          onCellClick: ['defaultEventHandler', ... ],
+
+    * STEP 3: Add your new function’s name to the array:
+          onCellClick: ['defaultEventHandler', 'yourEventName'],
+
+    * STEP 4: Test your new function to ensure it works correctly.
+
+    !!! IMPORTANT: PLEASE DO NOT DELETE OR MODIFY functions you did not create.
+
+*/
+
 const hookOptions: Record<string, string[]> = {
     onCellClick: ['defaultEventHandler'],
     onCellDoubleClick: ['defaultEventHandler'],

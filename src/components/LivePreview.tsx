@@ -72,7 +72,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                     if (!ignore) setMyData(events);
                 })
                 .catch(err => {
-                    if (!ignore) setMyData([]); 
+                    if (!ignore) setMyData([]);
                 });
         } else {
             console.log('[LivePreview] Using direct eventData:', eventData);
@@ -83,10 +83,45 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     }, [eventData]);
 
 
-
-    useEffect(() => {
-        console.log('[LivePreview] eventData:', eventData);
-    }, [eventData]);
+    /* Adding New Event Function (Start)
+ 
+     !!! IMPORTANT: Only follow these steps AFTER completing the steps in './reactHooks.ts'.
+ 
+     Once you have created your new event function in './reactHooks.ts', continue here:
+ 
+     * STEP 1: Write the handler function
+         - Define your new handler function with the SAME name as in './reactHooks.ts'.
+         - Write your new function ABOVE the comment: 'WRITE NEW FUNCTIONS ABOVE THIS'.
+         - Follow the structure of existing functions (e.g., useCallback for React handlers if needed).
+ 
+     * STEP 2: Register the handler in 'customHandlers'
+         - Add your new function to the 'customHandlers' array.
+         - Use this format: { key: yourEventName, fn: yourEventName }
+         - Insert it ABOVE the comment: "INSERT NEW FUNCTION HERE".
+         
+         !!! IMPORTANT: The function name ('key') MUST MATCH exactly in both this file and './reactHooks.ts'.
+ 
+     Example:
+ 
+         // Step 1: Define handler above this line
+         const myCustomHandler = useCallback((args) => {
+             // your handler logic
+         }, []);
+ 
+         // 'WRITE NEW FUNCTIONS ABOVE THIS'
+ 
+         // Step 2: Register handler here
+         const customHandlers = [
+             { key: 'myCustomHandler', fn: myCustomHandler },
+             // "INSERT NEW FUNCTION HERE"
+         ];
+ 
+     * STEP 3: Finalize in ConfigurationsSelector.tsx
+         - After registering your handler, open './ConfigurationsSelector.tsx'.
+         - Follow the steps at the top of the file (look for the comment "Finalizing new event add").
+ 
+     After completing these steps, your new event will be available throughout the app.
+ */
 
     const handleEventClick = useCallback((args: MbscEventClickEvent) => {
         setToastText(args.event.title ?? '');
@@ -103,13 +138,18 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         setToastOpen(true);
     }, []);
 
+    // WRITE NEW FUNCTIONS ABOVE THIS
+
 
     const customHandlers: { key: string; fn: (...args: MbscEventClickEvent[]) => void }[] = [
-        { key: 'myEventClick', fn: handleEventClick },
+        { key: 'handleEventClick', fn: handleEventClick },
         { key: 'extendDefaultEvent', fn: extendDefaultEvent },
         { key: 'defaultEventHandler', fn: defaultEventHandler }
 
+        // INSERT NEW FUNCTION HERE
+
     ];
+
 
     type ResourceTemplateFn = (resource: MbscResource) => React.ReactNode;
     type EventTemplateFn = (event: MbscCalendarEventData) => React.ReactNode;
