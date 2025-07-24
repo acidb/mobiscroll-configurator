@@ -61,7 +61,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         let ignore = false;
 
         if (eventData && typeof eventData === 'object' && 'url' in eventData) {
-            fetch('/api/timeline-events')
+            fetch(`${eventData.url}`)
                 .then(res => {
                     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                     return res.json();
