@@ -1,6 +1,5 @@
 import React from 'react'
 import { Framework } from './types'
-import Image from 'next/image'
 
 interface FrameworkSectionProps {
   frameworks: Framework[]
@@ -15,43 +14,39 @@ const FrameworkSection: React.FC<FrameworkSectionProps> = ({
   selectedComponent,
   updateSelection,
 }) => {
+  const isDisabled = !selectedComponent
+
   return (
-    <section className="mb-2">
-      <div className="flex flex-wrap gap-4">
-        {frameworks.map((framework) => {
-          const isSelected = selectedFramework === framework.slug
-          const isDisabled = !selectedComponent
+    <div className="flex items-center gap-2">
+      {selectedFramework && (
+        <img
+          src={
+            frameworks.find((f) => f.slug === selectedFramework)?.icon
+          }
+          alt="Selected framework"
+          className="w-5"
+        />
+      )}
 
-          return (
-            <button
-              key={framework.slug}
-              className={`
-                 btn rounded-md p-4
-                  ${isSelected ? 'btn-primary' : ''}
-                  ${isDisabled ? 'btn-disabled' : ''}
-                `}
-              onClick={() => !isDisabled && updateSelection('framework', framework.slug)}
-              disabled={isDisabled}
-              aria-label={`Select ${framework.name} framework`}
-              aria-disabled={isDisabled}
-            >
-              <div className="flex items-center space-x-2 ">
-                <Image
-                  src={framework.icon}
-                  alt={framework.name}
-                  width={32}
-                  height={32}
-                  className="w-8 h-8"
-                  unoptimized 
-                />
+      <select
+        className="select select-xs w-24  px-2 py-1 rounded bg-white text-blue-600 hover:bg-blue-100 shadow-sm disabled:opacity-50"
+        disabled={isDisabled}
+        value={selectedFramework ?? ''}
+        onChange={(e) => updateSelection('framework', e.target.value || null)}
+      >
+        <option disabled value="">
+          Framework
+        </option>
+        {frameworks.map((framework) => (
+          <option key={framework.slug} value={framework.slug}>
+            {framework.name}
+          </option>
+        ))}
+      </select>
 
-                <span className="font-medium">{framework.name}</span>
-              </div>
-            </button>
-          )
-        })}
-      </div>
-    </section>
+
+    </div>
+
   )
 }
 

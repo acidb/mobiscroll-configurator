@@ -24,11 +24,18 @@ export const exampleSnippets: CodeSnippet[] = [
 import React from 'react';
 
 export default function HelloWorld() {
-  return <div>Hello, world!</div>;
+  return (
+    <ol>
+      <li>Choose group</li>
+      <li>Choose component</li>
+      <li>Choose preset</li>
+    </ol>
+  );
 }
 `.trim(),
-  }
+  },
 ];
+
 
 
 export default function ConfiguratorClient({
@@ -572,16 +579,18 @@ export default function ConfiguratorClient({
         <div className={previewAreaClass}>
           <div className={`flex flex-col w-full overflow-auto max-w-full transition-all duration-500 ease-in-out`}>
             <>
-              <FrameworkSection
-                frameworks={frameworks}
-                selectedFramework={selectedFramework}
-                selectedComponent={selectedComponent}
-                updateSelection={updateSelection}
-              />
+              
               {isLoading ? (
-                <CodePreview fullCode={exampleSnippets} />
+                <CodePreview fullCode={exampleSnippets}
+                  frameworks={frameworks}
+                  selectedFramework={selectedFramework}
+                  selectedComponent={selectedComponent}
+                  updateSelection={updateSelection} />
               ) : (
-                <CodePreview fullCode={code} />
+                <CodePreview fullCode={code} frameworks={frameworks}
+                  selectedFramework={selectedFramework}
+                  selectedComponent={selectedComponent}
+                  updateSelection={updateSelection} />
               )}
             </>
           </div>
@@ -595,16 +604,55 @@ export default function ConfiguratorClient({
             {isLoading ? (
               isScheduler ? (
                 <div className="mockup-window bg-white border border-base-300 w-full rounded-mg min-h-[700px] max-h-[700px]">
-                  {/* <Image alt="wallpaper" src="https://img.daisyui.com/images/stock/453966.webp" layout="fill" objectFit="cover" /> */}
-
-                </div>
-              ) : (
-                <div className="mockup-phone">
-                  <div className="mockup-phone-camera z-50" />
-                  <div className="mockup-phone-display">
-                    {/* <Image alt="wallpaper" src="https://img.daisyui.com/images/stock/453966.webp" layout="fill" objectFit="cover" /> */}
+                  <div className="w-full px-6 py-8">
+                    <div className="flex flex-col gap-4">
+                      <ol className="space-y-4">
+                        {[
+                          "Choose group",
+                          "Choose component",
+                          "Choose preset"
+                        ].map((step, idx) => (
+                          <li key={idx} className="flex items-start gap-3 group">
+                            <div className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-md transition-transform group-hover:scale-110">
+                              {idx + 1}
+                            </div>
+                            <div className="text-sm text-gray-800 group-hover:text-primary transition-colors">
+                              {step}
+                            </div>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
                   </div>
                 </div>
+              ) : (
+                <div className="mockup-phone bg-base-200">
+                  <div className="mockup-phone-camera z-50" />
+                  <div className="mockup-phone-display flex items-center justify-center">
+                    <div className="w-full px-6 py-8">
+                      <div className="flex flex-col gap-4">
+                        <ol className="space-y-4">
+                          {[
+                            "Choose group",
+                            "Choose component",
+                            "Choose preset"
+                          ].map((step, idx) => (
+                            <li key={idx} className="flex items-start gap-3 group">
+                              <div className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-md transition-transform group-hover:scale-110">
+                                {idx + 1}
+                              </div>
+                              <div className="text-sm text-gray-800 group-hover:text-primary transition-colors">
+                                {step}
+                              </div>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
               )
             ) : (
               <div
