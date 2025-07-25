@@ -508,7 +508,7 @@ export default function ConfiguratorClient({
     <div className="w-full h-full">
 
       <div className="flex flex-col xl:flex-row gap-6 items-start transition-all duration-500 ease-in-out">
-        <div className="w-full lg:w-[20%] mg:w-[5%] xl:sticky xl:top-3 self-start">
+        <div className="w-full lg:w-[20%] mg:w-[5%] xl:sticky xl:top-3 self-start min-w-[300px]">
           <ConfigurationsSelector
             configurations={{
               ...props,
