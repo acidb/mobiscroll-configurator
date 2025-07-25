@@ -26,7 +26,12 @@ export default buildConfig({
     },
     components: {
       beforeDashboard: ['@/components/DashBoardDescription'],
+      graphics: {
+        Logo: '@/components/MobiscrollLogo',
+        Icon: '@/components/MobiscrollLogo',
+      }
     },
+    theme: "light"
   },
   collections: [Users, Media, Groups, Components, Frameworks, Presets, Configs, Settings],
   editor: lexicalEditor(),
@@ -63,7 +68,7 @@ export default buildConfig({
         }
       },
     },
-   
+
   ],
 
 

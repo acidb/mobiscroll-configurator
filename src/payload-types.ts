@@ -201,7 +201,6 @@ export interface Framework {
   id: string;
   name: string;
   slug: string;
-  template: string;
   templates?:
     | {
         label: string;
@@ -429,7 +428,6 @@ export interface ComponentsSelect<T extends boolean = true> {
 export interface FrameworksSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
-  template?: T;
   templates?:
     | T
     | {

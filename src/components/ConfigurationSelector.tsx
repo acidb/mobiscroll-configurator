@@ -52,7 +52,7 @@ const templateOptions: Record<string, string[]> = {
     renderMonthFooter: ['renderMonthFooter'],
     renderQuarter: ['renderQuarter'],
     renderQuarterFooter: ['renderQuarterFooter'],
-    renderResource: ['renderResource'],
+    renderResource: ['renderResource', 'renderResourceWithAvatar'],
     renderResourceEmpty: ['renderResourceEmpty'],
     renderResourceFooter: ['renderResourceFooter'],
     renderResourceHeader: ['renderResourceHeader'],
@@ -707,7 +707,6 @@ export function ConfigurationsSelector({
         bg-white
         flex flex-col
         z-50
-        min-w-[300px]
         overflow-y-auto
       "
             style={{ maxHeight: 'calc(100vh - 64px)' }}
@@ -740,48 +739,48 @@ export function ConfigurationsSelector({
             />
 
             {selectedGroup && selectedComponent && selectedPreset && (
-                    <div className="flex justify-between items-center border-b border-gray-200 py-2">
-                        <div>
-                            {user && selectedPreset && config?.id && (
-                                <Link
-                                    href={`/admin/collections/configs/${config.id}`}
-                                    className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white shadow flex items-center gap-1 px-3 transition-all duration-300"
+                <div className="flex justify-between items-center border-b border-gray-200 py-2">
+                    <div>
+                        {user && selectedPreset && config?.id && (
+                            <Link
+                                href={`/admin/collections/configs/${config.id}`}
+                                className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white shadow flex items-center gap-1 px-3 transition-all duration-300"
 
-                                    title="Edit this configuration"
-                                >
-                                    <span className="font-semibold">Edit this config</span>
-                                    <ExternalLink size={14} />
-
-                                </Link>
-                            )}
-                        </div>
-
-
-                        <div className="flex gap-2">
-                            {selectedPreset && (
-                                <div>
-                                    <ConfigDropdown onChange={onChange} onTemplateChange={onTemplateChange} onHooksChange={onHooksChange} config={config} settings={settings} selectedPreset={selectedPreset} hooks={hooks} templates={templates} />
-                                </div>
-                            )}
-                            <button
-                                className={`btn btn-sm shadow flex items-center gap-1 px-3 transition-all duration-300
-                                ${editMode
-                                        ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                                        : 'bg-gray-200 hover:bg-orange-100 text-gray-600'
-                                    }`}
-                                title={editMode ? 'Exit edit mode' : 'Edit configuration'}
-                                onClick={() => setEditMode(e => !e)}
-                                type="button"
+                                title="Edit this configuration"
                             >
-                                <span className="transition-opacity duration-200">
-                                    {editMode ? <PencilOff size={18} /> : <Pencil size={18} />}
-                                </span>
-                                <span className="font-semibold transition-opacity duration-200">
-                                    {editMode ? 'Exit Edit' : 'Edit'}
-                                </span>
-                            </button>
-                        </div>
+                                <span className="font-semibold">Edit this config</span>
+                                <ExternalLink size={14} />
+
+                            </Link>
+                        )}
                     </div>
+
+
+                    <div className="flex gap-2">
+                        {selectedPreset && (
+                            <div>
+                                <ConfigDropdown onChange={onChange} onTemplateChange={onTemplateChange} onHooksChange={onHooksChange} config={config} settings={settings} selectedPreset={selectedPreset} hooks={hooks} templates={templates} />
+                            </div>
+                        )}
+                        <button
+                            className={`btn btn-sm shadow flex items-center gap-1 px-3 transition-all duration-300
+                                ${editMode
+                                    ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                                    : 'bg-gray-200 hover:bg-orange-100 text-gray-600'
+                                }`}
+                            title={editMode ? 'Exit edit mode' : 'Edit configuration'}
+                            onClick={() => setEditMode(e => !e)}
+                            type="button"
+                        >
+                            <span className="transition-opacity duration-200">
+                                {editMode ? <PencilOff size={18} /> : <Pencil size={18} />}
+                            </span>
+                            <span className="font-semibold transition-opacity duration-200">
+                                {editMode ? 'Exit Edit' : 'Edit'}
+                            </span>
+                        </button>
+                    </div>
+                </div>
 
             )}
             {selectedGroup && selectedComponent && selectedPreset && (
