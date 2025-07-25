@@ -579,16 +579,18 @@ export default function ConfiguratorClient({
         <div className={previewAreaClass}>
           <div className={`flex flex-col w-full overflow-auto max-w-full transition-all duration-500 ease-in-out`}>
             <>
-              <FrameworkSection
-                frameworks={frameworks}
-                selectedFramework={selectedFramework}
-                selectedComponent={selectedComponent}
-                updateSelection={updateSelection}
-              />
+              
               {isLoading ? (
-                <CodePreview fullCode={exampleSnippets} />
+                <CodePreview fullCode={exampleSnippets}
+                  frameworks={frameworks}
+                  selectedFramework={selectedFramework}
+                  selectedComponent={selectedComponent}
+                  updateSelection={updateSelection} />
               ) : (
-                <CodePreview fullCode={code} />
+                <CodePreview fullCode={code} frameworks={frameworks}
+                  selectedFramework={selectedFramework}
+                  selectedComponent={selectedComponent}
+                  updateSelection={updateSelection} />
               )}
             </>
           </div>
