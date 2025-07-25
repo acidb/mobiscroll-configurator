@@ -1,5 +1,5 @@
 import React from "react";
-import { MbscEventcalendarView } from "@mobiscroll/react";
+import { Datepicker, MbscEventcalendarView } from "@mobiscroll/react";
 
 const ENUM_OPTIONS: Record<string, string[]> = {
     type: ["month", "week", "day", "year"],
@@ -125,19 +125,28 @@ export const ViewEditor: React.FC<ViewEditorProps> = ({ view, onChange }) => {
                                         )}
 
                                         {(key === "startTime" || key === "endTime") ? (
-                                            <input
-                                                type="time"
-                                                className="input input-xs w-20 max-w-[80px] text-xs rounded-sm"
+                                            <Datepicker
+                                                controls={['time']}
+                                                timeFormat="HH:mm"
+                                                touchUi={true}
                                                 value={value as string}
-                                                onChange={e =>
+                                                onChange={(e) =>
                                                     onChange({
                                                         ...view,
                                                         [mode]: {
                                                             ...config,
-                                                            [key]: e.target.value, // "HH:mm" (e.g., "08:00")
+                                                            [key]: e.value,
                                                         },
                                                     })
                                                 }
+                                                inputProps={{
+                                                    className: "input input-xs w-20 max-w-[80px] text-xs rounded-sm h-8 px-2",
+                                                    style: {
+                                                        fontSize: '0.75rem',
+                                                        height: '2rem',
+                                                    },
+                                                    
+                                                }}
                                             />
 
 
