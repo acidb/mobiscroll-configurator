@@ -1027,7 +1027,7 @@ const renderDay = (day) => (
     }
   },
   renderBufferAfter: {
-    fn: (obj: MbscResource) => (<div>Buffer after</div>),
+    fn: () => (<div>Buffer after</div>),
     code: {
       tsx: `
 const renderBufferAfter = useCallback(() => (
@@ -1057,7 +1057,7 @@ const renderBufferAfter = () => (
     }
   },
   renderBufferBefore: {
-    fn: (obj: MbscResource) => (<div>Buffer before</div>),
+    fn: () => (<div>Buffer before</div>),
     code: {
       tsx: `
 const renderBufferBefore = useCallback(() => (
@@ -1117,7 +1117,7 @@ const renderDayContent = (day) => (
     }
   },
   renderDayFooter: {
-    fn: (obj: MbscResource) => (<div>Day footer</div>),
+    fn: () => (<div>Day footer</div>),
     code: {
       tsx: `
 const renderDayFooter = useCallback(() => (
@@ -1237,7 +1237,7 @@ const renderHour = (hour) => (
     }
   },
   renderHourFooter: {
-    fn: (obj: MbscResource) => (<div>Hour footer</div>),
+    fn: () => (<div>Hour footer</div>),
     code: {
       tsx: `
 const renderHourFooter = useCallback(() => (
@@ -1327,7 +1327,7 @@ const renderMonth = (month) => (
     }
   },
   renderMonthFooter: {
-    fn: (obj: MbscResource) => (<div>Month footer</div>),
+    fn: () => (<div>Month footer</div>),
     code: {
       tsx: `
 const renderMonthFooter = useCallback(() => (
@@ -1387,7 +1387,7 @@ const renderQuarter = (quarter) => (
     }
   },
   renderQuarterFooter: {
-    fn: (obj: MbscResource) => (<div>Quarter footer</div>),
+    fn: () => (<div>Quarter footer</div>),
     code: {
       tsx: `
 const renderQuarterFooter = useCallback(() => (
@@ -1447,7 +1447,7 @@ const renderResourceEmpty = () => (
     }
   },
   renderResourceFooter: {
-    fn: (obj: MbscResource) => (<div>Resource footer</div>),
+    fn: () => (<div>Resource footer</div>),
     code: {
       tsx: `
 const renderResourceFooter = useCallback(() => (
@@ -1477,7 +1477,7 @@ const renderResourceFooter = () => (
     }
   },
   renderResourceHeader: {
-    fn: (obj: MbscResource) => (<div>Resource header</div>),
+    fn: () => (<div>Resource header</div>),
     code: {
       tsx: `
 const renderResourceHeader = useCallback(() => (
@@ -1567,7 +1567,7 @@ const renderScheduleEventContent = (event) => (
     }
   },
   renderSidebar: {
-    fn: (obj: MbscResource) => (<div>Sidebar</div>),
+    fn: () => (<div>Sidebar</div>),
     code: {
       tsx: `
 const renderSidebar = useCallback(() => (
@@ -1597,7 +1597,7 @@ const renderSidebar = () => (
     }
   },
   renderSidebarFooter: {
-    fn: (obj: MbscResource) => (<div>Sidebar footer</div>),
+    fn: () => (<div>Sidebar footer</div>),
     code: {
       tsx: `
 const renderSidebarFooter = useCallback(() => (
@@ -1627,7 +1627,7 @@ const renderSidebarFooter = () => (
     }
   },
   renderSidebarHeader: {
-    fn: (obj: MbscResource) => (<div>Sidebar header</div>),
+    fn: () => (<div>Sidebar header</div>),
     code: {
       tsx: `
 const renderSidebarHeader = useCallback(() => (
@@ -1717,7 +1717,7 @@ const renderWeek = (week) => (
     }
   },
   renderWeekFooter: {
-    fn: (obj: MbscResource) => (<div>Week footer</div>),
+    fn: () => (<div>Week footer</div>),
     code: {
       tsx: `
 const renderWeekFooter = useCallback(() => (
@@ -1777,7 +1777,7 @@ const renderYear = (year) => (
     }
   },
   renderYearFooter: {
-    fn: (obj: MbscResource) => (<div>Year footer</div>),
+    fn: () => (<div>Year footer</div>),
     code: {
       tsx: `
 const renderYearFooter = useCallback(() => (
