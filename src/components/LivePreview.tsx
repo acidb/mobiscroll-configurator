@@ -238,6 +238,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                 <div className="mockup-phone bg-gray-100">
                     <div className="mockup-phone-camera z-50" />
                     <div className="mockup-phone-display my-mockup">
+                        <div className={selectedComponent === 'select' ? 'pt-6' : ''}></div>
                         <Component
                             themeVariant="light"
                             {...safeMergedProps}
