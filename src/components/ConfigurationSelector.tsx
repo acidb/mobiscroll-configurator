@@ -554,7 +554,7 @@ export function ConfigurationsSelector({
                                     <input
                                         type="date"
                                         value={value ? String(value).slice(0, 10) : ''}
-                                        onChange={e => updateValue(key, e.target.value)}
+                                        onChange={e => updateValue(key, e.target.value.toString())}
                                         className="input input-xs w-28 rounded-sm"
                                     />
                                     {editMode && (
