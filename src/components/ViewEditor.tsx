@@ -129,6 +129,7 @@ export const ViewEditor: React.FC<ViewEditorProps> = ({ view, onChange }) => {
                                                 controls={['time']}
                                                 timeFormat="HH:mm"
                                                 touchUi={true}
+                                                display="anchored"
                                                 value={value as string}
                                                 onChange={(e) => {
                                                     const date = e.value as Date;
