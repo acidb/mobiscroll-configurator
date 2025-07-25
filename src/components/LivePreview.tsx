@@ -68,6 +68,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     } = data || {};
 
     const [toastOpen, setToastOpen] = useState(false);
+
     const [toastText, setToastText] = useState('');
     const [myData, setMyData] = useState<MbscCalendarEvent[]>([]);
 
@@ -216,7 +217,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     return (
         <>
             {isScheduler ? (
-                <div className="mockup-window border my-mockup  bg-white border-base-300 w-full rounded-mg">
+                <div id="toast-desktop-container" className="mockup-window border my-mockup  bg-white border-base-300 w-full rounded-mg">
                     <Component
                         themeVariant="light"
                         {...safeMergedProps}
@@ -234,12 +235,13 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                         message={toastText}
                         isOpen={toastOpen}
                         onClose={() => setToastOpen(false)}
+                        context="#toast-desktop-container"
                     />
                 </div>
             ) : (
                 <div className="mockup-phone bg-gray-100">
                     <div className="mockup-phone-camera z-50" />
-                    <div className="mockup-phone-display my-mockup">
+                    <div className="mockup-phone-display my-mockup" id="toast-container">
                         <div className={selectedComponent === 'select' ? 'pt-6' : ''}></div>
                         <Component
                             themeVariant="light"
@@ -257,6 +259,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                             message={toastText}
                             isOpen={toastOpen}
                             onClose={() => setToastOpen(false)}
+                            context="#toast-container"
                         />
                     </div>
                 </div>
