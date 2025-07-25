@@ -260,10 +260,16 @@ export default function ConfiguratorClient({
       const invalid = extractedValues.invalid ?? []
       const colors = extractedValues.colors ?? []
 
+      const slots = extractedValues.slots ?? []
+      const connections = extractedValues.connections ?? []
+
       const inlineData = extractedInlineValues.data ?? []
       const inlineResources = extractedInlineValues.resources ?? []
       const inlineInvalid = extractedInlineValues.invalid ?? []
       const inlineColors = extractedInlineValues.colors ?? []
+
+      const inlineSlots = extractedInlineValues.slots ?? []
+      const inlineConnections = extractedInlineValues.connections ?? []
 
       function getComponentTemplateProps(templates: Record<string, string>): string {
         if (!templates) return '';
@@ -390,10 +396,17 @@ export default function ConfiguratorClient({
       const hasInvalid = isFilled(invalid)
       const hasColors = isFilled(colors)
 
+      const hasSlots = isFilled(slots)
+      const hasConnections = isFilled(connections)
+
       const hasInlineData = hasData && isFilled(inlineData)
       const hasInlineResources = hasResources && isFilled(inlineResources)
       const hasInlineInvalid = hasInvalid && isFilled(inlineInvalid)
+
       const hasInlineColors = hasColors && isFilled(inlineColors)
+
+      const hasInlineSlots = hasSlots && isFilled(inlineSlots)
+      const hasInlineConnections = hasConnections && isFilled(inlineConnections)
 
       const allowedLabels = [
         'TSX', 'JSX', 'jquery', 'vue', 'react', 'Component', 'Template', 'SFC JS', 'SFC TS', 'HTML', 'JS'
@@ -462,6 +475,24 @@ export default function ConfiguratorClient({
                 : ''
             )
             .replace(
+              /\/\* slots \*\//g,
+              hasInvalid
+                ? frameworkObj.slug === 'vue'
+                  ? `const mySlots = ref(${toUnquotedObjectString(slots, 2)});`
+                  : `const mySlots = ${JSON.stringify(slots, null, 2)};`
+                : ''
+            )
+
+            .replace(
+              /\/\* connections \*\//g,
+              hasInvalid
+                ? frameworkObj.slug === 'vue'
+                  ? `const myConnections = ref(${toUnquotedObjectString(connections, 2)});`
+                  : `const myConnections = ${JSON.stringify(connections, null, 2)};`
+                : ''
+            )
+
+            .replace(
               /\/\* colors \*\//g,
               hasColors
                 ? frameworkObj.slug === 'vue'
@@ -477,6 +508,8 @@ export default function ConfiguratorClient({
               hasInlineResources ? formatFrameworkProp('resources', 'myResources') : ''
             )
             .replace(/\/\* Component invalids \*\//g, hasInlineInvalid ? formatFrameworkProp('invalid', 'myInvalid') : '')
+            .replace(/\/\* Component slots \*\//g, hasInlineSlots ? formatFrameworkProp('slots', 'mySlots') : '')
+            .replace(/\/\* Component connections \*\//g, hasInlineConnections ? formatFrameworkProp('connections', 'myConnections') : '')
             .replace(/\/\* Component colors \*\//g, hasInlineColors ? formatFrameworkProp('colors', 'myColors') : '')
             .replace(/\/\* Component hooks \*\//g, componentHookProps)
             .replace(/\/\* Component templates \*\//g, componentTemplateProps)
@@ -508,7 +541,7 @@ export default function ConfiguratorClient({
     <div className="w-full h-full">
 
       <div className="flex flex-col xl:flex-row gap-6 items-start transition-all duration-500 ease-in-out">
-        <div className="w-full lg:w-[20%] mg:w-[5%] xl:sticky xl:top-3 self-start">
+        <div className="w-full lg:w-[20%] mg:w-[5%] xl:sticky xl:top-3 self-start min-w-[300px]">
           <ConfigurationsSelector
             configurations={{
               ...props,

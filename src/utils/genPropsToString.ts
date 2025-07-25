@@ -10,7 +10,7 @@ export function genCodeWithTopVars(
     data?: Record<string, string>,
     templates?: Record<string, string>,
     hooks?: Record<string, string>,
-    extracted: string[] = ['data', 'view', 'resources', 'invalid', 'colors', 'templates', 'hooks'],
+    extracted: string[] = ['data', 'view', 'resources', 'invalid', 'colors', 'templates', 'hooks', 'slots', 'connections'],
 ) {
     const topVars: string[] = [];
     const templateInlineProps: string[] = [];
