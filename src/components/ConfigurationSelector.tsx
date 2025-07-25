@@ -707,7 +707,6 @@ export function ConfigurationsSelector({
         bg-white
         flex flex-col
         z-50
-        min-w-[300px]
         overflow-y-auto
       "
             style={{ maxHeight: 'calc(100vh - 64px)' }}
