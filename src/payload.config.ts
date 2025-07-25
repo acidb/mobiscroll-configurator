@@ -27,6 +27,7 @@ export default buildConfig({
     components: {
       beforeDashboard: ['@/components/DashBoardDescription'],
     },
+    theme : "light"
   },
   collections: [Users, Media, Groups, Components, Frameworks, Presets, Configs, Settings],
   editor: lexicalEditor(),
