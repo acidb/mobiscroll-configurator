@@ -1,4 +1,6 @@
-@tailwind utilities;
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css';
+@import 'tailwindcss/utilities.css';
 @plugin "daisyui";
 
 .config-p {
@@ -9,3 +11,5 @@
   border: 0;
   background-color: transparent;
 }
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
