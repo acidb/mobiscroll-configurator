@@ -45,9 +45,16 @@ export default function ConfigDescription() {
                             </li>
                             <li>
                                 <b>hooks</b>: Lifecycle event handler mappings. Handler functions can be added in <code>src/components/reactHooks.tsx</code>.
+                                <div className="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+                                    <b className="font-medium">Important</b> The lifecycle event name needs to be present in the reactHooks.tsx in order to be used in the code preview.
+                                </div>
                             </li>
                             <li><b>props</b>: General component options.</li>
-                            <li><b>templates</b>: Template/render function mappings. Template functions can be added in <code>src/components/reactTemplates.tsx</code></li>
+                            <li><b>templates</b>: Template/render function mappings. Template functions can be added in <code>src/components/reactTemplates.tsx</code>
+                                <div className="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+                                    <b className="font-medium">Important</b> The template function name needs to be present in the reactTemplates.tsx in order to be used in the code preview.
+                                </div>
+                            </li>
                             <li>
                                 <b>types</b>: Mobiscroll TypeScript types used in code. .
                             </li>

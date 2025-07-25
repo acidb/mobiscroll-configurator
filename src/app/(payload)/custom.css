@@ -3,7 +3,6 @@
 @import 'tailwindcss/utilities.css';
 @plugin "daisyui";
 
-
 .config-p {
   margin: 1em 0;
 }
@@ -13,3 +12,11 @@
   background-color: transparent;
 }
 
+code {
+  background-color: #f3f4f6;
+  color: #d6336c;
+  padding: 0.15em 0.4em;
+  border-radius: 0.3em;
+  font-size: 0.95em;
+  font-family: 'Fira Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+}
