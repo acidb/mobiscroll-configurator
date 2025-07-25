@@ -1,5 +1,5 @@
 import React from 'react';
-import { MbscCalendarEventData, MbscResource } from '@mobiscroll/react';
+import { MbscCalendarEventData, MbscResource, MbscSelectItemData } from '@mobiscroll/react';
 import Image from 'next/image';
 
 /*
@@ -40,6 +40,35 @@ If you want to add a new template for a renderer, follow these steps:
 
 
 export const templates = {
+  renderCustomItem: {
+    fn: (item: MbscSelectItemData) => {
+      const data = item.data;
+      return (
+        <div className="flex flex-row">
+          <img
+            className="max-h-12 max-w-12 object-contain"
+            src={'https://img.mobiscroll.com/demos/' + data.img + '.png'}
+            alt="Cover"
+          />
+          <div className="md-item-template-title">
+            <span>{data.text}</span>
+            <span className="md-item-template-year">{' (' + data.year + ')'}</span>
+          </div>
+          <div className="md-item-template-artist">{'by ' + data.artist}</div>
+        </div>
+      );
+    },
+
+    code: {
+      tsx: ``.trim(),
+      jsx: ``.trim(),
+      sfcjs: ``.trim(),
+      sfcts: ``.trim(),
+      template: ``.trim(),
+
+    }
+  },
+
   renderResourceWithAvatar: {
     fn: (resource: MbscResource) => (
       <div className="mbsc-flex">

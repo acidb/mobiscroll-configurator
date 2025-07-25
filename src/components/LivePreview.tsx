@@ -9,6 +9,7 @@ import {
     Toast,
     MbscEventcalendarView,
     MbscCalendarEvent,
+    MbscSelectItemData,
     Popup
 } from '@mobiscroll/react';
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
@@ -169,7 +170,8 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
     type ResourceTemplateFn = (resource: MbscResource) => React.ReactNode;
     type EventTemplateFn = (event: MbscCalendarEventData) => React.ReactNode;
-    type MobiscrollTemplateFn = ResourceTemplateFn | EventTemplateFn;
+    type SelectTemplateFn = (item: MbscSelectItemData) => React.ReactNode;
+    type MobiscrollTemplateFn = ResourceTemplateFn | EventTemplateFn | SelectTemplateFn;
 
 
     const templateProps: Record<string, MobiscrollTemplateFn> = {};

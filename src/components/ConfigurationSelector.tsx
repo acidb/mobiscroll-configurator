@@ -66,6 +66,10 @@ const templateOptions: Record<string, string[]> = {
     renderWeekFooter: ['renderWeekFooter'],
     renderYear: ['renderYear'],
     renderYearFooter: ['renderYearFooter'],
+
+    // SELECT TEMPLATES
+    renderItem: ['renderCustomItem'],
+
 };
 
 /* Finalizing New Event Add
@@ -134,6 +138,9 @@ const hookOptions: Record<string, string[]> = {
     onSelectedDateChange: ['defaultEventHandler'],
     onSelectedEventsChange: ['defaultEventHandler'],
     onVirtualLoading: ['defaultEventHandler'],
+
+    // SELECT  HOOKS
+    onChange: ['defaultEventHandler'],
 
 };
 
@@ -585,7 +592,7 @@ export function ConfigurationsSelector({
 
                     return (
                         <div key={key} className="flex items-center gap-3 justify-between">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-5">
                                 <kbd className="kbd rounded-sm ">
                                     {key}
                                 </kbd>
@@ -606,7 +613,7 @@ export function ConfigurationsSelector({
                                     />
                                 </span>
                             </div>
-                            <span className="ml-2">{String(value)}</span>
+                            <input type="text" placeholder={String(value)} className="input input-sm rounded-sm  max-w-24" disabled />
                         </div>
                     );
                 })}
