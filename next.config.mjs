@@ -2,15 +2,15 @@ import { withPayload } from '@payloadcms/next/withPayload'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // async redirects() {
-  //   return [
-  //     {
-  //       source: '/',
-  //       destination: '/configurator',
-  //       permanent: true,
-  //     },
-  //   ];
-  // },
+  async redirects() {
+    return [
+      {
+        source: '/configurator',
+        destination: '/',
+        permanent: true,
+      },
+    ];
+  },
   // Your Next.js config here
   images: {
     domains: ['img.mobiscroll.com'],
