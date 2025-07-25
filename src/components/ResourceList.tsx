@@ -1,4 +1,3 @@
-import { Users } from 'lucide-react';
 import React, { useState } from "react";
 
 export interface Resource {
@@ -41,17 +40,7 @@ export function ResourceList({ resources = [] }: { resources: Resource[] }) {
                             key={res.id ?? i}
                             className="flex items-center gap-4 py-3 px-3"
                         >
-                            {res.img ? (
-                                <img
-                                    src={res.img}
-                                    alt={res.name || `Resource ${res.id}`}
-                                    className="w-10 h-10 rounded-full object-cover border"
-                                />
-                            ) : (
-                                <div className="w-10 h-10 rounded-full bg-gray-200 border flex items-center justify-center text-gray-500 text-lg font-semibold">
-                                    {res.name ? res.name.charAt(0).toUpperCase() : <span role="img" aria-label="resource">🧑‍⚕️</span>}
-                                </div>
-                            )}
+
                             <div className="flex-1">
                                 <div className="font-semibold text-sm">
                                     {res.name ?? `Resource ${res.id}`}

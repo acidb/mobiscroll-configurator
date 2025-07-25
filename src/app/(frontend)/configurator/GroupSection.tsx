@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { Group, Component } from './types'
-import { Calendar1, Wrench, CalendarDays } from 'lucide-react'
+import { Calendar1, Wrench, CalendarDays } from 'lucide-react';
+import Image from 'next/image';
 
 interface GroupSectionProps {
   groups: Group[]
@@ -8,7 +9,6 @@ interface GroupSectionProps {
   selectedGroup?: string
   selectedComponent: string | null
   updateSelection: (key: string, value: string | null) => void
-  selectComponent: (groupSlug: string, componentId: string) => void
 }
 
 const GroupSection: React.FC<GroupSectionProps> = ({
@@ -17,15 +17,10 @@ const GroupSection: React.FC<GroupSectionProps> = ({
   selectedGroup,
   selectedComponent,
   updateSelection,
-  selectComponent,
 }) => {
-  useEffect(() => {
-    if (!selectedGroup && groups.length > 0) {
-      updateSelection('group', groups[0].slug)
-    }
-  }, [selectedGroup, groups, updateSelection])
-
-  const currentGroupSlug = selectedGroup
+  const currentGroupSlug =
+    selectedGroup ||
+    (groups.length > 0 ? groups[0].slug : null)
 
   const groupComponents = components
     .filter((c) =>
@@ -88,8 +83,8 @@ const GroupSection: React.FC<GroupSectionProps> = ({
             `}
             onClick={() => updateSelection('component', component.view)}
           >
-            <img
-              src={'https://placehold.co/40x40?text=?'}
+            <Image
+              src={"https://placehold.co/40x40?text=?"}
               alt={component.label}
               className="w-8 h-8 object-contain rounded p-1 bg-gray-100"
             />

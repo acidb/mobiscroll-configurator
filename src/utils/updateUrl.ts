@@ -5,7 +5,10 @@
 
 
 'use client';
-export function updateUrl(params: Record<string, any>) {
+
+import { MbscEventcalendarView } from "@mobiscroll/react";
+
+export function updateUrl(params: Record<string, string | number | boolean | null | MbscEventcalendarView>) {
     if (typeof window === 'undefined') return;
     const url = new URL(window.location.href);
 

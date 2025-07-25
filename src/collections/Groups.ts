@@ -4,6 +4,9 @@ export const Groups: CollectionConfig = {
   slug: 'groups',
   admin: {
     useAsTitle: 'name',
+    components: {
+      beforeListTable: ['@/components/GroupDescription'],
+    },
   },
   fields: [
     {

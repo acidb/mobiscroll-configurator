@@ -4,9 +4,12 @@ export const Configs: CollectionConfig = {
   slug: 'configs',
   admin: {
     useAsTitle: 'preset',
+    components: {
+      beforeList: ['@/components/ConfigDescription'],
+    },
   },
   fields: [
-    { 
+    {
       name: 'preset',
       type: 'relationship',
       relationTo: 'presets',

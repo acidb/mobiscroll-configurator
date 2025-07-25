@@ -13,7 +13,7 @@ import { Components } from './collections/Components'
 import { Frameworks } from './collections/Frameworks'
 import { Presets } from './collections/Presets'
 import { Configs } from './collections/Configs'
-import seedDatabase from './scripts/seed'
+import { Settings } from './collections/Settings';
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -24,9 +24,11 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    components: { afterDashboard: ['./app/components/seedButton'] },
+    components: {
+      beforeDashboard: ['@/components/DashBoardDescription'],
+    },
   },
-  collections: [Users, Media, Groups, Components, Frameworks, Presets, Configs],
+  collections: [Users, Media, Groups, Components, Frameworks, Presets, Configs, Settings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -42,17 +44,29 @@ export default buildConfig({
   ],
   endpoints: [
     {
-      path: '/seed',
-      method: 'post',
-      handler: async (req) => {
+      path: '/timeline-events',
+      method: 'get',
+      handler: async () => {
         try {
-          await seedDatabase(req.payload)
-          return Response.json({ success: true }, { status: 200 })
-        } catch (err) {
-          const message = (err as Error).message ?? 'Unknown error'
-          return Response.json({ success: false, message: `Error: ${message}` }, { status: 500 })
+          const response = await fetch('https://trial.mobiscroll.com/timeline-events/');
+          const text = await response.text();
+
+          const match = text.match(/\([\s\n]*(\[.*\])[\s\n]*\)/s);
+          if (match && match[1]) {
+            const data = JSON.parse(match[1]);
+            return Response.json(data);
+          } else {
+            return Response.json({ error: 'Failed to parse Mobiscroll JSONP.', raw: text }, { status: 500 });
+          }
+        } catch (e) {
+          return Response.json({ error: e || 'Something went wrong.' }, { status: 500 });
         }
       },
     },
+   
   ],
+
+
+
+
 })

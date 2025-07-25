@@ -4,6 +4,9 @@ export const Presets: CollectionConfig = {
   slug: 'presets',
   admin: {
     useAsTitle: 'name',
+    components: {
+      beforeListTable: ['@/components/PresetDescription'],
+    },
   },
   fields: [
     {
@@ -25,6 +28,7 @@ export const Presets: CollectionConfig = {
       name: 'component',
       type: 'relationship',
       relationTo: 'components',
+      hasMany: true,
       required: true,
     },
     {

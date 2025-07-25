@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="min-h-[100vh] flex flex-col bg-background text-foreground">
         <Header />
 
-        <main className="flex-1 flex items-start p-8">
+        <main className="flex-1 flex items-start">
           <div className="w-full p-6">{children}</div>
         </main>
 

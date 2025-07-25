@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Database } from 'lucide-react';
 
 export interface DataItem {
     id: string | number;
@@ -12,17 +11,6 @@ export interface DataItem {
     editable?: boolean;
 }
 
-function DataTypeBadge({ type }: { type: string }) {
-    const color =
-        type === "availability"
-            ? "bg-blue-100 text-blue-700"
-            : "bg-gray-200 text-gray-700";
-    return (
-        <span className={`px-2 py-0.5 rounded text-xs font-medium ${color}`}>
-            {type.charAt(0).toUpperCase() + type.slice(1)}
-        </span>
-    );
-}
 
 
 export function DataList({ data = [] }: { data: DataItem[] }) {

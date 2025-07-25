@@ -1,5 +1,6 @@
 import React from 'react'
 import { Framework } from './types'
+import Image from 'next/image'
 
 interface FrameworkSectionProps {
   frameworks: Framework[]
@@ -15,8 +16,7 @@ const FrameworkSection: React.FC<FrameworkSectionProps> = ({
   updateSelection,
 }) => {
   return (
-    <section className="mb-12">
-      <h2 className="text-2xl font-semibold mb-4">2. Choose a framework</h2>
+    <section className="mb-2">
       <div className="flex flex-wrap gap-4">
         {frameworks.map((framework) => {
           const isSelected = selectedFramework === framework.slug
@@ -26,17 +26,25 @@ const FrameworkSection: React.FC<FrameworkSectionProps> = ({
             <button
               key={framework.slug}
               className={`
-                  flex items-center justify-center p-4 rounded-lg shadow-md transition-all duration-300
-                  ${isSelected ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-blue-100'}
-                  ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                 btn rounded-md p-4
+                  ${isSelected ? 'btn-primary' : ''}
+                  ${isDisabled ? 'btn-disabled' : ''}
                 `}
               onClick={() => !isDisabled && updateSelection('framework', framework.slug)}
               disabled={isDisabled}
               aria-label={`Select ${framework.name} framework`}
               aria-disabled={isDisabled}
             >
-              <div className="flex items-center space-x-2">
-                <img src={framework.icon} alt={framework.name} className="w-8 h-8" />
+              <div className="flex items-center space-x-2 ">
+                <Image
+                  src={framework.icon}
+                  alt={framework.name}
+                  width={32}
+                  height={32}
+                  className="w-8 h-8"
+                  unoptimized 
+                />
+
                 <span className="font-medium">{framework.name}</span>
               </div>
             </button>

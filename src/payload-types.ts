@@ -74,6 +74,7 @@ export interface Config {
     frameworks: Framework;
     presets: Preset;
     configs: Config1;
+    settings: Setting;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -87,6 +88,7 @@ export interface Config {
     frameworks: FrameworksSelect<false> | FrameworksSelect<true>;
     presets: PresetsSelect<false> | PresetsSelect<true>;
     configs: ConfigsSelect<false> | ConfigsSelect<true>;
+    settings: SettingsSelect<false> | SettingsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -221,7 +223,7 @@ export interface Preset {
   name: string;
   slug: string;
   description?: string | null;
-  component: string | Component;
+  component: (string | Component)[];
   frameworks: (string | Framework)[];
   tags?:
     | {
@@ -252,6 +254,27 @@ export interface Config1 {
     | null;
   version?: string | null;
   createdBy?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings".
+ */
+export interface Setting {
+  id: string;
+  name: string;
+  components: (string | Component)[];
+  settings:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  title?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -289,6 +312,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'configs';
         value: string | Config1;
+      } | null)
+    | ({
+        relationTo: 'settings';
+        value: string | Setting;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -445,6 +472,18 @@ export interface ConfigsSelect<T extends boolean = true> {
   config?: T;
   version?: T;
   createdBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings_select".
+ */
+export interface SettingsSelect<T extends boolean = true> {
+  name?: T;
+  components?: T;
+  settings?: T;
+  title?: T;
   updatedAt?: T;
   createdAt?: T;
 }
