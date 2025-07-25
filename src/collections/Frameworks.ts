@@ -20,12 +20,6 @@ export const Frameworks: CollectionConfig = {
       required: true,
       unique: true,
     },
-    // TODO remove after the migration to templates
-    {
-      name: 'template',
-      type: 'code',
-      required: true,
-    },
     {
       name: 'templates',
       type: 'array',
