@@ -39,6 +39,8 @@ export interface LivePreviewProps {
         resources?: Record<string, string>[];
         invalid?: Record<string, string>[];
         colors?: Record<string, string>[];
+        slots?: Record<string, string>[];
+        connections?: Record<string, string>[];
     };
     template?: Record<string, string>;
     hooks?: Record<string, string>;
@@ -59,7 +61,9 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         data: eventData = [],
         resources = [],
         invalid = [],
-        colors = []
+        colors = [],
+        slots = [],
+        connections = []
     } = data || {};
 
     const [toastOpen, setToastOpen] = useState(false);
@@ -218,6 +222,8 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                         resources={resources}
                         invalid={invalid}
                         colors={colors}
+                        slots={slots}
+                        connections={connections}
                         {...templateProps}
                         {...hookProps}
                         className="min-h-[700px] max-h-[700px]"
@@ -239,6 +245,8 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                             resources={resources}
                             invalid={invalid}
                             colors={colors}
+                            slots={slots}
+                            connections={connections}
                             {...templateProps}
                             {...hookProps}
                         />
