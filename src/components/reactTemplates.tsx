@@ -40,6 +40,26 @@ If you want to add a new template for a renderer, follow these steps:
 
 
 export const templates = {
+  renderResourceWithAvatar: {
+    fn: (resource: MbscResource) => (
+      <div className="mbsc-flex">
+        <img className="mds-employee-shifts-avatar" alt={resource.name} src={resource.img} />
+        <div className="mds-employee-shifts-cont">
+          <div className="mds-employee-shifts-name">{resource.name}</div>
+          <div className="mds-employee-shifts-title">{resource.title}</div>
+        </div>
+      </div>
+    ),
+
+    code: {
+      tsx: ``.trim(),
+      jsx: ``.trim(),
+      sfcjs: ``.trim(),
+      sfcts: ``.trim(),
+      template: ``.trim(),
+
+    }
+  },
   renderAgenda: {
     fn: (agenda: MbscResource) => (
       <div>{agenda.label || 'Agenda'}</div>
