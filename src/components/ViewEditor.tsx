@@ -130,22 +130,27 @@ export const ViewEditor: React.FC<ViewEditorProps> = ({ view, onChange }) => {
                                                 timeFormat="HH:mm"
                                                 touchUi={true}
                                                 value={value as string}
-                                                onChange={(e) =>
+                                                onChange={(e) => {
+                                                    const date = e.value as Date;
+                                                    const formattedTime = date
+                                                        ? `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+                                                        : '';
+
                                                     onChange({
                                                         ...view,
                                                         [mode]: {
                                                             ...config,
-                                                            [key]: e.value,
+                                                            [key]: formattedTime,
                                                         },
-                                                    })
-                                                }
+                                                    });
+                                                }}
                                                 inputProps={{
                                                     className: "input input-xs w-20 max-w-[80px] text-xs rounded-sm h-8 px-2",
                                                     style: {
                                                         fontSize: '0.75rem',
                                                         height: '2rem',
                                                     },
-                                                    
+
                                                 }}
                                             />
 
