@@ -28,7 +28,7 @@ If you want to add a new template for a renderer, follow these steps:
   See all available language keys in './reactTemplates'.
 
   !!! IMPORTANT: For types, use Mobiscroll types like 'MbscResource', 'MbscCalendarEventData', etc., or your own.
-  **Avoid using 'any' as the type.**
+  **Avoid using 'MbscResource' as the type.**
 
 * STEP 2: Finalize in ConfigurationsSelector.tsx
   Once you've created the new template in 'export const templates',
@@ -41,7 +41,7 @@ If you want to add a new template for a renderer, follow these steps:
 
 export const templates = {
   renderAgenda: {
-    fn: (agenda: any) => (
+    fn: (agenda: MbscResource) => (
       <div>{agenda.label || 'Agenda'}</div>
     ),
     code: {
@@ -995,7 +995,7 @@ const renderAgendaEmpty = () => (
     }
   },
   renderDay: {
-    fn: (day: any) => (
+    fn: (day: MbscResource) => (
       <div>{day.day}</div>
     ),
     code: {
@@ -1027,7 +1027,7 @@ const renderDay = (day) => (
     }
   },
   renderBufferAfter: {
-    fn: (obj: any) => (<div>Buffer after</div>),
+    fn: (obj: MbscResource) => (<div>Buffer after</div>),
     code: {
       tsx: `
 const renderBufferAfter = useCallback(() => (
@@ -1057,7 +1057,7 @@ const renderBufferAfter = () => (
     }
   },
   renderBufferBefore: {
-    fn: (obj: any) => (<div>Buffer before</div>),
+    fn: (obj: MbscResource) => (<div>Buffer before</div>),
     code: {
       tsx: `
 const renderBufferBefore = useCallback(() => (
@@ -1087,7 +1087,7 @@ const renderBufferBefore = () => (
     }
   },
   renderDayContent: {
-    fn: (day: any) => (<div>{day.label || 'Day'}</div>),
+    fn: (day: MbscResource) => (<div>{day.label || 'Day'}</div>),
     code: {
       tsx: `
 const renderDayContent = useCallback((day) => (
@@ -1117,7 +1117,7 @@ const renderDayContent = (day) => (
     }
   },
   renderDayFooter: {
-    fn: (obj: any) => (<div>Day footer</div>),
+    fn: (obj: MbscResource) => (<div>Day footer</div>),
     code: {
       tsx: `
 const renderDayFooter = useCallback(() => (
@@ -1147,7 +1147,7 @@ const renderDayFooter = () => (
     }
   },
   renderEventContent: {
-    fn: (event: any) => (<div>{event.title}</div>),
+    fn: (event: MbscResource) => (<div>{event.title}</div>),
     code: {
       tsx: `
 const renderEventContent = useCallback((event) => (
@@ -1177,7 +1177,7 @@ const renderEventContent = (event) => (
     }
   },
   renderHeader: {
-    fn: (header: any) => (<div>{header.label || 'Header'}</div>),
+    fn: (header: MbscResource) => (<div>{header.label || 'Header'}</div>),
     code: {
       tsx: `
 const renderHeader = useCallback((header) => (
@@ -1207,7 +1207,7 @@ const renderHeader = (header) => (
     }
   },
   renderHour: {
-    fn: (hour: any) => (<div>{hour.label || hour.hour}</div>),
+    fn: (hour: MbscResource) => (<div>{hour.label || hour.hour}</div>),
     code: {
       tsx: `
 const renderHour = useCallback((hour) => (
@@ -1237,7 +1237,7 @@ const renderHour = (hour) => (
     }
   },
   renderHourFooter: {
-    fn: (obj: any) => (<div>Hour footer</div>),
+    fn: (obj: MbscResource) => (<div>Hour footer</div>),
     code: {
       tsx: `
 const renderHourFooter = useCallback(() => (
@@ -1267,7 +1267,7 @@ const renderHourFooter = () => (
     }
   },
   renderLabel: {
-    fn: (label: any) => (<div>{label.label}</div>),
+    fn: (label: MbscResource) => (<div>{label.label}</div>),
     code: {
       tsx: `
 const renderLabel = useCallback((label) => (
@@ -1297,7 +1297,7 @@ const renderLabel = (label) => (
     }
   },
   renderMonth: {
-    fn: (month: any) => (<div>{month.label}</div>),
+    fn: (month: MbscResource) => (<div>{month.label}</div>),
     code: {
       tsx: `
 const renderMonth = useCallback((month) => (
@@ -1327,7 +1327,7 @@ const renderMonth = (month) => (
     }
   },
   renderMonthFooter: {
-    fn: (obj: any) => (<div>Month footer</div>),
+    fn: (obj: MbscResource) => (<div>Month footer</div>),
     code: {
       tsx: `
 const renderMonthFooter = useCallback(() => (
@@ -1357,7 +1357,7 @@ const renderMonthFooter = () => (
     }
   },
   renderQuarter: {
-    fn: (quarter: any) => (<div>{quarter.label}</div>),
+    fn: (quarter: MbscResource) => (<div>{quarter.label}</div>),
     code: {
       tsx: `
 const renderQuarter = useCallback((quarter) => (
@@ -1387,7 +1387,7 @@ const renderQuarter = (quarter) => (
     }
   },
   renderQuarterFooter: {
-    fn: (obj: any) => (<div>Quarter footer</div>),
+    fn: (obj: MbscResource) => (<div>Quarter footer</div>),
     code: {
       tsx: `
 const renderQuarterFooter = useCallback(() => (
@@ -1447,7 +1447,7 @@ const renderResourceEmpty = () => (
     }
   },
   renderResourceFooter: {
-    fn: (obj: any) => (<div>Resource footer</div>),
+    fn: (obj: MbscResource) => (<div>Resource footer</div>),
     code: {
       tsx: `
 const renderResourceFooter = useCallback(() => (
@@ -1477,7 +1477,7 @@ const renderResourceFooter = () => (
     }
   },
   renderResourceHeader: {
-    fn: (obj: any) => (<div>Resource header</div>),
+    fn: (obj: MbscResource) => (<div>Resource header</div>),
     code: {
       tsx: `
 const renderResourceHeader = useCallback(() => (
@@ -1507,7 +1507,7 @@ const renderResourceHeader = () => (
     }
   },
   renderScheduleEvent: {
-    fn: (event: any) => (<div>{event.title}</div>),
+    fn: (event: MbscResource) => (<div>{event.title}</div>),
     code: {
       tsx: `
 const renderScheduleEvent = useCallback((event) => (
@@ -1537,7 +1537,7 @@ const renderScheduleEvent = (event) => (
     }
   },
   renderScheduleEventContent: {
-    fn: (event: any) => (<div>{event.title}</div>),
+    fn: (event: MbscResource) => (<div>{event.title}</div>),
     code: {
       tsx: `
 const renderScheduleEventContent = useCallback((event) => (
@@ -1567,7 +1567,7 @@ const renderScheduleEventContent = (event) => (
     }
   },
   renderSidebar: {
-    fn: (obj: any) => (<div>Sidebar</div>),
+    fn: (obj: MbscResource) => (<div>Sidebar</div>),
     code: {
       tsx: `
 const renderSidebar = useCallback(() => (
@@ -1597,7 +1597,7 @@ const renderSidebar = () => (
     }
   },
   renderSidebarFooter: {
-    fn: (obj: any) => (<div>Sidebar footer</div>),
+    fn: (obj: MbscResource) => (<div>Sidebar footer</div>),
     code: {
       tsx: `
 const renderSidebarFooter = useCallback(() => (
@@ -1627,7 +1627,7 @@ const renderSidebarFooter = () => (
     }
   },
   renderSidebarHeader: {
-    fn: (obj: any) => (<div>Sidebar header</div>),
+    fn: (obj: MbscResource) => (<div>Sidebar header</div>),
     code: {
       tsx: `
 const renderSidebarHeader = useCallback(() => (
@@ -1657,7 +1657,7 @@ const renderSidebarHeader = () => (
     }
   },
   renderSlot: {
-    fn: (slot: any) => (<div>{slot.label}</div>),
+    fn: (slot: MbscResource) => (<div>{slot.label}</div>),
     code: {
       tsx: `
 const renderSlot = useCallback((slot) => (
@@ -1687,7 +1687,7 @@ const renderSlot = (slot) => (
     }
   },
   renderWeek: {
-    fn: (week: any) => (<div>{week.label}</div>),
+    fn: (week: MbscResource) => (<div>{week.label}</div>),
     code: {
       tsx: `
 const renderWeek = useCallback((week) => (
@@ -1717,7 +1717,7 @@ const renderWeek = (week) => (
     }
   },
   renderWeekFooter: {
-    fn: (obj: any) => (<div>Week footer</div>),
+    fn: (obj: MbscResource) => (<div>Week footer</div>),
     code: {
       tsx: `
 const renderWeekFooter = useCallback(() => (
@@ -1747,7 +1747,7 @@ const renderWeekFooter = () => (
     }
   },
   renderYear: {
-    fn: (year: any) => (<div>{year.label}</div>),
+    fn: (year: MbscResource) => (<div>{year.label}</div>),
     code: {
       tsx: `
 const renderYear = useCallback((year) => (
@@ -1777,7 +1777,7 @@ const renderYear = (year) => (
     }
   },
   renderYearFooter: {
-    fn: (obj: any) => (<div>Year footer</div>),
+    fn: (obj: MbscResource) => (<div>Year footer</div>),
     code: {
       tsx: `
 const renderYearFooter = useCallback(() => (
