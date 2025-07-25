@@ -60,11 +60,94 @@ export const templates = {
     },
 
     code: {
-      tsx: ``.trim(),
-      jsx: ``.trim(),
-      sfcjs: ``.trim(),
-      sfcts: ``.trim(),
-      template: ``.trim(),
+      tsx: `const renderCustomItem = useCallback((item: MbscSelectItemData) => {
+  const data = item.data;
+
+  return (
+    <div className="flex flex-row items-center gap-3">
+      <img
+        className="max-h-12 max-w-12 object-contain"
+        src={'https://img.mobiscroll.com/demos/' + data.img + '.png'}
+        alt="Cover"
+      />
+      <div>
+        <div className="md-item-template-title">
+          <span>{data.text}</span>
+          <span className="md-item-template-year">{' (' + data.year + ')'}</span>
+        </div>
+        <div className="md-item-template-artist">{'by ' + data.artist}</div>
+      </div>
+    </div>
+  );
+}, []);`.trim(),
+      jsx: `const renderCustomItem = (item) => {
+  const data = item.data;
+
+  return (
+    <div className="flex flex-row items-center gap-3">
+      <img
+        className="max-h-12 max-w-12 object-contain"
+        src={'https://img.mobiscroll.com/demos/' + data.img + '.png'}
+        alt="Cover"
+      />
+      <div>
+        <div className="md-item-template-title">
+          <span>{data.text}</span>
+          <span className="md-item-template-year">{' (' + data.year + ')'}</span>
+        </div>
+        <div className="md-item-template-artist">{'by ' + data.artist}</div>
+      </div>
+    </div>
+  );
+}`.trim(),
+      sfcjs: `<template #renderCustomItem="item">
+  <div class="flex flex-row items-center gap-3">
+    <img
+      class="max-h-12 max-w-12 object-contain"
+      :src="'https://img.mobiscroll.com/demos/' + item.data.img + '.png'"
+      alt="Cover"
+    />
+    <div>
+      <div class="md-item-template-title">
+        <span>{{ item.data.text }}</span>
+        <span class="md-item-template-year">({{ item.data.year }})</span>
+      </div>
+      <div class="md-item-template-artist">by {{ item.data.artist }}</div>
+    </div>
+  </div>
+</template>`.trim(),
+      sfcts: `<template #renderCustomItem="item">
+  <div class="flex flex-row items-center gap-3">
+    <img
+      class="max-h-12 max-w-12 object-contain"
+      :src="'https://img.mobiscroll.com/demos/' + item.data.img + '.png'"
+      alt="Cover"
+    />
+    <div>
+      <div class="md-item-template-title">
+        <span>{{ item.data.text }}</span>
+        <span class="md-item-template-year">({{ item.data.year }})</span>
+      </div>
+      <div class="md-item-template-artist">by {{ item.data.artist }}</div>
+    </div>
+  </div>
+</template>`.trim(),
+      template: `<ng-template #renderCustomItem let-item>
+  <div class="flex flex-row items-center gap-3">
+    <img
+      class="max-h-12 max-w-12 object-contain"
+      [src]="'https://img.mobiscroll.com/demos/' + item.data.img + '.png'"
+      alt="Cover"
+    />
+    <div>
+      <div class="md-item-template-title">
+        <span>{{ item.data.text }}</span>
+        <span class="md-item-template-year">({{ item.data.year }})</span>
+      </div>
+      <div class="md-item-template-artist">by {{ item.data.artist }}</div>
+    </div>
+  </div>
+</ng-template>`.trim(),
 
     }
   },
@@ -81,11 +164,72 @@ export const templates = {
     ),
 
     code: {
-      tsx: ``.trim(),
-      jsx: ``.trim(),
-      sfcjs: ``.trim(),
-      sfcts: ``.trim(),
-      template: ``.trim(),
+      tsx: `const renderResourceWithAvatar = useCallback((resource: MbscResource) => (
+  <div className="mbsc-flex">
+    <img
+      className="mds-employee-shifts-avatar"
+      alt={resource.name}
+      src={resource.img}
+    />
+    <div className="mds-employee-shifts-cont">
+      <div className="mds-employee-shifts-name">{resource.name}</div>
+      <div className="mds-employee-shifts-title">{resource.title}</div>
+    </div>
+  </div>
+), []);`.trim(),
+      jsx: `const renderResourceWithAvatar = (resource) => (
+  <div className="mbsc-flex">
+    <img
+      className="mds-employee-shifts-avatar"
+      alt={resource.name}
+      src={resource.img}
+    />
+    <div className="mds-employee-shifts-cont">
+      <div className="mds-employee-shifts-name">{resource.name}</div>
+      <div className="mds-employee-shifts-title">{resource.title}</div>
+    </div>
+  </div>
+)`.trim(),
+      sfcjs: `<template #renderResourceWithAvatar="resource">
+  <div class="mbsc-flex">
+    <img
+      class="mds-employee-shifts-avatar"
+      :alt="resource.name"
+      :src="resource.img"
+    />
+    <div class="mds-employee-shifts-cont">
+      <div class="mds-employee-shifts-name">{{ resource.name }}</div>
+      <div class="mds-employee-shifts-title">{{ resource.title }}</div>
+    </div>
+  </div>
+</template>
+`.trim(),
+      sfcts: `<template #renderResourceWithAvatar="resource">
+  <div class="mbsc-flex">
+    <img
+      class="mds-employee-shifts-avatar"
+      :alt="resource.name"
+      :src="resource.img"
+    />
+    <div class="mds-employee-shifts-cont">
+      <div class="mds-employee-shifts-name">{{ resource.name }}</div>
+      <div class="mds-employee-shifts-title">{{ resource.title }}</div>
+    </div>
+  </div>
+</template>`.trim(),
+      template: `<ng-template #renderResourceWithAvatar let-resource>
+  <div class="mbsc-flex">
+    <img
+      class="mds-employee-shifts-avatar"
+      [alt]="resource.name"
+      [src]="resource.img"
+    />
+    <div class="mds-employee-shifts-cont">
+      <div class="mds-employee-shifts-name">{{ resource.name }}</div>
+      <div class="mds-employee-shifts-title">{{ resource.title }}</div>
+    </div>
+  </div>
+</ng-template>`.trim(),
 
     }
   },
