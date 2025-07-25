@@ -9,6 +9,7 @@ import {
     Toast,
     MbscEventcalendarView,
     MbscCalendarEvent,
+    Popup
 } from '@mobiscroll/react';
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
 import { templateCodes } from './reactTemplates';
@@ -24,6 +25,7 @@ const componentMap: Record<string, React.ElementType> = {
     datepicker: Datepicker,
     timepicker: Datepicker,
     rangepicker: Datepicker,
+    popup: Popup,
 };
 
 import { MbscCalendarEventData, MbscResource } from '@mobiscroll/react';
