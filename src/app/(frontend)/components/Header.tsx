@@ -8,7 +8,7 @@ export default function Header() {
     <header className="w-full py-4 px-8 bg-gradient-to-r from-gray-50 to-gray-100 shadow-md border-b border-gray-200 top-0 z-1">
 
       <div className="w-full px-8 mx-auto flex items-center justify-between">
-        <Link href="/configurator" aria-label="Mobiscroll Configurator Home" className="flex items-center transition-colors duration-300 hover:text-gray-600">
+        <Link href="/" aria-label="Mobiscroll Configurator Home" className="flex items-center transition-colors duration-300 hover:text-gray-600">
           <svg className="w-[80px] h-[36px]" viewBox="0 0 80 36" version="1.1" xmlns="http://www.w3.org/2000/svg">
             <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
               <g transform="translate(-34.000000, -48.000000)" fill="#11283A">

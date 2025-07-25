@@ -134,7 +134,7 @@ export default function ConfiguratorClient({
       router.push(`${pathname}?${newQuery.toString()}`, { scroll: false });
     } else {
       if (key === 'group') {
-        router.push('/configurator', { scroll: false });
+        router.push('/', { scroll: false });
         return;
       }
 
